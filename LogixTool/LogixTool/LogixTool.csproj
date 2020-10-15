@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{99D6C33C-BE52-4F7A-AE36-52626634ED50}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LogixTool</RootNamespace>
+    <AssemblyName>LogixTool</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FormAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAbout.Designer.cs">
+      <DependentUpon>FormAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\BitExtractor.cs" />
+    <Compile Include="Common\CustomListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Common\MessageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Common\MessageControl.designer.cs">
+      <DependentUpon>MessageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EthernetIP\AllenBradley\TagHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\ArrayDefinition.cs" />
+    <Compile Include="EthernetIP\AllenBradley\TagValueReading.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagsEventArgs.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagsEventHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\TagValueControl.cs" />
+    <Compile Include="Controls\DataGridViewDisableButtonCell.cs" />
+    <Compile Include="Controls\DataGridViewDisableButtonColumn.cs" />
+    <Compile Include="Controls\TreeNode_EthernetDevice.cs" />
+    <Compile Include="CheckBoxItem.cs" />
+    <Compile Include="Enumerations.cs" />
+    <Compile Include="FormRecordSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRecordSettings.Designer.cs">
+      <DependentUpon>FormRecordSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormRegistrator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRegistrator.Designer.cs">
+      <DependentUpon>FormRegistrator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TagRecorder.cs" />
+    <Compile Include="RecordItem.cs" />
+    <Compile Include="Common\ComboBoxExtensions.cs" />
+    <Compile Include="Common\CsvFile.cs" />
+    <Compile Include="Common\DataGridViewExtensions.cs" />
+    <Compile Include="Common\DateTimeExtensions.cs" />
+    <Compile Include="Common\FormsExtensions.cs" />
+    <Compile Include="Common\MessageEvent.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\CLXCustomTagMemoryItem.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\CLXCustomTagMemoryTable.cs" />
+    <Compile Include="EthernetIP\AllenBradley\LogixDevice.cs" />
+    <Compile Include="EthernetIP\AllenBradley\LogixRadixConvertor.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\CLXTag.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\CLXSymbolTypeAttribute.cs" />
+    <Compile Include="EthernetIP\AllenBradley\LogixTag.cs" />
+    <Compile Include="EthernetIP\AllenBradley\TagTask.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\CLXTemplate.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\CLXTemplateMember.cs" />
+    <Compile Include="EthernetIP\AllenBradley\TagDataTypeDefinition.cs" />
+    <Compile Include="EthernetIP\AllenBradley\TagValueReport.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TaskEventArgs.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TaskEventHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\DeviceEventHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Enum.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\DeviceEventArgs.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskEndEditEventArgs.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskBeginEditEventArgs.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskeEndEditEventHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskBeginEditEventHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagEventArgs.cs" />
+    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagEventHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\TagValueWriting.cs" />
+    <Compile Include="EthernetIP\EIPClient.cs" />
+    <Compile Include="EthernetIP\Enumerations.cs" />
+    <Compile Include="Controls\DeviceBrowserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DeviceBrowserControl.Designer.cs">
+      <DependentUpon>DeviceBrowserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TagBrowserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TagBrowserControl.Designer.cs">
+      <DependentUpon>TagBrowserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EthernetIP\Models\CommonPacketFormat.cs" />
+    <Compile Include="EthernetIP\Models\CommonPacketItem.cs" />
+    <Compile Include="EthernetIP\Models\EncapsulatedPacket.cs" />
+    <Compile Include="EthernetIP\Models\EPath.cs" />
+    <Compile Include="EthernetIP\Models\EPathSegment.cs" />
+    <Compile Include="EthernetIP\Models\ForwardCloseRequest.cs" />
+    <Compile Include="EthernetIP\Models\ForwardCloseResponse.cs" />
+    <Compile Include="EthernetIP\Models\ForwardOpenRequest.cs" />
+    <Compile Include="EthernetIP\Models\ForwardOpenResponse.cs" />
+    <Compile Include="EthernetIP\Models\ListIdentityResponse.cs" />
+    <Compile Include="EthernetIP\Models\MessageRouterRequest.cs" />
+    <Compile Include="EthernetIP\Models\MessageRouterResponse.cs" />
+    <Compile Include="EthernetIP\Models\NetworkConnectionParameter.cs" />
+    <Compile Include="EthernetIP\Models\SocketAddressInfo.cs" />
+    <Compile Include="EthernetIP\Models\TransportTypeAndTrigger.cs" />
+    <Compile Include="EthernetIP\Models\UnconnectedSendRequest.cs" />
+    <Compile Include="LocalDatabase\Enumerations.cs" />
+    <Compile Include="LocalDatabase\TypeAttribute.cs" />
+    <Compile Include="LocalDatabase\LocalDataBase.cs" />
+    <Compile Include="LocalDatabase\OwnerAttribute.cs" />
+    <Compile Include="LocalDatabase\StorageItemInfo.cs" />
+    <Compile Include="Logix\Extensions\Enum.cs" />
+    <Compile Include="Logix\Extensions\TextFragment.cs" />
+    <Compile Include="Common\MessageEventArgs.cs" />
+    <Compile Include="Logix\Models\AddonInstruction.cs" />
+    <Compile Include="Logix\Models\ArrayIndex.cs" />
+    <Compile Include="Logix\Models\CrossReferenceItem.cs" />
+    <Compile Include="Logix\Models\ArrayDefinition.cs" />
+    <Compile Include="Logix\Models\LogixTree.cs" />
+    <Compile Include="Logix\Models\MemoryCell.cs" />
+    <Compile Include="Logix\Models\MemoryCoord.cs" />
+    <Compile Include="Logix\Models\MemoryObject.cs" />
+    <Compile Include="Logix\Models\ConsumeInfo.cs" />
+    <Compile Include="Logix\Models\LogicContainer.cs" />
+    <Compile Include="Logix\Models\LogicInstructionParameter.cs" />
+    <Compile Include="Logix\Models\MessageParameters.cs" />
+    <Compile Include="Logix\Models\ProduceInfo.cs" />
+    <Compile Include="Logix\Models\SafetyTagMap.cs" />
+    <Compile Include="Logix\Models\Tag.cs" />
+    <Compile Include="Logix\Models\TagAddonParameter.cs" />
+    <Compile Include="Logix\Models\TagMember.cs" />
+    <Compile Include="Logix\Models\DataType.cs" />
+    <Compile Include="Logix\Models\DataTypeMember.cs" />
+    <Compile Include="Logix\Models\DataTypeAddonParameter.cs" />
+    <Compile Include="Logix\Models\Enumerations.cs" />
+    <Compile Include="Logix\Models\LogicInstruction.cs" />
+    <Compile Include="Logix\Models\LogicNode.cs" />
+    <Compile Include="Logix\Models\LogicProgram.cs" />
+    <Compile Include="Logix\Models\LogicRoutine.cs" />
+    <Compile Include="Logix\Models\LogicTask.cs" />
+    <Compile Include="Logix\Models\LogicRung.cs" />
+    <Compile Include="Common\Tree.cs" />
+    <Compile Include="Logix\Extensions\IEnum.cs" />
+    <Compile Include="Common\RadixConverter.cs" />
+    <Compile Include="Logix\LogixL5X.cs" />
+    <Compile Include="Logix\Extensions\Strings.cs" />
+    <Compile Include="Logix\Extensions\XLinqExtensions.cs" />
+    <Compile Include="Logix\LangText.cs" />
+    <Compile Include="Logix\PSA\FunctionalElement.cs" />
+    <Compile Include="Logix\PSA\Enumerations.cs" />
+    <Compile Include="Logix\PSA\AtributePsaDiagTriggerType.cs" />
+    <Compile Include="Logix\PSA\RoutineName.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Logix\Resources\LogixResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LogixResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="FormAbout.resx">
+      <DependentUpon>FormAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRecordSettings.resx">
+      <DependentUpon>FormRecordSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRegistrator.resx">
+      <DependentUpon>FormRegistrator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DeviceBrowserControl.resx">
+      <DependentUpon>DeviceBrowserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TagBrowserControl.resx">
+      <DependentUpon>TagBrowserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\MessageControl.resx">
+      <DependentUpon>MessageControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Logix\Resources\LogixResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LogixResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="EthernetIP\_doc\1756-pm020_-en-p.pdf" />
+    <None Include="EthernetIP\_doc\EIP-CIP-V1-1.0.pdf" />
+    <None Include="EthernetIP\_doc\EIP-CIP-V2-1.0.pdf" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Logix\Resources\PredefinedDataTypes.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\ico_plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ico_minus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EthernetIP\Notes.txt" />
+    <Content Include="Resources\ico_logix_module_add.png" />
+    <Content Include="Resources\ico_logix_module_init.png" />
+    <Content Include="Resources\ico_loupe.png" />
+    <Content Include="Resources\ico_alert.png" />
+    <Content Include="Resources\ico_logix_module_error.png" />
+    <Content Include="Resources\ico_logix_module_stop.png" />
+    <Content Include="Resources\ico_library.png" />
+    <Content Include="Resources\ico_question.png" />
+    <Content Include="Resources\ico_logix_aoi_nom.png" />
+    <Content Include="Resources\ico_logix_aoi_safety.png" />
+    <Content Include="Resources\ico_logix_aoi_sign.png" />
+    <Content Include="Resources\ico_arrow_round.png" />
+    <Content Include="Resources\ico_logix_datatype.png" />
+    <Content Include="Resources\ico_logix_folder_closed.png" />
+    <Content Include="Resources\ico_logix_folder_open.png" />
+    <Content Include="Resources\ico_logix_program_safety.png" />
+    <Content Include="Resources\ico_logix_program_standard.png" />
+    <Content Include="Resources\ico_logix_program_standard_inhibited.png" />
+    <Content Include="Resources\ico_logix_routine.png" />
+    <Content Include="Resources\ico_logix_routine_main.png" />
+    <Content Include="Resources\ico_run.png" />
+    <Content Include="Resources\ico_stop.png" />
+    <Content Include="Resources\ico_pause.png" />
+    <Content Include="Resources\ico_sheets.png" />
+    <Content Include="Resources\ico_error.png" />
+    <Content Include="Resources\ico_alarm.png" />
+    <Content Include="Resources\ico_item_create.png" />
+    <Content Include="Resources\ico_item_add.png" />
+    <Content Include="Resources\ico_folder_create.png" />
+    <Content Include="Resources\ico_info.png" />
+    <Content Include="Resources\ico_folder.png" />
+    <Content Include="Resources\ico_disk.png" />
+    <Content Include="Resources\ico_mark.png" />
+    <Content Include="Resources\ico_logix_tag.png" />
+    <Content Include="Resources\ico_logix_task_continuous.png" />
+    <Content Include="Resources\ico_logix_task_periodic.png" />
+    <Content Include="Resources\txt_AppRegistratorRelease.txt" />
+    <None Include="Resources\ico_plug.png" />
+    <None Include="Resources\ico_cross.png" />
+    <None Include="Resources\ico_gear.png" />
+    <None Include="Resources\ico_arrows.png" />
+    <None Include="Resources\ico_tool.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,177 @@
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\bin\Debug\LogixTool.exe
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\bin\Debug\LogixTool.exe.config
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppExportIO.FormHardIOTool.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppUncryptor.FormUncryptor.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.FormMain.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.Cache
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.exe
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\bin\Debug\LogixTool.pdb
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.csprojResolveAssemblyReference.cache
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppDiagGenerator.FormDiagGenerator.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.exe.config
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.exe
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.pdb
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppDiagGenerator.FormDiagGenerator.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppExportIO.FormHardIOTool.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppChecker.FormPLCChecker.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRobPointsExporter.FormRobPointsExporter.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppUncryptor.FormUncryptor.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.FormMain.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.Cache
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.exe
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
+d:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csprojResolveAssemblyReference.cache
+f:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\bin\Debug\LogixTool.exe.config
+f:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.exe
+f:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.pdb
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\bin\Debug\LogixTool.exe
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\bin\Debug\LogixTool.pdb
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.csprojResolveAssemblyReference.cache
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.AppDiagGenerator.FormDiagGenerator.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.AppExportIO.FormHardIOTool.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.AppChecker.FormPLCChecker.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.AppUncryptor.FormUncryptor.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.FormMain.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool_new\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.Cache
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\bin\Debug\LogixTool.exe.config
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.exe
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.pdb
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\bin\Debug\LogixTool.exe
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\bin\Debug\LogixTool.pdb
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.csprojResolveAssemblyReference.cache
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.AppDiagGenerator.FormDiagGenerator.resources
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.AppExportIO.FormHardIOTool.resources
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.AppUncryptor.FormUncryptor.resources
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.FormMain.resources
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+f:\C# PROJECTS\_ACTUAL\LogixTool_arc\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.Cache
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.FormMicroHmi.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Panel.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Text.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRegistrator.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRecordSettings.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.RuleOfUdtMemberControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.RuleOfTagNameControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.RuleOfInstructionControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.RuleOfDuplicateParametersControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.FormPLCInspector.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.RulesControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.DeviceBrowserControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.TagBrowserControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.ProjectControl.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.FormProjectSettings.resources
+c:\Documents\C# PROJECTS\LogixTool\LogixTool\obj\Debug\LogixTool.TestCore.FormDataTypeTest.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.exe.config
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.exe
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.pdb
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppDiagGenerator.FormDiagGenerator.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.FormMicroHmi.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Panel.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppExportIO.FormHardIOTool.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Text.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfUdtMemberControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfTagNameControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfInstructionControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfDuplicateParametersControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.FormPLCInspector.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RulesControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRecordSettings.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRegistrator.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppUncryptor.FormUncryptor.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.Controls.DeviceBrowserControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.Controls.TagBrowserControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.FormMain.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.ProjectControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.Cache
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.exe
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.EventsLogControl.resources
+F:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormAbout.resources
+f:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csprojAssemblyReference.cache
+f:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CoreCompileInputs.cache
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppDiagGenerator.FormDiagGenerator.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.FormMicroHmi.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Panel.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppExportIO.FormHardIOTool.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Text.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfUdtMemberControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfTagNameControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfInstructionControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfDuplicateParametersControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.FormPLCInspector.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RulesControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormAbout.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRecordSettings.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRegistrator.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppUncryptor.FormUncryptor.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.Controls.DeviceBrowserControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.Controls.TagBrowserControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.FormMain.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.ProjectControl.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.cache
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.exe.config
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.exe
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Debug\LogixTool.pdb
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.exe
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csprojAssemblyReference.cache
+e:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CoreCompileInputs.cache
+E:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\obj\Debug\LogixTool.Common.MessageControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\bin\Debug\LogixTool.exe.config
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\bin\Debug\LogixTool.exe
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\bin\Debug\LogixTool.pdb
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.csprojAssemblyReference.cache
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppDiagGenerator.FormDiagGenerator.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.FormMicroHmi.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Panel.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppExportIO.FormHardIOTool.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppMicroHMI.UserControl_Text.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfUdtMemberControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfTagNameControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfInstructionControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RuleOfDuplicateParametersControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.FormPLCInspector.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.RulesControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormAbout.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRecordSettings.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.FormRegistrator.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppUncryptor.FormUncryptor.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.Controls.DeviceBrowserControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppRegistrator.Controls.TagBrowserControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.Common.MessageControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.FormMain.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.AppPLCInspector.Controls.ProjectControl.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.cache
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CoreCompileInputs.cache
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.exe
+E:\C# PROJECTS\Developing\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
+d:\Git\Repository\LogixTool\LogixTool\bin\Debug\LogixTool.exe.config
+d:\Git\Repository\LogixTool\LogixTool\bin\Debug\LogixTool.exe
+d:\Git\Repository\LogixTool\LogixTool\bin\Debug\LogixTool.pdb
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.csprojAssemblyReference.cache
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.Common.MessageControl.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.Logix.Resources.LogixResources.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.cache
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CoreCompileInputs.cache
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.exe
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.FormAbout.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.FormRecordSettings.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.FormRegistrator.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.DeviceBrowserControl.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.TagBrowserControl.resources

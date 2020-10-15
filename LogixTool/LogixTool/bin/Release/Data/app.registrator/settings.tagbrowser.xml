@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<storage Owner="app.registrator" Type="settings" ID="tagbrowser" Saved="637187080691533025">
+  <data>
+    <Settings>
+      <Columns>
+        <Column Name="ColumnDevice" Width="90" Visible="true" />
+        <Column Name="ColumnTag" Width="100" Visible="true" />
+        <Column Name="ColumnDataType" Width="100" Visible="true" />
+        <Column Name="ColumnFragmentLength" Width="60" Visible="true" />
+        <Column Name="ColumnStatus" Width="60" Visible="true" />
+        <Column Name="ColumnReadRate" Width="95" Visible="true" />
+        <Column Name="ColumnActualUpdateRate" Width="100" Visible="true" />
+        <Column Name="ColumnActualServerReply" Width="100" Visible="true" />
+        <Column Name="ColumnRadix" Width="100" Visible="true" />
+        <Column Name="ColumnReadValue" Width="100" Visible="true" />
+        <Column Name="ColumnWriteButton" Width="25" Visible="false" />
+        <Column Name="ColumnWriteValue" Width="100" Visible="false" />
+      </Columns>
+    </Settings>
+  </data>
+</storage>

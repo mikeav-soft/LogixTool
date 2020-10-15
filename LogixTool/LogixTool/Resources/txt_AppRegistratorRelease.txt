@@ -1,0 +1,22 @@
+﻿===========================================================
+ Application  :	REGISTRATOR v0.2
+ Auhtor       :	VAULIN MIKHAIL (MIKEAV)
+ Release date :	16.02.2020
+ Description  : 
+	This application is necessary for reading data from the
+Rockwell controllers (ControlLogix and CompactLogix families) 
+with the ability to register current data by writing them to
+a text file.
+===========================================================
+Current version successful tested with PLC formware :
+ V18.11 
+ V16.00
+
+ Core release. ____________________________________________
+ - 0.0 : Init Version.
+ - 0.1 : Fixed problem of synchronization read/write events.
+ 
+ Application Release. _____________________________________
+ - 0.0 : Init Version.
+ - 0.1 : Optimization of device browser.
+===========================================================
