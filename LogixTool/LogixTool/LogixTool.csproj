@@ -49,6 +49,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EthernetIP\Models\MessageRouterRequest.cs" />
+    <Compile Include="EthernetIP\Models\MessageRouterResponse.cs" />
+    <Compile Include="EthernetIP\Models\ForwardOpenRequest.cs" />
+    <Compile Include="EthernetIP\Models\ForwardOpenResponse.cs" />
+    <Compile Include="EthernetIP\Models\ForwardCloseResponse.cs" />
+    <Compile Include="EthernetIP\Models\ForwardCloseRequest.cs" />
     <Compile Include="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,13 +145,7 @@
     <Compile Include="EthernetIP\Models\EncapsulatedPacket.cs" />
     <Compile Include="EthernetIP\Models\EPath.cs" />
     <Compile Include="EthernetIP\Models\EPathSegment.cs" />
-    <Compile Include="EthernetIP\Models\ForwardCloseRequest.cs" />
-    <Compile Include="EthernetIP\Models\ForwardCloseResponse.cs" />
-    <Compile Include="EthernetIP\Models\ForwardOpenRequest.cs" />
-    <Compile Include="EthernetIP\Models\ForwardOpenResponse.cs" />
     <Compile Include="EthernetIP\Models\ListIdentityResponse.cs" />
-    <Compile Include="EthernetIP\Models\MessageRouterRequest.cs" />
-    <Compile Include="EthernetIP\Models\MessageRouterResponse.cs" />
     <Compile Include="EthernetIP\Models\NetworkConnectionParameter.cs" />
     <Compile Include="EthernetIP\Models\SocketAddressInfo.cs" />
     <Compile Include="EthernetIP\Models\TransportTypeAndTrigger.cs" />

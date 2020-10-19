@@ -1,24 +1,24 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace LogixTool.EthernetIP
 {
     /// <summary>
-    /// 
+    /// CIP РѕС‚РІРµС‚.
     /// </summary>
 	public class MessageRouterResponse
-	{
+    {
         /// <summary>
-        /// Возвращаемый сервисный код.
+        /// Р’РѕР·РІСЂР°С‰Р°РµРјС‹Р№ СЃРµСЂРІРёСЃРЅС‹Р№ РєРѕРґ.
         /// </summary>
         public byte ReplyServiceCode { get; set; }
         /// <summary>
-        /// Возвращает или задает основной статус.
+        /// Р’РѕР·РІСЂР°С‰Р°РµС‚ РёР»Рё Р·Р°РґР°РµС‚ РѕСЃРЅРѕРІРЅРѕР№ СЃС‚Р°С‚СѓСЃ.
         /// </summary>
         public byte GeneralStatus { get; set; }
         /// <summary>
-        /// Возвращает текстовое описание основного статуса.
+        /// Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСЃС‚РѕРІРѕРµ РѕРїРёСЃР°РЅРёРµ РѕСЃРЅРѕРІРЅРѕРіРѕ СЃС‚Р°С‚СѓСЃР°.
         /// </summary>
         public string GeneralStatusText
         {
@@ -28,7 +28,7 @@ namespace LogixTool.EthernetIP
             }
         }
         /// <summary>
-        /// Размер массива со списком дополнительных статусов.
+        /// Р Р°Р·РјРµСЂ РјР°СЃСЃРёРІР° СЃРѕ СЃРїРёСЃРєРѕРј РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СЃС‚Р°С‚СѓСЃРѕРІ.
         /// </summary>
         public byte SizeOfAdditionalStatus
         {
@@ -38,11 +38,11 @@ namespace LogixTool.EthernetIP
             }
         }
         /// <summary>
-        /// Список дополнительных статусов.
+        /// РЎРїРёСЃРѕРє РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СЃС‚Р°С‚СѓСЃРѕРІ.
         /// </summary>
         public List<ushort> AdditionalStatus { get; set; }
         /// <summary>
-        /// Возвращаемые данные.
+        /// Р’РѕР·РІСЂР°С‰Р°РµРјС‹Рµ РґР°РЅРЅС‹Рµ.
         /// </summary>
         public List<byte> ResponseData { get; set; }
 
@@ -50,19 +50,19 @@ namespace LogixTool.EthernetIP
         /// 
         /// </summary>
         public MessageRouterResponse()
-		{
+        {
             this.ReplyServiceCode = 0;
             this.GeneralStatus = 0;
             this.AdditionalStatus = new List<ushort>();
             this.ResponseData = new List<byte>();
-		}
+        }
 
         /// <summary>
-        /// Разбирает последовательность байт в объект со значениями из данной последовательности.
-        /// В случае неверной структуры, длины или ошибок возвращает значение null.
+        /// Р Р°Р·Р±РёСЂР°РµС‚ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ Р±Р°Р№С‚ РІ РѕР±СЉРµРєС‚ СЃРѕ Р·РЅР°С‡РµРЅРёСЏРјРё РёР· РґР°РЅРЅРѕР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё.
+        /// Р’ СЃР»СѓС‡Р°Рµ РЅРµРІРµСЂРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹, РґР»РёРЅС‹ РёР»Рё РѕС€РёР±РѕРє РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ null.
         /// </summary>
-        /// <param name="bytes">Последовательность байт.</param>
-        public static MessageRouterResponse Parse (List<byte> bytes)
+        /// <param name="bytes">РџРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ Р±Р°Р№С‚.</param>
+        public static MessageRouterResponse Parse(List<byte> bytes)
         {
             MessageRouterResponse messageRouterResponse = new MessageRouterResponse();
 
@@ -100,11 +100,11 @@ namespace LogixTool.EthernetIP
             return messageRouterResponse;
         }
         /// <summary>
-        /// Преобразовывает код статуса из байта в текст.
+        /// РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµС‚ РєРѕРґ СЃС‚Р°С‚СѓСЃР° РёР· Р±Р°Р№С‚Р° РІ С‚РµРєСЃС‚.
         /// </summary>
-        /// <param name="status">Код статуса.</param>
+        /// <param name="status">РљРѕРґ СЃС‚Р°С‚СѓСЃР°.</param>
         /// <returns></returns>
-        private string RecognizeGeneralStatus (byte status)
+        private string RecognizeGeneralStatus(byte status)
         {
             switch (status)
             {
@@ -166,7 +166,7 @@ namespace LogixTool.EthernetIP
             return "?";
         }
         /// <summary>
-        /// Преобразовывает данный объект в масив Байт.
+        /// РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµС‚ РґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ РјР°СЃРёРІ Р‘Р°Р№С‚.
         /// </summary>
         /// <returns></returns>
         public byte[] ToBytes()

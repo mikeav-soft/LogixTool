@@ -1,11 +1,11 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace LogixTool.EthernetIP
 {
     /// <summary>
-    /// Структура запроса на создание подключения с удаленным устройством.
+    /// РЎС‚СЂСѓРєС‚СѓСЂР° Р·Р°РїСЂРѕСЃР° РЅР° СЃРѕР·РґР°РЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
     /// </summary>
 	public class ForwardOpenRequest
     {
@@ -20,15 +20,15 @@ namespace LogixTool.EthernetIP
         /// </summary>
         public byte TimeOutTicks { get; set; }
         /// <summary>
-        /// ID подключения Originator -> Target.
+        /// ID РїРѕРґРєР»СЋС‡РµРЅРёСЏ Originator -> Target.
         /// </summary>
         public uint OtoTConnectionID { get; set; }
         /// <summary>
-        /// ID подключения Target -> Originator.
+        /// ID РїРѕРґРєР»СЋС‡РµРЅРёСЏ Target -> Originator.
         /// </summary>
         public uint TtoOConnectionID { get; set; }
         /// <summary>
-        /// Серийный номер подключения.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ РїРѕРґРєР»СЋС‡РµРЅРёСЏ.
         /// </summary>
         public ushort ConnectionSerialNumber { get; set; }
         /// <summary>
@@ -36,7 +36,7 @@ namespace LogixTool.EthernetIP
         /// </summary>
         public ushort OriginatorVendorID { get; set; }
         /// <summary>
-        /// Серийный номер Originator-а.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ Originator-Р°.
         /// </summary>
         public uint OriginatorSerialNumber { get; set; }
         /// <summary>
@@ -44,34 +44,34 @@ namespace LogixTool.EthernetIP
         /// </summary>
         public byte ConnectionTimeOutMultiplier { get; set; }
         /// <summary>
-        /// Запрашиваемый период времени отправки пакетов (RPI) Originator -> Target.
+        /// Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё РѕС‚РїСЂР°РІРєРё РїР°РєРµС‚РѕРІ (RPI) Originator -> Target.
         /// </summary>
         public uint OtoTRequestedPacketInterval { get; set; }
         /// <summary>
-        /// Параметры сетевых подключений Originator -> Target.
+        /// РџР°СЂР°РјРµС‚СЂС‹ СЃРµС‚РµРІС‹С… РїРѕРґРєР»СЋС‡РµРЅРёР№ Originator -> Target.
         /// </summary>
         public NetworkConnectionParameter OtoTParameters { get; set; }
         /// <summary>
-        /// Запрашиваемый период времени отправки пакетов (RPI) Target -> Originator.
+        /// Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё РѕС‚РїСЂР°РІРєРё РїР°РєРµС‚РѕРІ (RPI) Target -> Originator.
         /// </summary>
         public uint TtoORequestedPacketInterval { get; set; }
         /// <summary>
-        /// Параметры сетевых подключений Target -> Originator.
+        /// РџР°СЂР°РјРµС‚СЂС‹ СЃРµС‚РµРІС‹С… РїРѕРґРєР»СЋС‡РµРЅРёР№ Target -> Originator.
         /// </summary>
         public NetworkConnectionParameter TtoOParameters { get; set; }
         /// <summary>
-        /// Возвращает или задает Тип транспорта и Триггер передачи данных.
+        /// Р’РѕР·РІСЂР°С‰Р°РµС‚ РёР»Рё Р·Р°РґР°РµС‚ РўРёРї С‚СЂР°РЅСЃРїРѕСЂС‚Р° Рё РўСЂРёРіРіРµСЂ РїРµСЂРµРґР°С‡Рё РґР°РЅРЅС‹С….
         /// </summary>
         public TransportTypeAndTrigger TransportClassAndTrigger { get; set; }
         /// <summary>
-        /// Путь до запрашиваемого объекта.
+        /// РџСѓС‚СЊ РґРѕ Р·Р°РїСЂР°С€РёРІР°РµРјРѕРіРѕ РѕР±СЉРµРєС‚Р°.
         /// </summary>
         public EPath ConnectionPath { get; set; }
         /* ============================================================================== */
         #endregion
 
         /// <summary>
-        /// Создает структуру запроса на создание подключения с удаленным устройством.
+        /// РЎРѕР·РґР°РµС‚ СЃС‚СЂСѓРєС‚СѓСЂСѓ Р·Р°РїСЂРѕСЃР° РЅР° СЃРѕР·РґР°РЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
         /// </summary>
         public ForwardOpenRequest()
         {
@@ -92,12 +92,12 @@ namespace LogixTool.EthernetIP
         }
 
         /// <summary>
-        /// Преобразовывает данный объект в масив Байт.
+        /// РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµС‚ РґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ РјР°СЃРёРІ Р‘Р°Р№С‚.
         /// </summary>
         /// <returns></returns>
 		public byte[] ToBytes()
-		{
-			List<byte> result = new List<byte>();
+        {
+            List<byte> result = new List<byte>();
 
             // PriorityTimeTick
             result.Add(this.PriorityTimeTick);
@@ -131,10 +131,10 @@ namespace LogixTool.EthernetIP
             result.AddRange(this.TtoOParameters.ToBytes());
             // Transport Type/Trigger
             result.AddRange(this.TransportClassAndTrigger.ToBytes());
-            // Путь к подключаемому объекту.
+            // РџСѓС‚СЊ Рє РїРѕРґРєР»СЋС‡Р°РµРјРѕРјСѓ РѕР±СЉРµРєС‚Сѓ.
             result.AddRange(this.ConnectionPath.ToBytes(EPathToByteMethod.Complete));
 
-			return result.ToArray();
-		}
-	}
+            return result.ToArray();
+        }
+    }
 }

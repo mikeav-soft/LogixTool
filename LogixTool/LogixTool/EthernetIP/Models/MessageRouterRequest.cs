@@ -1,24 +1,24 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace LogixTool.EthernetIP
 {
     /// <summary>
-    /// CIP запрос.
+    /// CIP Р·Р°РїСЂРѕСЃ.
     /// </summary>
 	public class MessageRouterRequest
-	{
+    {
         /// <summary>
-        /// Номер запрашиваемого сервисного кода.
+        /// РќРѕРјРµСЂ Р·Р°РїСЂР°С€РёРІР°РµРјРѕРіРѕ СЃРµСЂРІРёСЃРЅРѕРіРѕ РєРѕРґР°.
         /// </summary>
         public byte ServiceCode { get; set; }
         /// <summary>
-        /// Запрашиваемый путь.
+        /// Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ РїСѓС‚СЊ.
         /// </summary>
         public EPath RequestPath { get; set; }
         /// <summary>
-        /// Передаваемые данные.
+        /// РџРµСЂРµРґР°РІР°РµРјС‹Рµ РґР°РЅРЅС‹Рµ.
         /// </summary>
         public List<byte> RequestData { get; set; }
 
@@ -26,14 +26,14 @@ namespace LogixTool.EthernetIP
         /// 
         /// </summary>
 		public MessageRouterRequest()
-		{
+        {
             this.ServiceCode = 0;
             this.RequestPath = new EPath();
             this.RequestData = new List<byte>();
-		}
+        }
 
         /// <summary>
-        /// Преобразовывает данный объект в масив Байт.
+        /// РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµС‚ РґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ РјР°СЃРёРІ Р‘Р°Р№С‚.
         /// </summary>
         /// <returns></returns>
         public byte[] ToBytes()
@@ -52,5 +52,5 @@ namespace LogixTool.EthernetIP
             }
             return list.ToArray();
         }
-	}
+    }
 }

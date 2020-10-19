@@ -1,11 +1,11 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace LogixTool.EthernetIP
 {
     /// <summary>
-    /// Структура запроса на закрытие подключения с удаленным устройством.
+    /// РЎС‚СЂСѓРєС‚СѓСЂР° Р·Р°РїСЂРѕСЃР° РЅР° Р·Р°РєСЂС‹С‚РёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
     /// </summary>
 	public class ForwardCloseRequest
     {
@@ -20,7 +20,7 @@ namespace LogixTool.EthernetIP
         /// </summary>
         public byte TimeOutTicks { get; set; }
         /// <summary>
-        /// Серийный номер подключения.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ РїРѕРґРєР»СЋС‡РµРЅРёСЏ.
         /// </summary>
         public ushort ConnectionSerialNumber { get; set; }
         /// <summary>
@@ -28,18 +28,18 @@ namespace LogixTool.EthernetIP
         /// </summary>
         public ushort OriginatorVendorID { get; set; }
         /// <summary>
-        /// Серийный номер Originator-а.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ Originator-Р°.
         /// </summary>
         public uint OriginatorSerialNumber { get; set; }
         /// <summary>
-        /// Путь до запрашиваемого объекта.
+        /// РџСѓС‚СЊ РґРѕ Р·Р°РїСЂР°С€РёРІР°РµРјРѕРіРѕ РѕР±СЉРµРєС‚Р°.
         /// </summary>
         public EPath ConnectionPath { get; set; }
         /* ============================================================================== */
         #endregion
 
         /// <summary>
-        /// Создает структуру запроса на закрытие подключения с удаленным устройством.
+        /// РЎРѕР·РґР°РµС‚ СЃС‚СЂСѓРєС‚СѓСЂСѓ Р·Р°РїСЂРѕСЃР° РЅР° Р·Р°РєСЂС‹С‚РёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
         /// </summary>
         public ForwardCloseRequest()
         {
@@ -52,12 +52,12 @@ namespace LogixTool.EthernetIP
         }
 
         /// <summary>
-        /// Преобразовывает данный объект в масив Байт.
+        /// РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµС‚ РґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ РјР°СЃРёРІ Р‘Р°Р№С‚.
         /// </summary>
         /// <returns></returns>
 		public byte[] ToBytes()
-		{
-			List<byte> result = new List<byte>();
+        {
+            List<byte> result = new List<byte>();
 
             // Priority/Time_tick
             result.Add(this.PriorityTimeTick);
@@ -75,7 +75,7 @@ namespace LogixTool.EthernetIP
             result.Add(0);
             // Indicates the route to the Remote Target Device.
             result.AddRange(this.ConnectionPath.ToBytes(EPathToByteMethod.DataOnly));
-			return result.ToArray();
-		}
-	}
+            return result.ToArray();
+        }
+    }
 }

@@ -1,30 +1,30 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace LogixTool.EthernetIP
 {
     /// <summary>
-    /// Структура ответа на создание подключения с удаленным устройством.
+    /// РЎС‚СЂСѓРєС‚СѓСЂР° РѕС‚РІРµС‚Р° РЅР° СЃРѕР·РґР°РЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
     /// </summary>
 	public class ForwardOpenResponse
-	{
+    {
         #region [ PROPERTIES ]
         /* ============================================================================== */
         /// <summary>
-        /// Показывает был ли ответ успешным.
+        /// РџРѕРєР°Р·С‹РІР°РµС‚ Р±С‹Р» Р»Рё РѕС‚РІРµС‚ СѓСЃРїРµС€РЅС‹Рј.
         /// </summary>
         public bool? IsSuccessful { get; set; }
         /// <summary>
-        /// ID подключения Originator -> Target.
+        /// ID РїРѕРґРєР»СЋС‡РµРЅРёСЏ Originator -> Target.
         /// </summary>
         public uint OtoTConnectionID { get; set; }
         /// <summary>
-        /// ID подключения Target -> Originator.
+        /// ID РїРѕРґРєР»СЋС‡РµРЅРёСЏ Target -> Originator.
         /// </summary>
         public uint TtoOConnectionID { get; set; }
         /// <summary>
-        /// Серийный номер подключения.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ РїРѕРґРєР»СЋС‡РµРЅРёСЏ.
         /// </summary>
         public ushort ConnectionSerialNumber { get; set; }
         /// <summary>
@@ -32,32 +32,32 @@ namespace LogixTool.EthernetIP
         /// </summary>
         public ushort OriginatorVendorID { get; set; }
         /// <summary>
-        /// Серийный номер Originator-а.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ Originator-Р°.
         /// </summary>
         public uint OriginatorSerialNumber { get; set; }
         /// <summary>
-        /// Это поле присутствует в случае ошибок маршрутизации и показывает число слов в оригинальном пути маршрута
-        /// которое видит маршрутизатор и сигнализирует как ошибку.
+        /// Р­С‚Рѕ РїРѕР»Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РѕРє РјР°СЂС€СЂСѓС‚РёР·Р°С†РёРё Рё РїРѕРєР°Р·С‹РІР°РµС‚ С‡РёСЃР»Рѕ СЃР»РѕРІ РІ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕРј РїСѓС‚Рё РјР°СЂС€СЂСѓС‚Р°
+        /// РєРѕС‚РѕСЂРѕРµ РІРёРґРёС‚ РјР°СЂС€СЂСѓС‚РёР·Р°С‚РѕСЂ Рё СЃРёРіРЅР°Р»РёР·РёСЂСѓРµС‚ РєР°Рє РѕС€РёР±РєСѓ.
         /// </summary>
         public byte? RemainingPathSize { get; set; }
         /// <summary>
-        /// Актуальный период времени отправки пакетов (RPI) Originator -> Target.
+        /// РђРєС‚СѓР°Р»СЊРЅС‹Р№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё РѕС‚РїСЂР°РІРєРё РїР°РєРµС‚РѕРІ (RPI) Originator -> Target.
         /// </summary>
         public uint OtoTActualPacketInterval { get; set; }
         /// <summary>
-        /// Актуальный период времени отправки пакетов (RPI) Target -> Originator.
+        /// РђРєС‚СѓР°Р»СЊРЅС‹Р№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё РѕС‚РїСЂР°РІРєРё РїР°РєРµС‚РѕРІ (RPI) Target -> Originator.
         /// </summary>
         public uint TtoOActualPacketInterval { get; set; }
         /// <summary>
-        /// Специальные данны от приложения.
+        /// РЎРїРµС†РёР°Р»СЊРЅС‹Рµ РґР°РЅРЅС‹ РѕС‚ РїСЂРёР»РѕР¶РµРЅРёСЏ.
         /// </summary>
         public List<byte> ApplicationReply { get; set; }
         /* ============================================================================== */
         #endregion
 
         /// <summary>
-        /// Создает структуру ответа на создание подключения с удаленным устройством.
-        /// Используется для инициализации объекта.
+        /// РЎРѕР·РґР°РµС‚ СЃС‚СЂСѓРєС‚СѓСЂСѓ РѕС‚РІРµС‚Р° РЅР° СЃРѕР·РґР°РЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
+        /// РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚Р°.
         /// </summary>
         public ForwardOpenResponse()
         {
@@ -73,10 +73,10 @@ namespace LogixTool.EthernetIP
             this.ApplicationReply = new List<byte>();
         }
         /// <summary>
-        /// Разбирает последовательность байт в объект со значениями из данной последовательности.
-        /// В случае неверной структуры, длины или ошибок возвращает значение null.
+        /// Р Р°Р·Р±РёСЂР°РµС‚ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ Р±Р°Р№С‚ РІ РѕР±СЉРµРєС‚ СЃРѕ Р·РЅР°С‡РµРЅРёСЏРјРё РёР· РґР°РЅРЅРѕР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё.
+        /// Р’ СЃР»СѓС‡Р°Рµ РЅРµРІРµСЂРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹, РґР»РёРЅС‹ РёР»Рё РѕС€РёР±РѕРє РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ null.
         /// </summary>
-        /// <param name="responce">Ответ от удаленного сервера.</param>
+        /// <param name="responce">РћС‚РІРµС‚ РѕС‚ СѓРґР°Р»РµРЅРЅРѕРіРѕ СЃРµСЂРІРµСЂР°.</param>
         public static ForwardOpenResponse Parse(MessageRouterResponse responce)
         {
             ForwardOpenResponse forwardOpenResponse = new ForwardOpenResponse();
@@ -138,12 +138,12 @@ namespace LogixTool.EthernetIP
         }
 
         /// <summary>
-        /// Преобразовывает данный объект в масив Байт.
+        /// РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµС‚ РґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ РјР°СЃРёРІ Р‘Р°Р№С‚.
         /// </summary>
         /// <returns></returns>
 		public byte[] ToBytes()
-		{
-			List<byte> result = new List<byte>();
+        {
+            List<byte> result = new List<byte>();
 
             // Connection ID: O to T.
             result.AddRange(BitConverter.GetBytes(this.OtoTConnectionID));
@@ -168,7 +168,7 @@ namespace LogixTool.EthernetIP
             {
                 result.Add(appReply);
             }
-			return result.ToArray();
-		}
-	}
+            return result.ToArray();
+        }
+    }
 }

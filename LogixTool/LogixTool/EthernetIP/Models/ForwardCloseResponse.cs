@@ -1,22 +1,22 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace LogixTool.EthernetIP
 {
     /// <summary>
-    /// Структура ответа на закрытие подключения с удаленным устройством.
+    /// РЎС‚СЂСѓРєС‚СѓСЂР° РѕС‚РІРµС‚Р° РЅР° Р·Р°РєСЂС‹С‚РёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
     /// </summary>
 	public class ForwardCloseResponse
-	{
+    {
         #region [ PROPERTIES ]
         /* ============================================================================== */
         /// <summary>
-        /// Показывает был ли ответ успешным.
+        /// РџРѕРєР°Р·С‹РІР°РµС‚ Р±С‹Р» Р»Рё РѕС‚РІРµС‚ СѓСЃРїРµС€РЅС‹Рј.
         /// </summary>
         public bool? IsSuccessful { get; set; }
         /// <summary>
-        /// Серийный номер подключения.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ РїРѕРґРєР»СЋС‡РµРЅРёСЏ.
         /// </summary>
         public ushort ConnectionSerialNumber { get; set; }
         /// <summary>
@@ -24,19 +24,19 @@ namespace LogixTool.EthernetIP
         /// </summary>
         public ushort OriginatorVendorID { get; set; }
         /// <summary>
-        /// Серийный номер Originator-а.
+        /// РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ Originator-Р°.
         /// </summary>
         public uint OriginatorSerialNumber { get; set; }
         /// <summary>
-        /// Специальные данны от приложения.
+        /// РЎРїРµС†РёР°Р»СЊРЅС‹Рµ РґР°РЅРЅС‹ РѕС‚ РїСЂРёР»РѕР¶РµРЅРёСЏ.
         /// </summary>
         public List<byte> ApplicationReply { get; set; }
         /* ============================================================================== */
         #endregion
 
         /// <summary>
-        /// Создает структуру ответа на закрытие подключения с удаленным устройством.
-        /// Используется для инициализации объекта.
+        /// РЎРѕР·РґР°РµС‚ СЃС‚СЂСѓРєС‚СѓСЂСѓ РѕС‚РІРµС‚Р° РЅР° Р·Р°РєСЂС‹С‚РёРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЃ СѓРґР°Р»РµРЅРЅС‹Рј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј.
+        /// РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚Р°.
         /// </summary>
         public ForwardCloseResponse()
         {
@@ -48,11 +48,11 @@ namespace LogixTool.EthernetIP
         }
 
         /// <summary>
-        /// Разбирает последовательность байт в объект со значениями из данной последовательности.
-        /// В случае неверной структуры, длины или ошибок возвращает значение null.
+        /// Р Р°Р·Р±РёСЂР°РµС‚ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ Р±Р°Р№С‚ РІ РѕР±СЉРµРєС‚ СЃРѕ Р·РЅР°С‡РµРЅРёСЏРјРё РёР· РґР°РЅРЅРѕР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё.
+        /// Р’ СЃР»СѓС‡Р°Рµ РЅРµРІРµСЂРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹, РґР»РёРЅС‹ РёР»Рё РѕС€РёР±РѕРє РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ null.
         /// </summary>
-        /// <param name="responce">Ответ от удаленного сервера.</param>
-        public static ForwardCloseResponse Parse (MessageRouterResponse responce)
+        /// <param name="responce">РћС‚РІРµС‚ РѕС‚ СѓРґР°Р»РµРЅРЅРѕРіРѕ СЃРµСЂРІРµСЂР°.</param>
+        public static ForwardCloseResponse Parse(MessageRouterResponse responce)
         {
             ForwardCloseResponse forwardCloseResponse = new ForwardCloseResponse();
             if (responce == null || responce == null)
@@ -63,7 +63,7 @@ namespace LogixTool.EthernetIP
             List<byte> bytes = responce.ResponseData;
             forwardCloseResponse.IsSuccessful = false;
 
-            if (bytes.Count >=9)
+            if (bytes.Count >= 9)
             {
                 forwardCloseResponse.ConnectionSerialNumber = (ushort)(bytes[0] | bytes[1] << 8);
                 forwardCloseResponse.OriginatorVendorID = (ushort)(bytes[2] | bytes[3] << 8);
@@ -95,12 +95,12 @@ namespace LogixTool.EthernetIP
         }
 
         /// <summary>
-        /// Преобразовывает данный объект в масив Байт.
+        /// РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµС‚ РґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ РјР°СЃРёРІ Р‘Р°Р№С‚.
         /// </summary>
         /// <returns></returns>
 		public byte[] ToBytes()
-		{
-			List<byte> result = new List<byte>();
+        {
+            List<byte> result = new List<byte>();
 
             // Connection Serial Number.
             result.AddRange(BitConverter.GetBytes(this.ConnectionSerialNumber));
@@ -122,7 +122,7 @@ namespace LogixTool.EthernetIP
             {
                 result.Add(appReply);
             }
-			return result.ToArray();
-		}
-	}
+            return result.ToArray();
+        }
+    }
 }
