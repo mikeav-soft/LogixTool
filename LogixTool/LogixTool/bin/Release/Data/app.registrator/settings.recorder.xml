@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="settings" ID="recorder" Saved="637187080691603029">
+<storage Owner="app.registrator" Type="settings" ID="recorder" Saved="637388270254945579">
   <data>
-    <Settings FileLocation="e:\C# PROJECTS\_ACTUAL\LogixTool\LogixTool\bin\Release" FilePrefix="new_recording" SeparationFileSize="1" SeparationPeriod="Day" RecordingType="All" RecordingPeriodValue="1" RecordingPeriodUnit="Sec" TickTimeFormat="false" />
+    <Settings FileLocation="D:\Git\Repository\LogixTool\LogixTool\bin\Debug\log" FilePrefix="my_rec" SeparationFileSize="1" SeparationPeriod="Minute" RecordingType="All" RecordingPeriodValue="100" RecordingPeriodUnit="mSec" TickTimeFormat="true" />
   </data>
 </storage>

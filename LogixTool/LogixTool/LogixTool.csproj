@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Configuration.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -88,11 +91,11 @@
     <Compile Include="FormRecordSettings.Designer.cs">
       <DependentUpon>FormRecordSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormRegistrator.cs">
+    <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormRegistrator.Designer.cs">
-      <DependentUpon>FormRegistrator.cs</DependentUpon>
+    <Compile Include="FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="TagRecorder.cs" />
     <Compile Include="RecordItem.cs" />
@@ -209,8 +212,8 @@
     <EmbeddedResource Include="FormRecordSettings.resx">
       <DependentUpon>FormRecordSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormRegistrator.resx">
-      <DependentUpon>FormRegistrator.cs</DependentUpon>
+    <EmbeddedResource Include="FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DeviceBrowserControl.resx">
       <DependentUpon>DeviceBrowserControl.cs</DependentUpon>
@@ -260,7 +263,9 @@
     <None Include="Resources\ico_minus.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configuration.ico" />
     <Content Include="EthernetIP\Notes.txt" />
+    <Content Include="Icons\Configuration.ico" />
     <Content Include="Resources\ico_logix_module_add.png" />
     <Content Include="Resources\ico_logix_module_init.png" />
     <Content Include="Resources\ico_loupe.png" />

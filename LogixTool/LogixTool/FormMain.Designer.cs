@@ -1,6 +1,6 @@
 ﻿namespace LogixTool
 {
-    partial class FormRegistrator
+    partial class FormMain
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRegistrator));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.recorderStatusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.recordCounterToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -344,7 +344,7 @@
             this.messageControl.TimeStampFormat = "dd.MM.yyyy HH:mm:ss:fffffff";
             this.messageControl.UpdateInterval = 1000D;
             // 
-            // FormRegistrator
+            // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -352,8 +352,8 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "FormRegistrator";
-            this.Text = "Registrator v0.1 (Test version)";
+            this.Name = "FormMain";
+            this.Text = "Logix Tool v0.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormRegistrator_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormRegistrator_FormClosed);
             this.statusStrip.ResumeLayout(false);

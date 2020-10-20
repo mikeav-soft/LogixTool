@@ -16,7 +16,7 @@ namespace LogixTool
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LogixTool.FormRegistrator());
+            Application.Run(new LogixTool.FormMain());
         }
     }
 }

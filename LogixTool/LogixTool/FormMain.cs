@@ -18,7 +18,7 @@ using LogixTool.Common;
 
 namespace LogixTool
 {
-    public partial class FormRegistrator : Form
+    public partial class FormMain : Form
     {
         /// <summary>
         /// 
@@ -36,7 +36,7 @@ namespace LogixTool
         /// <summary>
         /// 
         /// </summary>
-        public FormRegistrator()
+        public FormMain()
         {
             InitializeComponent();
 
