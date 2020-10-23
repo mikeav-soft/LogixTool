@@ -81,7 +81,7 @@
             this.fileNameToolStripStatusLabel});
             this.statusStrip.Location = new System.Drawing.Point(0, 540);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1034, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1265, 22);
             this.statusStrip.TabIndex = 1;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -137,7 +137,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer1.Size = new System.Drawing.Size(1034, 540);
+            this.splitContainer1.Size = new System.Drawing.Size(1265, 540);
             this.splitContainer1.SplitterDistance = 25;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -159,7 +159,7 @@
             this.toolStripButton_About});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1034, 25);
+            this.toolStrip.Size = new System.Drawing.Size(1265, 25);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -290,7 +290,7 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.messageControl);
-            this.splitContainer3.Size = new System.Drawing.Size(1034, 511);
+            this.splitContainer3.Size = new System.Drawing.Size(1265, 511);
             this.splitContainer3.SplitterDistance = 384;
             this.splitContainer3.TabIndex = 1;
             // 
@@ -308,7 +308,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tagBrowserControl);
-            this.splitContainer2.Size = new System.Drawing.Size(1034, 384);
+            this.splitContainer2.Size = new System.Drawing.Size(1265, 384);
             this.splitContainer2.SplitterDistance = 225;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -326,9 +326,8 @@
             // 
             this.tagBrowserControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tagBrowserControl.Location = new System.Drawing.Point(0, 0);
-            this.tagBrowserControl.MonitorMode = false;
             this.tagBrowserControl.Name = "tagBrowserControl";
-            this.tagBrowserControl.Size = new System.Drawing.Size(805, 384);
+            this.tagBrowserControl.Size = new System.Drawing.Size(1036, 384);
             this.tagBrowserControl.TabIndex = 1;
             this.tagBrowserControl.WriteModeEnable = false;
             // 
@@ -339,7 +338,7 @@
             this.messageControl.MessageCapacity = 10000;
             this.messageControl.Name = "messageControl";
             this.messageControl.NewMessagesOnTop = true;
-            this.messageControl.Size = new System.Drawing.Size(1034, 123);
+            this.messageControl.Size = new System.Drawing.Size(1265, 123);
             this.messageControl.TabIndex = 0;
             this.messageControl.TimeStampFormat = "dd.MM.yyyy HH:mm:ss:fffffff";
             this.messageControl.UpdateInterval = 1000D;
@@ -348,11 +347,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1034, 562);
+            this.ClientSize = new System.Drawing.Size(1265, 562);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Logix Tool v0.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormRegistrator_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormRegistrator_FormClosed);

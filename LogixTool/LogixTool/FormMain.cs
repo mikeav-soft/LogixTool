@@ -105,7 +105,7 @@ namespace LogixTool
         private void dt_Tick(object sender, EventArgs e)
         {
             Color recordingStatusColor;
-            string recordingStatusText = "Recorder: ";
+            string recordingStatusText = "Logger: ";
             string fileSizeText = "";
 
             if (this.recorder.EnableRunning)
@@ -124,7 +124,7 @@ namespace LogixTool
             }
             else
             {
-                recordingStatusText += "...";
+                recordingStatusText += "Off";
                 recordingStatusColor = Color.LightGray;
             }
 
@@ -416,21 +416,7 @@ namespace LogixTool
         /// <param name="e"></param>
         private void toolStripButton_RunRecording_Click(object sender, EventArgs e)
         {
-            if (recorder.EnableRunning || recorder.WritingRunned)
-            {
-                return;
-            }
-
-            recorder.RecordedTags.Clear();
-            recorder.RecordedTags.AddRange(this.tagBrowserControl.TagsByRows.Keys);
-
-            FormRecordSettings formRecordSettings = new FormRecordSettings(recorder);
-            formRecordSettings.ShowDialog();
-
-            if (formRecordSettings.IsApplied)
-            {
-                recorder.Run();
-            }
+            RunLogger();
         }
         /// <summary>
         /// 
@@ -439,7 +425,7 @@ namespace LogixTool
         /// <param name="e"></param>
         private void toolStripButton_StopRecording_Click(object sender, EventArgs e)
         {
-            recorder.Stop();
+            StopLogger();
         }
         /// <summary>
         /// 
@@ -448,8 +434,7 @@ namespace LogixTool
         /// <param name="e"></param>
         private void toolStripButton_GoOnline_Click(object sender, EventArgs e)
         {
-            tagBrowserControl.GoOnline();
-            this.OnlineMode = true;
+            GoOnline();
         }
         /// <summary>
         /// 
@@ -458,8 +443,8 @@ namespace LogixTool
         /// <param name="e"></param>
         private void toolStripButton_GoOffline_Click(object sender, EventArgs e)
         {
-            tagBrowserControl.GoOffline();
-            this.OnlineMode = false;
+            GoOffline();
+            StopLogger();
         }
         /// <summary>
         /// 
@@ -536,6 +521,53 @@ namespace LogixTool
 
         #region [ PRIVATE METHODS ]
         /* ================================================================================================== */
+        /// <summary>
+        /// Переводит состояние приложения в режим подключения к удаленным устройствам в соответствиии с выбранными тэгами.
+        /// </summary>
+        private void GoOnline()
+        {
+            tagBrowserControl.GoOnline();
+            this.OnlineMode = true;
+        }
+        /// <summary>
+        /// Переводит состояние приложения в режим отключения от всех имеющихся устройств.
+        /// </summary>
+        private void GoOffline()
+        {
+            tagBrowserControl.GoOffline();
+            this.OnlineMode = false;
+        }
+        /// <summary>
+        /// Запускает логирование данных в файл.
+        /// </summary>
+        private void RunLogger()
+        {
+            if (recorder.EnableRunning || recorder.WritingRunned)
+            {
+                return;
+            }
+
+            recorder.RecordedTags.Clear();
+            recorder.RecordedTags.AddRange(this.tagBrowserControl.TagsByRows.Keys);
+
+            FormRecordSettings formRecordSettings = new FormRecordSettings(recorder);
+            formRecordSettings.ShowDialog();
+
+            if (formRecordSettings.IsApplied)
+            {
+                recorder.Run();
+                tagBrowserControl.SetOnlineLock();
+            }
+        }
+        /// <summary>
+        /// Останавливает логирование данных в файл.
+        /// </summary>
+        private void StopLogger()
+        {
+            recorder.Stop();
+            tagBrowserControl.SetOnlineEdit();
+        }
+
         /// <summary>
         /// 
         /// </summary>

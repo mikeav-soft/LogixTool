@@ -24,6 +24,11 @@ namespace LogixTool.Controls
     {
         private const string MESSAGE_BOX_HEADER = "Tag Browser";
 
+        /// <summary>
+        /// Представляет собой перечисления режимов отображения данного визуального компонета.
+        /// </summary>
+        public enum ViewMode { Edit, Monitor, Lock }
+
         #region [ PUBLIC PROPERTIES ]
         /* ======================================================================================== */
         /// <summary>
@@ -82,8 +87,8 @@ namespace LogixTool.Controls
         {
             get
             {
-                Dictionary<TagHandler, DataGridViewRow> result = new Dictionary<TagHandler, DataGridViewRow>(); 
-                foreach(DataGridViewRow row in dataGridView.Rows)
+                Dictionary<TagHandler, DataGridViewRow> result = new Dictionary<TagHandler, DataGridViewRow>();
+                foreach (DataGridViewRow row in dataGridView.Rows)
                 {
                     object obj = row.Cells[this.ColumnTag.Index].Value;
                     if (!row.IsNewRow && obj != null && obj is TagHandler)
@@ -190,42 +195,34 @@ namespace LogixTool.Controls
             }
         }
 
-        private bool _MonitorMode;
+        private ViewMode _Mode;
         /// <summary>
-        /// Вовзращает или задает значение о том что данный элемент управления находится в режиме отображения данных.
-        /// При значении False элемент управления считается в режиме редактирования.
+        /// Вовзращает режим отображения/редактирования элемента управления.
         /// </summary>
-        public bool MonitorMode
+        public ViewMode Mode
         {
             get
             {
-                return _MonitorMode;
+                return _Mode;
             }
-            set
+            private set
             {
                 // Запоминаем значение своства перед дальнейшими операциями.
-                bool lastMonitorMode = _MonitorMode;
-
+                ViewMode lastMode = _Mode;
+                // Присваиваем новое значение свойства.
+                _Mode = value;
                 // Устанавливаем режим отображения элемента управления.
-                if (value)
-                {
-                    this.SetMonitorMode();
-                }
-                else
-                {
-                    this.SetEditMode();
-                }
-
-                // Присваиваем новое значение свояства.
-                _MonitorMode = value;
+                this.SetVisualizationMode();
 
                 // Вызывам событие при изменении значения свояства.
-                if (lastMonitorMode != _MonitorMode)
+                if (lastMode != _Mode)
                 {
                     Event_ModeWasChanged();
                 }
             }
         }
+
+
         /* ======================================================================================== */
         #endregion
 
@@ -241,7 +238,7 @@ namespace LogixTool.Controls
             InitializeComponent();
 
             // Устаналиваем режим работы как редактирование.
-            this.MonitorMode = false;
+            this.Mode = ViewMode.Edit;
 
             // Обновляем верхнюю панель инструментов.
             UpdateUpperPanelControls();
@@ -402,7 +399,7 @@ namespace LogixTool.Controls
         /// </summary>
         private void Event_ModeWasChanged()
         {
-            if (this.ModeWasChanged!=null)
+            if (this.ModeWasChanged != null)
             {
                 this.ModeWasChanged(this, null);
             }
@@ -454,7 +451,7 @@ namespace LogixTool.Controls
                 else
                 {
                     this.currentEditedTag = null;
-                }            
+                }
             }
         }
         /// <summary>
@@ -663,7 +660,7 @@ namespace LogixTool.Controls
                     #region [ CLX TAG ]
                     /*===========================================================================================*/
                     bool resultIsOk = false;
-                    
+
                     TagHandler tag = (TagHandler)row.Cells[ColumnTag.Index].Value;
 
                     if (tag.Type == null || tag.Type.Code == 0)
@@ -802,7 +799,7 @@ namespace LogixTool.Controls
             {
                 DataGridViewRow row = dataGridView.Rows[e.RowIndex];
                 DataGridViewDisableButtonCell buttonCell = (DataGridViewDisableButtonCell)row.Cells[e.ColumnIndex];
-                
+
                 if (buttonCell.Hide)
                 {
                     return;
@@ -828,7 +825,7 @@ namespace LogixTool.Controls
         /// <param name="e"></param>
         private void button_MoveRowsUp_Click(object sender, EventArgs e)
         {
-            if (this.MonitorMode)
+            if (this.Mode != ViewMode.Edit)
             {
                 return;
             }
@@ -842,7 +839,7 @@ namespace LogixTool.Controls
         /// <param name="e"></param>
         private void button_MoveRowsDown_Click(object sender, EventArgs e)
         {
-            if (this.MonitorMode)
+            if (this.Mode != ViewMode.Edit)
             {
                 return;
             }
@@ -892,7 +889,7 @@ namespace LogixTool.Controls
         private void comboBox_CommonRadix_SelectedIndexChanged(object sender, EventArgs e)
         {
             TagValueRadix result;
-            if (Enum.TryParse<TagValueRadix>(comboBox_CommonRadix.Text,out result))
+            if (Enum.TryParse<TagValueRadix>(comboBox_CommonRadix.Text, out result))
             {
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
@@ -998,18 +995,19 @@ namespace LogixTool.Controls
         /// <param name="e"></param>
         private void contextMenuStrip_ColumnHeader_Opening(object sender, CancelEventArgs e)
         {
-            this.toolStripMenuItem_RequiredUpdateRate.Checked = this.ColumnReadRate.Visible;
-            this.toolStripMenuItem_ActualUpdateRate.Checked = this.ColumnActualUpdateRate.Visible;
-            this.toolStripMenuItem_ActualServerReply.Checked = this.ColumnActualServerReply.Visible;
-            this.toolStripMenuItem_DataTypeVisible.Checked = this.ColumnDataType.Visible;
-            this.toolStripMenuItem_FragmentLengthVisible.Checked = this.ColumnFragmentLength.Visible;
+            this.requiredUpdateRateToolStripMenuItem.Checked = this.ColumnReadRate.Visible;
+            this.actualUpdateRateToolStripMenuItem.Checked = this.ColumnActualUpdateRate.Visible;
+            this.actualServerReplyToolStripMenuItem.Checked = this.ColumnActualServerReply.Visible;
+            this.dataTypeVisibleToolStripMenuItem.Checked = this.ColumnDataType.Visible;
+            this.fragmentLengthVisibleToolStripMenuItem.Checked = this.ColumnFragmentLength.Visible;
+            this.tableInstanceIDToolStripMenuItem.Checked = this.ColumnTableInstanceID.Visible; 
         }
         /// <summary>
         /// Подписка на событие : ContextMenuStrip : Нажатие на элемент меню.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripMenuItem_RequiredUpdateRate_Click(object sender, EventArgs e)
+        private void requiredUpdateRateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.ColumnReadRate.Visible = !this.ColumnReadRate.Visible;
         }
@@ -1018,7 +1016,7 @@ namespace LogixTool.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripMenuItem_ActualUpdateRate_Click(object sender, EventArgs e)
+        private void actualUpdateRateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.ColumnActualUpdateRate.Visible = !this.ColumnActualUpdateRate.Visible;
         }
@@ -1027,7 +1025,7 @@ namespace LogixTool.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripMenuItem_ActualServerReply_Click(object sender, EventArgs e)
+        private void actualServerReplyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.ColumnActualServerReply.Visible = !this.ColumnActualServerReply.Visible;
         }
@@ -1036,18 +1034,27 @@ namespace LogixTool.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripMenuItem_DataTypeVisible_Click(object sender, EventArgs e)
+        private void dataTypeVisibleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.ColumnDataType.Visible = !this.ColumnDataType.Visible;    
+            this.ColumnDataType.Visible = !this.ColumnDataType.Visible;
         }
         /// <summary>
         /// Подписка на событие : ContextMenuStrip : Нажатие на элемент меню.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripMenuItem_FragmentLengthVisible_Click(object sender, EventArgs e)
+        private void fragmentLengthVisibleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.ColumnFragmentLength.Visible = !this.ColumnFragmentLength.Visible;
+        }
+        /// <summary>
+        /// Подписка на событие : ContextMenuStrip : Нажатие на элемент меню.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tableInstanceIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.ColumnTableInstanceID.Visible = !this.ColumnTableInstanceID.Visible;
         }
         /* ======================================================================================== */
         #endregion
@@ -1062,7 +1069,7 @@ namespace LogixTool.Controls
         public void Add(string deviceName, TagHandler tag)
         {
             // Проверяем входные параметры.
-            if (tag == null || deviceName == null || this.MonitorMode)
+            if (tag == null || deviceName == null || this.Mode != ViewMode.Edit)
             {
                 return;
             }
@@ -1079,7 +1086,7 @@ namespace LogixTool.Controls
         public void AddRange(string deviceName, IEnumerable<TagHandler> tags)
         {
             // Проверяем входные параметры.
-            if (tags == null || tags.Count() == 0 || this.MonitorMode)
+            if (tags == null || tags.Count() == 0 || this.Mode != ViewMode.Edit)
             {
                 return;
             }
@@ -1145,7 +1152,7 @@ namespace LogixTool.Controls
         public void Add(string deviceName, string tagName)
         {
             // Проверяем входные параметры.
-            if (tagName == null || this.MonitorMode)
+            if (tagName == null || this.Mode != ViewMode.Edit)
             {
                 return;
             }
@@ -1160,16 +1167,16 @@ namespace LogixTool.Controls
         public void AddRange(string deviceName, IEnumerable<string> tagNames)
         {
             // Проверяем входные параметры.
-            if (tagNames == null || tagNames.Count() == 0 || this.MonitorMode)
+            if (tagNames == null || tagNames.Count() == 0 || this.Mode != ViewMode.Edit)
             {
                 return;
             }
 
-            List<TagHandler> tags = new List<TagHandler> ();
+            List<TagHandler> tags = new List<TagHandler>();
 
             foreach (string tagName in tagNames)
             {
-                if (tagName!=null && tagName.Trim()!="")
+                if (tagName != null && tagName.Trim() != "")
                 {
                     tags.Add(new TagHandler(tagName.Trim()));
                 }
@@ -1183,7 +1190,7 @@ namespace LogixTool.Controls
         /// <param name="tag">Тэг для удаления.</param>
         public void Remove(TagHandler tag)
         {
-            if (tag == null || tag.Name == null || this.MonitorMode)
+            if (tag == null || tag.Name == null || this.Mode != ViewMode.Edit)
             {
                 return;
             }
@@ -1207,7 +1214,7 @@ namespace LogixTool.Controls
         /// </summary>
         public void Clear()
         {
-            if (this.MonitorMode)
+            if (this.Mode != ViewMode.Edit)
             {
                 return;
             }
@@ -1230,7 +1237,7 @@ namespace LogixTool.Controls
             this.dataGridView.Refresh();
         }
         /// <summary>
-        /// Добавляет все тэги в соответствующие им устройства.
+        /// Добавляет все тэги в соответствующие им устройства и переводит визуальный компонент в режим просмотра с частичной блокировкой.
         /// </summary>
         public void GoOnline()
         {
@@ -1239,10 +1246,26 @@ namespace LogixTool.Controls
                 task.Begin(this.TasksByTags[task]);
             }
 
-            this.MonitorMode = true;
+            this.Mode = ViewMode.Monitor;
         }
         /// <summary>
-        /// Удаляет соответствующие тэги из устройств.
+        /// Переводит визуальный компонент в режим просмотра с полной блокировкой.
+        /// </summary>
+        public void SetOnlineLock()
+        {
+            if (this.Mode == ViewMode.Monitor)
+                this.Mode = ViewMode.Lock;
+        }
+        /// <summary>
+        /// Переводит визуальный компонент в режим просмотра с частичной блокировкой.
+        /// </summary>
+        public void SetOnlineEdit()
+        {
+            if (this.Mode == ViewMode.Lock)
+                this.Mode = ViewMode.Monitor;
+        }
+        /// <summary>
+        /// Удаляет соответствующие тэги из устройств и переводит визуальный компонент в режим редактирования.
         /// </summary>
         public void GoOffline()
         {
@@ -1251,7 +1274,7 @@ namespace LogixTool.Controls
                 task.Finish();
             }
 
-            this.MonitorMode = false;
+            this.Mode = ViewMode.Edit;
         }
 
         /// <summary>
@@ -1296,7 +1319,7 @@ namespace LogixTool.Controls
                     string columnName = xColumn.Attribute("Name").GetXValue("");
                     string columnWidth = xColumn.Attribute("Width").GetXValue("100");
                     string columnVisible = xColumn.Attribute("Visible").GetXValue("true");
-                    
+
                     // Пытаемся поолучить ссылку на объект колонки по имени.
                     DataGridViewColumn column = this.dataGridView.Columns[columnName];
                     if (column != null)
@@ -1335,84 +1358,43 @@ namespace LogixTool.Controls
         #region [ PRIVATE METHODS ]
         /* ======================================================================================== */
         /// <summary>
-        /// Устанавливает режим редактирования элемента управления.
+        /// Устанавливает визуальные свойства для данного элемента управления в соответствии с выбранным режимом отображения.
         /// </summary>
-        private void SetEditMode()
+        private void SetVisualizationMode()
         {
-            Color editBackColor = Color.White;
-            Color lockBackColor = Color.Gainsboro;
+            this.comboBox_CommonRadix.Enabled = (this.Mode != ViewMode.Lock);
+            this.textBox_CommonUpdateRate.Enabled = (this.Mode != ViewMode.Lock);
 
-            this.comboBox_CommonRadix.Enabled = true;
-            this.ColumnDevice.DefaultCellStyle.BackColor = editBackColor;
-            this.ColumnDevice.ReadOnly = false;
-            this.ColumnTag.DefaultCellStyle.BackColor = editBackColor;
-            this.ColumnTag.ReadOnly = false;
-            this.ColumnFragmentLength.DefaultCellStyle.BackColor = editBackColor;
-            this.ColumnFragmentLength.ReadOnly = false;
-            this.ColumnDataType.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnDataType.ReadOnly = true;
-            this.ColumnStatus.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnStatus.ReadOnly = true;
-            this.ColumnReadRate.DefaultCellStyle.BackColor = editBackColor;
-            this.ColumnReadRate.ReadOnly = false;
-            this.ColumnActualServerReply.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnActualServerReply.ReadOnly = true;
-            this.ColumnActualUpdateRate.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnActualUpdateRate.ReadOnly = true;
-            this.ColumnRadix.DefaultCellStyle.BackColor = editBackColor;
-            this.ColumnRadix.ReadOnly = false;
-            this.ColumnReadValue.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnReadValue.ReadOnly = true;
-            this.ColumnWriteValue.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnWriteValue.ReadOnly = true;
-            this.ColumnComMethod.DefaultCellStyle.BackColor = editBackColor;
-            this.ColumnComMethod.ReadOnly = false;
-            this.ColumnTableNumber.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnTableNumber.ReadOnly = true;
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnDevice, this.Mode != ViewMode.Edit);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnTag, this.Mode != ViewMode.Edit);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnFragmentLength, this.Mode != ViewMode.Edit);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnDataType, true);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnStatus, true);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnReadRate, this.Mode == ViewMode.Lock);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnActualServerReply, true);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnActualUpdateRate, true);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnRadix, this.Mode == ViewMode.Lock);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnReadValue, true);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnWriteValue, this.Mode == ViewMode.Lock);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnComMethod, this.Mode != ViewMode.Edit);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnTableInstanceID, true);
 
-            this.dataGridView.AllowUserToAddRows = true;
-            this.dataGridView.AllowUserToDeleteRows = true;
+            this.dataGridView.AllowUserToAddRows = (this.Mode == ViewMode.Edit);
+            this.dataGridView.AllowUserToDeleteRows = (this.Mode == ViewMode.Edit);
         }
         /// <summary>
-        /// Устанавливает режим просмотра элемента управления.
+        /// Устанавливает свойства возможности чтения/редактирования колонки DataGridViewColumn.
         /// </summary>
-        private void SetMonitorMode()
+        /// <param name="column">Текушая колонка DataGridView.</param>
+        /// <param name="readOnly">Значнение свойства означающее только чтенеи при равенстве True.</param>
+        private void SetDataGridColumnReadOnlyProperty(DataGridViewColumn column, bool readOnly)
         {
             Color editBackColor = Color.White;
             Color lockBackColor = Color.Gainsboro;
 
-            this.comboBox_CommonRadix.Enabled = false;
-            this.ColumnDevice.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnDevice.ReadOnly = true;
-            this.ColumnTag.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnTag.ReadOnly = true;
-            this.ColumnFragmentLength.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnFragmentLength.ReadOnly = true;
-            this.ColumnDataType.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnDataType.ReadOnly = true;
-            this.ColumnStatus.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnStatus.ReadOnly = true;
-            this.ColumnReadRate.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnReadRate.ReadOnly = true;
-            this.ColumnActualServerReply.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnActualServerReply.ReadOnly = true;
-            this.ColumnActualUpdateRate.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnActualUpdateRate.ReadOnly = true;
-            this.ColumnRadix.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnRadix.ReadOnly = true;
-            this.ColumnReadValue.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnReadValue.ReadOnly = true;
-            this.ColumnWriteValue.DefaultCellStyle.BackColor = editBackColor;
-            this.ColumnWriteValue.ReadOnly = false;        
-            this.ColumnComMethod.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnComMethod.ReadOnly = true;
-            this.ColumnTableNumber.DefaultCellStyle.BackColor = lockBackColor;
-            this.ColumnTableNumber.ReadOnly = true;
-
-            this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.AllowUserToDeleteRows = false;
+            column.ReadOnly = readOnly;
+            column.DefaultCellStyle.BackColor = readOnly ? lockBackColor : editBackColor;
         }
-
         /// <summary>
         /// Устанавливает режим просмотра и редактирования при котором возможна запись значений тэга.
         /// </summary>
@@ -1426,10 +1408,9 @@ namespace LogixTool.Controls
         /// </summary>
         private void SetWriteDisableMode()
         {
-            this.ColumnWriteButton.Visible =false;
+            this.ColumnWriteButton.Visible = false;
             this.ColumnWriteValue.Visible = false;
         }
-
         /// <summary>
         /// Обновляет свойства и состояния визуальных компонентов на верхней вспомогательной панели.
         /// </summary>
@@ -1733,7 +1714,7 @@ namespace LogixTool.Controls
                     string value = "";
                     if (tag != null && tag.OwnerTableItem != null)
                     {
-                        if (tag.OwnerTableItem.ParrentTable !=null)
+                        if (tag.OwnerTableItem.ParrentTable != null)
                         {
                             string tableId = tag.OwnerTableItem.ParrentTable.Instance.ToString();
                             string itemId = tag.OwnerTableItem.ID.ToString();
@@ -1741,7 +1722,7 @@ namespace LogixTool.Controls
                         }
                     }
 
-                    row.Cells[this.ColumnTableNumber.Index].Value = value;
+                    row.Cells[this.ColumnTableInstanceID.Index].Value = value;
                     /* ======================================================================================== */
                     #endregion
 
@@ -1752,5 +1733,7 @@ namespace LogixTool.Controls
         }
         /* ======================================================================================== */
         #endregion
+
+
     }
 }
