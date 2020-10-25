@@ -42,13 +42,13 @@ namespace LogixTool
 
             // 1. Device Browser Control.
             this.deviceBrowserControl.Message += Message;
-            this.deviceBrowserControl.TaskCollectionWasChanged+=deviceBrowserControl_DeviceCollectionWasChanged;
+            this.deviceBrowserControl.TaskCollectionWasChanged += deviceBrowserControl_DeviceCollectionWasChanged;
             this.deviceBrowserControl.DevicePropertyWasChanged += deviceBrowserControl_DevicePropertyWasChanged;
             this.deviceBrowserControl.TagsValueWasChanged += deviceBrowserControl_TagsValueWasChanged;
-            
+
             // 2. Tag Browser Control.
-            this.tagBrowserControl.TaskCollection = deviceBrowserControl.EthernetDeviceNodes.Select(t=>t.Task).ToList();
-            
+            this.tagBrowserControl.TaskCollection = deviceBrowserControl.EthernetDeviceNodes.Select(t => t.Task).ToList();
+
             // 3. Storage of data.
             this.storage = new Storage();
             this.storage.Message += Message;
@@ -62,7 +62,7 @@ namespace LogixTool
             // Загружаем настройки браузера тэгов.
             StorageItemInfo browserStorageItem;
             this.storage.Get(StoreOwner.AppRegistrator, StoreType.Settings, "tagbrowser", out browserStorageItem);
-            if (browserStorageItem.IsSuccessful == true && browserStorageItem.XContent!=null)
+            if (browserStorageItem.IsSuccessful == true && browserStorageItem.XContent != null)
             {
                 this.tagBrowserControl.SetXSettings(browserStorageItem.XContent.Element("Settings"));
             }
@@ -77,6 +77,7 @@ namespace LogixTool
             // 4. Recorder.
             this.recorder = new TagRecorder();
             this.recorder.Message += Message;
+            this.recorder.Error += Recorder_Error;
 
             StorageItemInfo recorderStorageItem;
             this.storage.Get(StoreOwner.AppRegistrator, StoreType.Settings, "recorder", out recorderStorageItem);
@@ -135,7 +136,7 @@ namespace LogixTool
             this.fileSizeToolStripStatusLabel.Text = "Size: " + fileSizeText;
             this.recordCounterToolStripStatusLabel.Text = "Lines: " + this.recorder.RecordCounter.ToString();
             this.fileNameToolStripStatusLabel.Text = "File: " + this.recorder.FullFileName;
-            
+
             // Отображение элементов в строке состояния.
             this.fileSizeToolStripStatusLabel.Visible = this.recorder.EnableRunning && recorder.WritingRunned;
             this.recordCounterToolStripStatusLabel.Visible = this.recorder.EnableRunning && recorder.WritingRunned;
@@ -155,6 +156,18 @@ namespace LogixTool
         private void Message(object sender, MessageEventArgs e)
         {
             this.messageControl.AddMessage(e);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Recorder_Error(object sender, EventArgs e)
+        {
+            FormsExtensions.InvokeControl<Form>(this, act =>
+            {
+                MessageBox.Show("Error of recording tag data.", "Recorder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            });
         }
 
         #region [ 0. Form ]
@@ -213,7 +226,7 @@ namespace LogixTool
         /// <param name="e"></param>
         private void deviceBrowserControl_DeviceCollectionWasChanged(object sender, EventArgs e)
         {
-            this.tagBrowserControl.TaskCollection = deviceBrowserControl.EthernetDeviceNodes.Select(t=>t.Task).ToList();
+            this.tagBrowserControl.TaskCollection = deviceBrowserControl.EthernetDeviceNodes.Select(t => t.Task).ToList();
         }
         /// <summary>
         /// Подписка на событие : DeviceBrowserControl : Свойства одного из устройств было изменено.
@@ -393,7 +406,7 @@ namespace LogixTool
                 return;
             }
 
-            List<string[]> items = new List<string[]> ();
+            List<string[]> items = new List<string[]>();
 
             foreach (KeyValuePair<TagTask, List<TagHandler>> pair in tagBrowserControl.TasksByTags)
             {
@@ -404,7 +417,7 @@ namespace LogixTool
                 }
             }
 
-            if (!CsvFile.Save(saveFileDialog.FileName,'\t',items))
+            if (!CsvFile.Save(saveFileDialog.FileName, '\t', items))
             {
                 MessageBox.Show("Error! Can't save file!", "Registrator", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -505,7 +518,7 @@ namespace LogixTool
         private void fileNameToolStripStatusLabel_Click(object sender, EventArgs e)
         {
             try
-            {             
+            {
                 System.Diagnostics.Process.Start("explorer.exe", recorder.FileLocation);
             }
             catch
@@ -598,7 +611,7 @@ namespace LogixTool
         private string GetFileSizeText(long byteSize)
         {
             if (byteSize >= 0 && byteSize < 1024) return byteSize + " Bytes";
-            else if (byteSize >= 1024 && byteSize < 1048576)return (byteSize / 1024) + " KB";     
+            else if (byteSize >= 1024 && byteSize < 1048576) return (byteSize / 1024) + " KB";
             else if (byteSize >= 1048576 && byteSize < 1073741824) return (byteSize / 1048576) + " MB";
             else return (byteSize / 1073741824) + " GB";
         }

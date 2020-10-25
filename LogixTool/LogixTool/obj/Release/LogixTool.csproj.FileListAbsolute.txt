@@ -1,0 +1,15 @@
+d:\Git\Repository\LogixTool\LogixTool\bin\Release\LogixTool.exe.config
+d:\Git\Repository\LogixTool\LogixTool\bin\Release\LogixTool.exe
+d:\Git\Repository\LogixTool\LogixTool\bin\Release\LogixTool.pdb
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.csprojAssemblyReference.cache
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.FormAbout.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.FormRecordSettings.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.FormMain.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.Controls.DeviceBrowserControl.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.Controls.TagBrowserControl.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.Common.MessageControl.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.Properties.Resources.resources
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.csproj.GenerateResource.cache
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.csproj.CoreCompileInputs.cache
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.exe
+d:\Git\Repository\LogixTool\LogixTool\obj\Release\LogixTool.pdb
