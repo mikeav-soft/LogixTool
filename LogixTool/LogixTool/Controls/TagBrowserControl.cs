@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Timers;
 using LogixTool.Common;
+using LogixTool.Common.Extension;
 using LogixTool.EthernetIP.AllenBradley;
 using LogixTool.EthernetIP.AllenBradley.Models.Events;
 using LogixTool.LocalDatabase;

@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using System.Net;
 using LogixTool.EthernetIP;
 using LogixTool.Common;
+using LogixTool.Common.Extension;
 using LogixTool.EthernetIP.AllenBradley.Models;
 
 namespace LogixTool.EthernetIP.AllenBradley

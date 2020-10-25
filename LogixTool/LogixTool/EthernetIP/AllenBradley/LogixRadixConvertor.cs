@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LogixTool.Common;
+using LogixTool.Common.Extension;
 
 namespace LogixTool.EthernetIP.AllenBradley
 {

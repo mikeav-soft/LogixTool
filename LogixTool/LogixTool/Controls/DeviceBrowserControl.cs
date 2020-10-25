@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LogixTool.EthernetIP.AllenBradley;
 using LogixTool.Common;
+using LogixTool.Common.Extension;
 using LogixTool.LocalDatabase;
 using LogixTool.EthernetIP.AllenBradley.Models.Events;
 

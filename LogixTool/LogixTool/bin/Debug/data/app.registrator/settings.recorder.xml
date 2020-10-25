@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<storage Owner="app.registrator" Type="settings" ID="recorder" Saved="637392693164111703">
+  <data>
+    <Settings FileLocation="d:\Git\Repository\LogixTool\LogixTool\bin\Debug" FilePrefix="new_recording" SeparationFileSize="1" SeparationPeriod="Day" RecordingType="All" RecordingPeriodValue="1" RecordingPeriodUnit="Sec" TickTimeFormat="false" />
+  </data>
+</storage>

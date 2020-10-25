@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using System.Windows.Forms;
 using System.IO;
 using LogixTool.Common;
+using LogixTool.Common.Extension;
 
 namespace LogixTool.LocalDatabase
 {

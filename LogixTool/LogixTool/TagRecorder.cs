@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using LogixTool.EthernetIP.AllenBradley;
 using LogixTool.Common;
+using LogixTool.Common.Extension;
 
 namespace LogixTool
 {
