@@ -19,7 +19,7 @@ Production automation based on Allen-Bradley PLC (ControlLogix, CompactLogix).
 >
 ## Advanteges
 
-No additional special programs are required (for example, the OPS server, etc.) for this utility to work.
+No additional special programs are required (for example, the OPC server, etc.) for this utility to work.
 
 ## System Requirements
 
