@@ -3249,11 +3249,11 @@ namespace LogixTool.EthernetIP.AllenBradley
             }
 
 
-            if (recievedMemberNames.GetRange(requiredMemberCount, recievedMemberNames.Count - requiredMemberCount).Any(t => t != ""))
-            {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Member Names count " + recievedMemberNames.Count.ToString() + " not equal to required count " + requiredMemberCount.ToString() + "."));
-                return false;
-            }
+            //if (recievedMemberNames.GetRange(requiredMemberCount, recievedMemberNames.Count - requiredMemberCount).Any(t => t != ""))
+            //{
+            //    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Member Names count " + recievedMemberNames.Count.ToString() + " not equal to required count " + requiredMemberCount.ToString() + "."));
+            //    return false;
+            //}
 
             memberNames = recievedMemberNames.GetRange(0, requiredMemberCount);
 
