@@ -18,11 +18,11 @@ namespace LogixTool.EthernetIP.AllenBradley.Models.Events
         /// <summary>
         /// Старое (текущее) устройство которое привязано к тэгу.
         /// </summary>
-        public TagTask OldDevice { get; private set; }
+        public LogixTask OldDevice { get; private set; }
         /// <summary>
         /// Новое устройство к которому стоит привязать тэг.
         /// </summary>
-        public TagTask NewDevice { get; private set; }
+        public LogixTask NewDevice { get; private set; }
         /// <summary>
         /// Задат или получает данные о том что операцию необходимо отменить.
         /// </summary>
@@ -34,7 +34,7 @@ namespace LogixTool.EthernetIP.AllenBradley.Models.Events
         /// <param name="tag">Текущий тэг.</param>
         /// <param name="oldDevice">Старое (текущая) задача устройства которое привязано к тэгу.</param>
         /// <param name="newDevice">Новое задача устройства к которому стоит привязать тэг.</param>
-        public TagTaskBeginEditEventArgs(LogixTag tag, TagTask oldDevice, TagTask newDevice)
+        public TagTaskBeginEditEventArgs(LogixTag tag, LogixTask oldDevice, LogixTask newDevice)
         {
             this.Tag = tag;
             this.OldDevice = oldDevice;

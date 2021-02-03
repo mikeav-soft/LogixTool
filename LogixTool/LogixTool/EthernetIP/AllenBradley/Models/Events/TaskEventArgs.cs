@@ -14,13 +14,13 @@ namespace LogixTool.EthernetIP.AllenBradley.Models.Events
         /// <summary>
         /// Текущая задача устройства.
         /// </summary>
-        public TagTask Task { get; private set; }
+        public LogixTask Task { get; private set; }
 
         /// <summary>
         /// Создает новый аргумент события.
         /// </summary>
         /// <param name="task"></param>
-        public TaskEventArgs(TagTask task)
+        public TaskEventArgs(LogixTask task)
         {
             this.Task = task;
         }

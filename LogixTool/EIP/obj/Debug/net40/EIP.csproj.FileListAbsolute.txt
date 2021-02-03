@@ -1,0 +1,8 @@
+E:\repos\LogixTool\LogixTool\EIP\bin\Debug\net40\EIP.dll
+E:\repos\LogixTool\LogixTool\EIP\bin\Debug\net40\EIP.pdb
+E:\repos\LogixTool\LogixTool\EIP\obj\Debug\net40\EIP.csprojAssemblyReference.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Debug\net40\EIP.AssemblyInfoInputs.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Debug\net40\EIP.AssemblyInfo.cs
+E:\repos\LogixTool\LogixTool\EIP\obj\Debug\net40\EIP.csproj.CoreCompileInputs.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Debug\net40\EIP.dll
+E:\repos\LogixTool\LogixTool\EIP\obj\Debug\net40\EIP.pdb

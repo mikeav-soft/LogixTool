@@ -774,7 +774,7 @@ namespace LogixTool.EthernetIP.AllenBradley
 
             // 2. Название структуры.
             string structureName;
-            if (!ParseTemplateNameResponce(messageEventHeaderText, recievedBytes, out structureName, out recievedBytes))
+            if (!ParseTemplateNameResponse(messageEventHeaderText, recievedBytes, out structureName, out recievedBytes))
             {
                 return false;
             }
@@ -782,7 +782,7 @@ namespace LogixTool.EthernetIP.AllenBradley
 
             // 3. Названия членов структуры.
             List<string> memberNames;
-            if (!ParseTemplateMemberNamesResponce(messageEventHeaderText, templateInfo.MemberCount, recievedBytes, out memberNames))
+            if (!ParseTemplateMemberNamesResponse(messageEventHeaderText, templateInfo.MemberCount, recievedBytes, out memberNames))
             {
                 return false;
             }
@@ -1075,17 +1075,11 @@ namespace LogixTool.EthernetIP.AllenBradley
             // Проверяем входные параметры.
             if (tag == null)
             {
-                throw new ArgumentNullException("'ReadTagValue': Tag Argument is NULL");
-            }
-
-            // Проверяем входные параметры.
-            if (tag.Name == null)
-            {
-                throw new ArgumentNullException("'ReadTagValue': Property 'Name' of Tag Argument is NULL");
+                throw new ArgumentNullException("tag", "Method 'ReadTag()': Argument 'tag' is NULL");
             }
 
             // Заголовок сообщений.
-            string messageEventHeaderText = "[Method='Device.ReadTagValue'; TagName='" + tag.Name + "']";
+            string messageEventHeaderText = "[Method='ReadTag'; TagPath='" + tag.SymbolicEPath.ToString() + "']";
 
             #region [ 1. ПРЕДВАРИТЕЛЬНАЯ ПРОВЕРКА ТЭГА ]
             /* ======================================================================================== */
@@ -1140,7 +1134,7 @@ namespace LogixTool.EthernetIP.AllenBradley
             if (tag.Type.Family == TagDataTypeFamily.AtomicBool
                 || tag.Type.Family == TagDataTypeFamily.AtomicDecimal
                 || tag.Type.Family == TagDataTypeFamily.AtomicFloat
-                || tag.Type.Family == TagDataTypeFamily.AtomicLong)
+                || tag.Type.Family == TagDataTypeFamily.AtomicBoolArray)
             {
                 currentResponsePacketSize += TAG_ATOMIC_TYPECODE_SIZE + tag.Type.ExpectedTotalSize;
             }
@@ -1326,11 +1320,11 @@ namespace LogixTool.EthernetIP.AllenBradley
             // Проверяем входные параметры.
             if (tags == null || tags.Any(t => t == null))
             {
-                throw new ArgumentNullException("'SimpleReadingOfTagsValue(Multiply)': Argument of Tag is NULL");
+                throw new ArgumentNullException("tags", "Method 'ReadTags()': Argument 'tags' is NULL");
             }
 
             // Заголовок сообщений.
-            string messageEventHeaderText = "[Method='SimpleReadingOfTagsValue(Multiply)'; TagName='" + "tag.Name" + "']";
+            string messageEventHeaderText = "[Method='ReadTags(Multiply)']";
 
             const int MULTIPLY_ROUTER_REQUEST_HEADER_SIZE = 8;
             const int MULTIPLY_ROUTER_RESPONSE_HEADER_SIZE = 6;
@@ -1396,7 +1390,7 @@ namespace LogixTool.EthernetIP.AllenBradley
                 }
                 else
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag '" + t.Name + "' already exist in requests."));
+                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TagPath='" + t.SymbolicEPath.ToString() + "' already exist in requests."));
                     t.ReadValue.FinalizeEdition(false);
                 }
             }
@@ -1424,7 +1418,7 @@ namespace LogixTool.EthernetIP.AllenBradley
                 if (tag.Type.Family == TagDataTypeFamily.AtomicBool
                     || tag.Type.Family == TagDataTypeFamily.AtomicDecimal
                     || tag.Type.Family == TagDataTypeFamily.AtomicFloat
-                    || tag.Type.Family == TagDataTypeFamily.AtomicLong)
+                    || tag.Type.Family == TagDataTypeFamily.AtomicBoolArray)
                 {
                     responseSize += TAG_ATOMIC_TYPECODE_SIZE + tag.Type.ExpectedTotalSize;
                 }
@@ -1681,13 +1675,13 @@ namespace LogixTool.EthernetIP.AllenBradley
         public bool ReadTagFragment(LogixTag tag)
         {
             // Проверяем входные параметры.
-            if (tag.Name == null)
+            if (tag == null)
             {
-                throw new ArgumentNullException("'ReadingOfFragmentTagValue': Argument of Tag is NULL");
+                throw new ArgumentNullException("tag", "Method 'ReadTagFragment()': Argument 'tag' is NULL");
             }
 
             // Заголовок сообщений.
-            string messageEventHeaderText = "[Method='ReadingOfFragmentTagValue'; TagName='" + tag.Name + "']";
+            string messageEventHeaderText = "[Method='ReadTagFragment'; TagPath='" + tag.SymbolicEPath.ToString() + "']";
 
             #region [ 1. ПРЕДВАРИТЕЛЬНАЯ ПРОВЕРКА ТЭГА ]
             /* ======================================================================================== */
@@ -1717,7 +1711,7 @@ namespace LogixTool.EthernetIP.AllenBradley
             UInt16 typeCode = 0;                                    // Текущий код типа данных.
             bool ressultOk = true;                                  // Общий результат операции.
             List<byte> values;                                      // Совокупность байт принятых от удаленного сервера (контроллера).
-            UInt16 length = (UInt16)tag.Type.ArrayDimension.Value;        // Длина в элементах массива которую требуется прочитать.
+            UInt16 length = (UInt16)tag.Type.ArrayDimension.Value;  // Длина в элементах массива которую требуется прочитать.
 
             // Устанавливаем временную метку момента запроса данных от удаленного сервера (контроллера).
             tag.ReadValue.SetRequestPoint();
@@ -1872,7 +1866,6 @@ namespace LogixTool.EthernetIP.AllenBradley
                 return true;
             }
         }
-
         /// <summary>
         /// Записывает значение простого тэга по заданному имени в контроллер используя сервис мультизапроса.
         /// Service Code: "0x4D"
@@ -1882,13 +1875,13 @@ namespace LogixTool.EthernetIP.AllenBradley
         public bool WriteTag(LogixTag tag)
         {
             // Проверяем входные параметры.
-            if (tag.Name == null)
+            if (tag == null)
             {
-                throw new ArgumentNullException("'SimpleWriteOfTagValue': Argument of Tag is NULL");
+                throw new ArgumentNullException("tag", "Method 'WriteTag()': Argument 'tag' is NULL");
             }
 
             // Заголовок сообщений.
-            string messageEventHeaderText = "[Method='SimpleWriteOfTagValue'; TagName='" + tag.Name + "']";
+            string messageEventHeaderText = "[Method='WriteTag'; TagPath='" + tag.SymbolicEPath.ToString() + "']";
 
             #region [ 1. ПРЕДВАРИТЕЛЬНАЯ ПРОВЕРКА ТЭГА ]
             /* ======================================================================================== */
@@ -1905,7 +1898,7 @@ namespace LogixTool.EthernetIP.AllenBradley
             if ((tag.Type.Family != TagDataTypeFamily.AtomicBool)
                 && (tag.Type.Family != TagDataTypeFamily.AtomicDecimal)
                 && (tag.Type.Family != TagDataTypeFamily.AtomicFloat)
-                && (tag.Type.Family != TagDataTypeFamily.AtomicLong))
+                && (tag.Type.Family != TagDataTypeFamily.AtomicBoolArray))
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode must be as atomic."));
                 tag.WriteValue.FinalizeEdition(false);
@@ -2047,11 +2040,11 @@ namespace LogixTool.EthernetIP.AllenBradley
             // Проверяем входные параметры.
             if (tags == null || tags.Any(t => t == null))
             {
-                throw new ArgumentNullException("'SimpleWritingOfTagsValue(Multiply)': Argument of Tag is NULL");
+                throw new ArgumentNullException("tags", "Method 'WriteTags()': Argument 'tags' is NULL");
             }
 
             // Заголовок сообщений.
-            string messageEventHeaderText = "[Method='SimpleWritingOfTagsValue(Multiply)'; TagName='" + "tag.Name" + "']";
+            string messageEventHeaderText = "[Method='WriteTags(Multiply)']";
 
             const int MULTIPLY_ROUTER_REQUEST_HEADER_SIZE = 8;
             const int MULTIPLY_ROUTER_RESPONSE_HEADER_SIZE = 6;
@@ -2082,7 +2075,7 @@ namespace LogixTool.EthernetIP.AllenBradley
                 if ((t.Type.Family != TagDataTypeFamily.AtomicBool)
                     && (t.Type.Family != TagDataTypeFamily.AtomicDecimal)
                     && (t.Type.Family != TagDataTypeFamily.AtomicFloat)
-                    && (t.Type.Family != TagDataTypeFamily.AtomicLong))
+                    && (t.Type.Family != TagDataTypeFamily.AtomicBoolArray))
                 {
                     Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode must be as atomic."));
                     t.WriteValue.FinalizeEdition(false);
@@ -2162,7 +2155,7 @@ namespace LogixTool.EthernetIP.AllenBradley
                 }
                 else
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag '" + t.Name + "' already exist in requests."));
+                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TagPath='" + t.SymbolicEPath.ToString() + "' already exist in requests."));
                     t.WriteValue.FinalizeEdition(false);
                 }
             }
@@ -2325,13 +2318,13 @@ namespace LogixTool.EthernetIP.AllenBradley
         public bool WriteTagFragment(LogixTag tag)
         {
             // Проверяем входные параметры.
-            if (tag.Name == null)
+            if (tag == null)
             {
-                throw new ArgumentNullException("'WritingOfFragmentTagValue': Argument of Tag is NULL");
+                throw new ArgumentNullException("tag", "Method 'WriteTagFragment()': Argument 'tag' is NULL");
             }
 
             // Заголовок сообщений.
-            string messageEventHeaderText = "[Method='WritingOfFragmentTagValue'; TagName='" + tag.Name + "']";
+            string messageEventHeaderText = "[Method='WriteTagFragment'; TagPath='" + tag.SymbolicEPath.ToString() + "']";
 
             int maxRequestDataBytesSize = 0;
 
@@ -2482,7 +2475,6 @@ namespace LogixTool.EthernetIP.AllenBradley
                 return false;
             }
         }
-
         /// <summary>
         /// Производит наложение масок с логическими операциями сначала OR затем AND на значение тэга.
         /// Service Code: "0x4E"
@@ -2493,11 +2485,11 @@ namespace LogixTool.EthernetIP.AllenBradley
             // Проверяем входные параметры.
             if (tag == null)
             {
-                throw new ArgumentNullException("'ReadModifyWriteTag': Argument of Tag is NULL");
+                throw new ArgumentNullException("tag", "Method 'ReadModifyWriteTag()': Argument 'tag' is NULL");
             }
 
             // Заголовок сообщений.
-            string messageEventHeaderText = "[Method='ReadModifyWriteTag'; TagName='" + tag.Name + "']";
+            string messageEventHeaderText = "[Method='ReadModifyWriteTag'; TagPath='" + tag.SymbolicEPath.ToString() + "']";
 
             #region [ 1. ПРЕДВАРИТЕЛЬНАЯ ПРОВЕРКА ТЭГА ]
             /* ======================================================================================== */
@@ -2760,7 +2752,7 @@ namespace LogixTool.EthernetIP.AllenBradley
             processorSlot = xdevice.Attribute("ProcessorSlot").GetXValue(null);
 
             // Проверяем промжуточные перемнные.
-            if (name == null || ipAddress == null || processorSlot == null || !processorSlot.IsDigits())
+            if (name == null || ipAddress == null || processorSlot == null || !processorSlot.All(c => Char.IsDigit(c)))
             {
                 return false;
             }
@@ -2809,14 +2801,14 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// 
         /// </summary>
         /// <param name="messageHeader">Заголовок текстового сообщения объекта.</param>
-        /// <param name="responces">Список распознанных ответов.</param>
+        /// <param name="responses">Список распознанных ответов.</param>
         /// <param name="response">Результат: Ответ.</param>
         /// <returns></returns>
-        private bool TryGetSimpleMessageRouterResponse(string messageHeader, List<object> responces, out MessageRouterResponse response)
+        private bool TryGetSimpleMessageRouterResponse(string messageHeader, List<object> responses, out MessageRouterResponse response)
         {
             response = null;
 
-            EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responces);
+            EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responses);
             if (encapsulatedPacket == null)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize EncapsulatedPacket."));
@@ -2829,7 +2821,7 @@ namespace LogixTool.EthernetIP.AllenBradley
                 return false;
             }
 
-            MessageRouterResponse messageRouterResponse = this.GetObject<MessageRouterResponse>(responces);
+            MessageRouterResponse messageRouterResponse = this.GetObject<MessageRouterResponse>(responses);
             if (messageRouterResponse == null)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponse."));
@@ -2843,16 +2835,16 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// 
         /// </summary>
         /// <param name="messageHeader">Заголовок текстового сообщения объекта.</param>
-        /// <param name="responces">Список распознанных ответов.</param>
+        /// <param name="responses">Список распознанных ответов.</param>
         /// <param name="response">Результат: Заголовок ответа мультизапроса.</param>
         /// <param name="multiplyResponses">Результат: Список ответов запрошенных в мультизапросе.</param>
         /// <returns></returns>
-        private bool TryGetMultiplyMessageRouterResponse(string messageHeader, List<object> responces, out MessageRouterResponse response, out List<MessageRouterResponse> multiplyResponses)
+        private bool TryGetMultiplyMessageRouterResponse(string messageHeader, List<object> responses, out MessageRouterResponse response, out List<MessageRouterResponse> multiplyResponses)
         {
             response = null;
             multiplyResponses = null;
 
-            EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responces);
+            EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responses);
             if (encapsulatedPacket == null)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize EncapsulatedPacket."));
@@ -2865,14 +2857,14 @@ namespace LogixTool.EthernetIP.AllenBradley
                 return false;
             }
 
-            MessageRouterResponse messageRouterResponse = this.GetObject<MessageRouterResponse>(responces);
+            MessageRouterResponse messageRouterResponse = this.GetObject<MessageRouterResponse>(responses);
             if (messageRouterResponse == null)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponse."));
                 return false;
             }
 
-            List<MessageRouterResponse> messageRouterResponses = this.GetObject<List<MessageRouterResponse>>(responces);
+            List<MessageRouterResponse> messageRouterResponses = this.GetObject<List<MessageRouterResponse>>(responses);
             if (messageRouterResponses == null)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponses."));
@@ -2887,7 +2879,7 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// Проверяет ответ на запрос MessageRouterRequest по критериям указанных статусов и указанных допустимых минимумов и максимумов полученных данных.
         /// </summary>
         /// <param name="messageHeader">Заголовок текстового сообщения объекта.</param>
-        /// <param name="responces">Список распознанных ответов.</param>
+        /// <param name="response">Распознанный ответ.</param>
         /// <param name="validMessageRouterGeneralStatus"></param>
         /// <param name="validDataLengthMin"></param>
         /// <param name="validDataLengthMax"></param>
@@ -3162,7 +3154,7 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// <param name="templateName">Результат: Имя структуры типа данных.</param>
         /// <param name="remainBytes">Результат: Оставшийся массив байт.</param>
         /// <returns>Возвращает True в случае успешного выполнения операции.</returns>
-        private bool ParseTemplateNameResponce(string messageHeader, List<byte> inBytes, out string templateName, out List<byte> remainBytes)
+        private bool ParseTemplateNameResponse(string messageHeader, List<byte> inBytes, out string templateName, out List<byte> remainBytes)
         {
             templateName = null;
             remainBytes = null;
@@ -3218,7 +3210,7 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// <param name="inBytes">Входящий массив байт.</param>
         /// <param name="memberNames">Результат: Массив имен членов структуры типа данных.</param>
         /// <returns>Возвращает True в случае успешного выполнения операции.</returns>
-        private bool ParseTemplateMemberNamesResponce(string messageHeader, UInt16 requiredMemberCount, List<byte> inBytes, out List<string> memberNames)
+        private bool ParseTemplateMemberNamesResponse(string messageHeader, UInt16 requiredMemberCount, List<byte> inBytes, out List<string> memberNames)
         {
             memberNames = null;
 

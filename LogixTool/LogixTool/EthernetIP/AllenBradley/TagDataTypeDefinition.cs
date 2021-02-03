@@ -38,13 +38,18 @@ namespace LogixTool.EthernetIP.AllenBradley
                         case 0xC2: result = "SINT"; break;
                         case 0xC3: result = "INT"; break;
                         case 0xC4: result = "DINT"; break;
-                        case 0xCA: result = "REAL"; break;
-                        case 0xD3: result = "0xD3"; break;
                         case 0xC5: result = "LINT"; break;
+                        case 0xCA: result = "REAL"; break;
+                        case 0xD3:
+                            {
+                                result = "BOOL[..]";
+                            }
+                            break;
+
                         default: result = "STRUCT"; break;
                     }
 
-                    if (this.AtomicBitPosition!=null)
+                    if (this.AtomicBitPosition != null)
                     {
                         result += "." + this.AtomicBitPosition;
                     }
@@ -81,7 +86,7 @@ namespace LogixTool.EthernetIP.AllenBradley
                         return TagDataTypeFamily.AtomicDecimal;
                     case 0xC5:
                     case 0xD3:
-                        return TagDataTypeFamily.AtomicLong;
+                        return TagDataTypeFamily.AtomicBoolArray;
                     case 0xCA:
                         return TagDataTypeFamily.AtomicFloat;
                     default:
@@ -148,11 +153,12 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// </summary>
         public UInt16? AtomicBitPosition { get; set; }
         /// <summary>
-        /// Возвращает или задает смещение байт для извлечения данных.
+        /// Возвращает или задает смещение байт для извлечения данных структуры.
         /// </summary>
         public UInt32 StructureByteOffset { get; set; }
         /// <summary>
-        /// Возвращает или задает позицию данного бита в слове, в случае если данный тип данных является битом (Code=0xC1).
+        /// Возвращает или задает позицию данного бита в слове для извлечения данных структуры.
+        /// Задается в случае если данный тип данных является битом (Code=0xC1).
         /// </summary>
         public UInt32? StructureBitPosition { get; set; }
         /// <summary>
@@ -160,9 +166,17 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// Значение может быть в случае если данный тип данных является битом (Code=0xC1).
         /// </summary>
         public string HiddenMemberName { get; set; }
+        /// <summary>
+        /// Возвращает или задает смещение 4-х байтных слов для извлечения данных битового массива.
+        /// </summary>
+        public UInt32? BitArrayDWordOffset { get; set; }
+        /// <summary>
+        /// Возвращает или задает позицию данного бита в 4-х байтном слове для извлечения данных битового массива.
+        /// </summary>
+        public UInt32? BitArrayDWordBitPosition { get; set; }
 
         /// <summary>
-        /// 
+        /// Возвращяет ожидаемый размер типа данных.
         /// </summary>
         public int ExpectedTotalSize
         {
@@ -193,6 +207,8 @@ namespace LogixTool.EthernetIP.AllenBradley
             this._Size = 0;
             this.StructureByteOffset = 0;
             this.StructureBitPosition = null;
+            this.BitArrayDWordOffset = null;
+            this.BitArrayDWordBitPosition = null;
             this.HiddenMemberName = null;
         }
 
@@ -212,6 +228,8 @@ namespace LogixTool.EthernetIP.AllenBradley
             this.AtomicBitPosition = null;
             this.StructureByteOffset = 0;
             this.StructureBitPosition = null;
+            this.BitArrayDWordOffset = 0;
+            this.BitArrayDWordBitPosition = 0;
             this.HiddenMemberName = null;
         }
 
@@ -227,9 +245,12 @@ namespace LogixTool.EthernetIP.AllenBradley
 
             this.ArrayIndex = typeDefinition.ArrayIndex;
             this.ArrayDimension.Max = typeDefinition.ArrayDimension.Max;
+            this.ArrayDimension.Value = typeDefinition.ArrayDimension.Value;
             this.AtomicBitPosition = typeDefinition.AtomicBitPosition;
             this.StructureByteOffset = typeDefinition.StructureByteOffset;
             this.StructureBitPosition = typeDefinition.StructureBitPosition;
+            this.BitArrayDWordOffset = typeDefinition.BitArrayDWordOffset;
+            this.BitArrayDWordBitPosition = typeDefinition.BitArrayDWordBitPosition;
             this.HiddenMemberName = typeDefinition.HiddenMemberName;
         }
         /* ================================================================================================== */

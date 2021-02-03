@@ -98,12 +98,12 @@ namespace LogixTool
         /// <summary>
         /// Текущие тэги с которыми производится работа.
         /// </summary>
-        public List<TagHandler> RecordedTags { get; set; }
+        public List<LogixTagHandler> RecordedTags { get; set; }
         /// <summary>
         /// Получает или задает список тэгов по изменению значений которых будет происходить запись.
         /// Данное свойство имеет смысл только при свойтве RecordingType равному значению BySelectedTags.
         /// </summary>
-        public List<TagHandler> SelectedTags
+        public List<LogixTagHandler> SelectedTags
         {
             get
             {
@@ -113,7 +113,7 @@ namespace LogixTool
             {
                 selectedTags.Clear();
 
-                foreach(TagHandler tag in value)
+                foreach(LogixTagHandler tag in value)
                 {
                     if (!selectedTags.ContainsKey(tag))
                     {
@@ -126,7 +126,7 @@ namespace LogixTool
         #endregion
 
         private List<RecordItem> writingBuffer;                     // Буфер данных которые необходимо записать в файл.
-        private Dictionary<TagHandler, TagHandler> selectedTags;    // 
+        private Dictionary<LogixTagHandler, LogixTagHandler> selectedTags;    // 
         private DateTime lastFileCreating;                          // Дата и время последнего создания файла.
         private DateTime lastRecord;                                // Дата и время последней записи.
         private StreamWriter streamWriter;                          // Поток записи в файл.
@@ -142,14 +142,14 @@ namespace LogixTool
 
 
             this.writingBuffer = new List<RecordItem>();
-            this.selectedTags = new Dictionary<TagHandler, TagHandler>();
+            this.selectedTags = new Dictionary<LogixTagHandler, LogixTagHandler>();
             this.FileLocation = Environment.CurrentDirectory;
             this.FilePrefix = "new_recording";
 
             this.RecordingType = RecordingEventType.All;
             this.RecordingPeriodValue = 1;
             this.RecordingPeriodUnit = RecordingPeriodUnits.Sec;
-            this.RecordedTags = new List<TagHandler>();
+            this.RecordedTags = new List<LogixTagHandler>();
 
             this.SeparationPeriod = SeparationFilePeriodBy.Day;
             this.SeparationFileSize = 1;
@@ -328,7 +328,7 @@ namespace LogixTool
         /// Запрашивает добавление записи данных тэгов с которыми в данный момент производится работа в очередь потоковой записи в файл.
         /// </summary>
         /// <param name="tags">Список тэгов со значениями чтения которые были изменены.</param>
-        public void RequestForRecording(List<TagHandler> tags)
+        public void RequestForRecording(List<LogixTagHandler> tags)
         {
             if (this.ProcessRunned && this.WritingRunned)
             {
@@ -527,7 +527,7 @@ namespace LogixTool
 
                 List<string> tagNames = new List<string>();
 
-                foreach (TagHandler tag in this.RecordedTags)
+                foreach (LogixTagHandler tag in this.RecordedTags)
                 {
                     string name = (tag.OwnerTask!=null? ("[" + tag.OwnerTask.ToString() + "]"):"[?]") + tag.Name;
 
@@ -597,7 +597,7 @@ namespace LogixTool
             if (toUseDateTimeFromLastUpdatedTag)
             {
                 // Получаем все тэги которые были когда-либо обновлены.
-                List<TagHandler> updatedTags = this.RecordedTags.Where(g => g.ReadValue.Report.ServerResponseTimeStamp.HasValue).ToList();
+                List<LogixTagHandler> updatedTags = this.RecordedTags.Where(g => g.ReadValue.Report.ServerResponseTimeStamp.HasValue).ToList();
                 // В Случае если ни один тэг не был обновлем, уходим из метода.
                 if (updatedTags.Count == 0)
                 {
@@ -613,7 +613,7 @@ namespace LogixTool
 
             List<string> tagValues = new List<string>();
 
-            foreach (TagHandler tag in this.RecordedTags)
+            foreach (LogixTagHandler tag in this.RecordedTags)
             {
                 if (!tag.Type.ArrayDimension.HasValue)
                 {

@@ -332,7 +332,7 @@ namespace LogixTool
                     }
 
 
-                    TagHandler tag = new TagHandler(tagName);
+                    LogixTagHandler tag = new LogixTagHandler(tagName);
 
                     if (fragmentLength != null)
                     {
@@ -408,10 +408,10 @@ namespace LogixTool
 
             List<string[]> items = new List<string[]>();
 
-            foreach (KeyValuePair<TagTask, List<TagHandler>> pair in tagBrowserControl.TasksByTags)
+            foreach (KeyValuePair<LogixTask, List<LogixTagHandler>> pair in tagBrowserControl.TasksByTags)
             {
-                TagTask key = pair.Key;
-                foreach (TagHandler tag in tagBrowserControl.TasksByTags[key])
+                LogixTask key = pair.Key;
+                foreach (LogixTagHandler tag in tagBrowserControl.TasksByTags[key])
                 {
                     items.Add(new string[] { key.Device.Name, tag.Name });
                 }
@@ -589,10 +589,10 @@ namespace LogixTool
         {
             // Проверяем что в данный момент ни один из тэгов не обрабатывается устройствами.
 
-            Dictionary<TagTask, List<TagHandler>> tasksByTags = this.tagBrowserControl.TasksByTags;
-            foreach (KeyValuePair<TagTask, List<TagHandler>> deviceByTags in tasksByTags/*.Where(d=>d.Key.IsConnected)*/)
+            Dictionary<LogixTask, List<LogixTagHandler>> tasksByTags = this.tagBrowserControl.TasksByTags;
+            foreach (KeyValuePair<LogixTask, List<LogixTagHandler>> deviceByTags in tasksByTags/*.Where(d=>d.Key.IsConnected)*/)
             {
-                foreach (TagHandler tag in deviceByTags.Value)
+                foreach (LogixTagHandler tag in deviceByTags.Value)
                 {
                     if (deviceByTags.Key.ContainsTagObject(tag))
                     {

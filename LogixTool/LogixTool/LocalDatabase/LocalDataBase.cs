@@ -205,7 +205,7 @@ namespace LogixTool.LocalDatabase
                             return false;
                         }
 
-                        if (readedTicks == null || !readedTicks.IsDigits())
+                        if (readedTicks == null || !readedTicks.All(c => Char.IsDigit(c)))
                         {
                             Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, header, "Object:" + ownerAttribute.Name + "::" + typeAttribute.Name + "::" + curr_id + ". Incorrect file structure: " + fi.FullName + ". Readed DateTime Stamp is not correct."));
                             return false;
@@ -292,7 +292,7 @@ namespace LogixTool.LocalDatabase
                                 result = false;
                             }
 
-                            if (readedTicks == null || !readedTicks.IsDigits())
+                            if (readedTicks == null || !readedTicks.All(c => Char.IsDigit(c)))
                             {
                                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, header, "Object:" + ownerAttribute.Name + "::" + typeAttribute.Name + ". Incorrect file structure: " + fi.FullName + ". Readed DateTime Stamp is not correct."));
                                 result = false;

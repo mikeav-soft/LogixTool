@@ -231,7 +231,7 @@ namespace LogixTool.Controls
         /// Вызывает "Событие при изменении коллекции тэгов".
         /// </summary>
         /// <param name="task"></param>
-        private void Event_TagCollectionOfTaskWasChanged(TagTask task)
+        private void Event_TagCollectionOfTaskWasChanged(LogixTask task)
         {
             if (this.TagCollectionOfTaskWasChanged != null)
             {
@@ -242,7 +242,7 @@ namespace LogixTool.Controls
         /// Вызывает "Событие при изменения состояния подключения с сервером".
         /// </summary>
         /// <param name="task"></param>
-        private void Event_TaskStateWasChanged(TagTask task)
+        private void Event_TaskStateWasChanged(LogixTask task)
         {
             if (this.TaskStateWasChanged != null)
             {

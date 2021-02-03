@@ -38,16 +38,16 @@ namespace LogixTool.Controls
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public List<TagTask> TaskCollection
+        public List<LogixTask> TaskCollection
         {
             get
             {
-                Dictionary<string, TagTask> result = new Dictionary<string, TagTask>();
+                Dictionary<string, LogixTask> result = new Dictionary<string, LogixTask>();
                 foreach (object obj in ColumnDevice.Items)
                 {
-                    if (obj is TagTask)
+                    if (obj is LogixTask)
                     {
-                        TagTask task = (TagTask)obj;
+                        LogixTask task = (LogixTask)obj;
                         result.Add(task.Device.Name, task);
                     }
                 }
@@ -61,8 +61,8 @@ namespace LogixTool.Controls
                 }
 
                 ColumnDevice.Items.Clear();
-                Dictionary<string, TagTask> reference = new Dictionary<string, TagTask>();
-                foreach (TagTask task in value)
+                Dictionary<string, LogixTask> reference = new Dictionary<string, LogixTask>();
+                foreach (LogixTask task in value)
                 {
                     string key = task.Device.Name;
                     if (!reference.ContainsKey(key))
@@ -71,7 +71,7 @@ namespace LogixTool.Controls
                     }
                 }
 
-                foreach (TagTask task in reference.Values)
+                foreach (LogixTask task in reference.Values)
                 {
                     ColumnDevice.Items.Add(task);
                 }
@@ -84,17 +84,17 @@ namespace LogixTool.Controls
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Dictionary<TagHandler, DataGridViewRow> TagsByRows
+        public Dictionary<LogixTagHandler, DataGridViewRow> TagsByRows
         {
             get
             {
-                Dictionary<TagHandler, DataGridViewRow> result = new Dictionary<TagHandler, DataGridViewRow>();
+                Dictionary<LogixTagHandler, DataGridViewRow> result = new Dictionary<LogixTagHandler, DataGridViewRow>();
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
                     object obj = row.Cells[this.ColumnTag.Index].Value;
-                    if (!row.IsNewRow && obj != null && obj is TagHandler)
+                    if (!row.IsNewRow && obj != null && obj is LogixTagHandler)
                     {
-                        TagHandler tag = (TagHandler)obj;
+                        LogixTagHandler tag = (LogixTagHandler)obj;
                         if (!result.ContainsKey(tag))
                         {
                             result.Add(tag, row);
@@ -112,17 +112,17 @@ namespace LogixTool.Controls
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Dictionary<TagTask, List<DataGridViewRow>> TasksByRows
+        public Dictionary<LogixTask, List<DataGridViewRow>> TasksByRows
         {
             get
             {
-                Dictionary<TagTask, List<DataGridViewRow>> result = new Dictionary<TagTask, List<DataGridViewRow>>();
+                Dictionary<LogixTask, List<DataGridViewRow>> result = new Dictionary<LogixTask, List<DataGridViewRow>>();
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
                     object obj = row.Cells[this.ColumnDevice.Index].Value;
-                    if (!row.IsNewRow && obj != null && obj is TagTask)
+                    if (!row.IsNewRow && obj != null && obj is LogixTask)
                     {
-                        TagTask task = (TagTask)obj;
+                        LogixTask task = (LogixTask)obj;
                         if (!result.ContainsKey(task))
                         {
                             result.Add(task, new List<DataGridViewRow>());
@@ -142,24 +142,24 @@ namespace LogixTool.Controls
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Dictionary<TagTask, List<TagHandler>> TasksByTags
+        public Dictionary<LogixTask, List<LogixTagHandler>> TasksByTags
         {
             get
             {
-                Dictionary<TagTask, List<TagHandler>> result = new Dictionary<TagTask, List<TagHandler>>();
+                Dictionary<LogixTask, List<LogixTagHandler>> result = new Dictionary<LogixTask, List<LogixTagHandler>>();
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
                     object taskObj = row.Cells[this.ColumnDevice.Index].Value;
                     object tagObj = row.Cells[this.ColumnTag.Index].Value;
 
-                    if (taskObj != null && taskObj is TagTask && tagObj != null && tagObj is TagHandler)
+                    if (taskObj != null && taskObj is LogixTask && tagObj != null && tagObj is LogixTagHandler)
                     {
-                        TagTask task = (TagTask)taskObj;
-                        TagHandler tag = (TagHandler)tagObj;
+                        LogixTask task = (LogixTask)taskObj;
+                        LogixTagHandler tag = (LogixTagHandler)tagObj;
 
                         if (!result.ContainsKey(task))
                         {
-                            result.Add(task, new List<TagHandler>());
+                            result.Add(task, new List<LogixTagHandler>());
                         }
 
                         result[task].Add(tag);
@@ -227,9 +227,9 @@ namespace LogixTool.Controls
         /* ======================================================================================== */
         #endregion
 
-        TagTask currentEditedTask;                                  //
-        TagHandler currentEditedTag;                                //
-        System.Windows.Threading.DispatcherTimer dtimer;            //
+        LogixTask currentEditedTask;                        //
+        LogixTagHandler currentEditedTag;                   //
+        System.Windows.Threading.DispatcherTimer dtimer;    //
 
         /// <summary>
         /// 
@@ -313,7 +313,7 @@ namespace LogixTool.Controls
         /// <summary>
         /// Вызывает "Событие при изменении свойств тэгов".
         /// </summary>
-        private void Event_TagWasModified(TagHandler tag)
+        private void Event_TagWasModified(LogixTagHandler tag)
         {
             if (this.TagWasModified != null)
             {
@@ -324,7 +324,7 @@ namespace LogixTool.Controls
         /// <summary>
         /// Вызывает "Событие при удалении тэгов из коллекции".
         /// </summary>
-        private void Event_TagsWasRemoved(List<TagHandler> tags)
+        private void Event_TagsWasRemoved(List<LogixTagHandler> tags)
         {
             if (this.TagsWasRemoved != null)
             {
@@ -334,11 +334,11 @@ namespace LogixTool.Controls
         /// <summary>
         /// Вызывает "Событие при удалении тэгов из коллекции".
         /// </summary>
-        private void Event_TagsWasRemoved(TagHandler tag)
+        private void Event_TagsWasRemoved(LogixTagHandler tag)
         {
             if (this.TagsWasRemoved != null)
             {
-                List<TagHandler> tags = new List<TagHandler>();
+                List<LogixTagHandler> tags = new List<LogixTagHandler>();
                 tags.Add(tag);
                 this.TagsWasRemoved(this, new TagsEventArgs(tags));
             }
@@ -346,7 +346,7 @@ namespace LogixTool.Controls
         /// <summary>
         /// Вызывает "Событие при добавлении тэгов в коллекцию".
         /// </summary>
-        private void Event_TagsWasAdded(List<TagHandler> tags)
+        private void Event_TagsWasAdded(List<LogixTagHandler> tags)
         {
             if (this.TagsWasAdded != null)
             {
@@ -356,11 +356,11 @@ namespace LogixTool.Controls
         /// <summary>
         /// Вызывает "Событие при добавлении тэгов в коллекцию".
         /// </summary>
-        private void Event_TagsWasAdded(TagHandler tag)
+        private void Event_TagsWasAdded(LogixTagHandler tag)
         {
             if (this.TagsWasAdded != null)
             {
-                List<TagHandler> tags = new List<TagHandler>();
+                List<LogixTagHandler> tags = new List<LogixTagHandler>();
                 tags.Add(tag);
                 this.TagsWasAdded(this, new TagsEventArgs(tags));
             }
@@ -368,7 +368,7 @@ namespace LogixTool.Controls
         /// <summary>
         /// Вызывает "Событие при появлении значения тэгов для записи".
         /// </summary>
-        private void Event_TagsHasValuesForWrite(TagHandler tag)
+        private void Event_TagsHasValuesForWrite(LogixTagHandler tag)
         {
             if (this.TagHasValuesForWrite != null)
             {
@@ -431,9 +431,9 @@ namespace LogixTool.Controls
             {
                 DataGridViewRow row = dataGridView.Rows[e.RowIndex];
                 object value = (row.Cells[e.ColumnIndex] as DataGridViewComboBoxCell).Value;
-                if (value != null && value is TagTask)
+                if (value != null && value is LogixTask)
                 {
-                    this.currentEditedTask = (TagTask)value;
+                    this.currentEditedTask = (LogixTask)value;
                 }
                 else
                 {
@@ -445,9 +445,9 @@ namespace LogixTool.Controls
             {
                 DataGridViewRow row = dataGridView.Rows[e.RowIndex];
                 object value = row.Cells[e.ColumnIndex].Value;
-                if (value != null && value is TagHandler)
+                if (value != null && value is LogixTagHandler)
                 {
-                    this.currentEditedTag = (TagHandler)value;
+                    this.currentEditedTag = (LogixTagHandler)value;
                 }
                 else
                 {
@@ -477,21 +477,21 @@ namespace LogixTool.Controls
                 // Устанавливаем значение-объект устройства подвязанного к тэгу.
                 row.Cells[this.ColumnDevice.Index].SetComboBoxCellValue(value.ToString());
 
-                TagHandler tag = null;
-                TagTask oldDevice = currentEditedTask;
-                TagTask newDevice = null;
+                LogixTagHandler tag = null;
+                LogixTask oldDevice = currentEditedTask;
+                LogixTask newDevice = null;
 
                 // Из текущей строки получаем значение устройства тэга.
                 object deviceValue = row.Cells[this.ColumnDevice.Index].Value;
-                if (deviceValue != null && deviceValue is TagTask)
+                if (deviceValue != null && deviceValue is LogixTask)
                 {
-                    newDevice = (TagTask)deviceValue;
+                    newDevice = (LogixTask)deviceValue;
                 }
 
                 object tagValue = row.Cells[this.ColumnTag.Index].Value;
-                if (tagValue != null && tagValue is TagHandler)
+                if (tagValue != null && tagValue is LogixTagHandler)
                 {
-                    tag = (TagHandler)tagValue;
+                    tag = (LogixTagHandler)tagValue;
                 }
 
                 // Вызываем событие на начало редактирования устройства тэга.
@@ -534,7 +534,7 @@ namespace LogixTool.Controls
                 }
                 else
                 {
-                    TagHandler tag = new TagHandler(tagName);
+                    LogixTagHandler tag = new LogixTagHandler(tagName);
                     row.Cells[ColumnTag.Index].Value = tag;
 
                     // Вызываем событие.
@@ -552,11 +552,11 @@ namespace LogixTool.Controls
                     return;
                 }
 
-                TagHandler tag;
+                LogixTagHandler tag;
 
-                if (row.Cells[ColumnTag.Index].Value != null && row.Cells[ColumnTag.Index].Value is TagHandler)
+                if (row.Cells[ColumnTag.Index].Value != null && row.Cells[ColumnTag.Index].Value is LogixTagHandler)
                 {
-                    tag = (TagHandler)row.Cells[ColumnTag.Index].Value;
+                    tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
                 }
                 else
                 {
@@ -565,7 +565,7 @@ namespace LogixTool.Controls
 
                 string readRateValueText = row.Cells[ColumnReadRate.Index].Value.ToString();
 
-                if (readRateValueText == null || readRateValueText.Trim() == "" || !readRateValueText.Trim().IsDigits())
+                if (readRateValueText == null || readRateValueText.Trim() == "" || !readRateValueText.Trim().All(c=>Char.IsDigit(c)))
                 {
                     MessageBox.Show("Imposible to set Update Rate Value.\r\nInput value must be contains digits only.", MESSAGE_BOX_HEADER, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -595,10 +595,10 @@ namespace LogixTool.Controls
 
                 // Проверяем что в текущей строке в ячейке отвечающей за хранение объекта CLXTag имеется реализация данного объекта.
                 // Получаем объект CLXTag.
-                TagHandler tag;
-                if (row.Cells[ColumnTag.Index].Value != null && row.Cells[ColumnTag.Index].Value is TagHandler)
+                LogixTagHandler tag;
+                if (row.Cells[ColumnTag.Index].Value != null && row.Cells[ColumnTag.Index].Value is LogixTagHandler)
                 {
-                    tag = (TagHandler)row.Cells[ColumnTag.Index].Value;
+                    tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
                 }
                 else
                 {
@@ -612,7 +612,7 @@ namespace LogixTool.Controls
                     // Получаем текст значения ячейки.
                     // Проверяем что текст содержит в себе только сиволы - цифры.
                     string fragmentLengthValueText = valueObj.ToString();
-                    if (fragmentLengthValueText == null || fragmentLengthValueText.Trim() == "" || !fragmentLengthValueText.Trim().IsDigits())
+                    if (fragmentLengthValueText == null || fragmentLengthValueText.Trim() == "" || !fragmentLengthValueText.Trim().All(c => Char.IsDigit(c)))
                     {
                         MessageBox.Show("Imposible to set Fragment Length Value.\r\nInput value must be contains digits only.", MESSAGE_BOX_HEADER, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
@@ -641,12 +641,12 @@ namespace LogixTool.Controls
             {
                 #region [ 5. COLUMN TAG RADIX VALUE. ]
                 /*===========================================================================================*/
-                if (row.Cells[this.ColumnRadix.Index].Value == null || !(row.Cells[ColumnTag.Index].Value is TagHandler))
+                if (row.Cells[this.ColumnRadix.Index].Value == null || !(row.Cells[ColumnTag.Index].Value is LogixTagHandler))
                 {
                     return;
                 }
 
-                TagHandler tag = (TagHandler)row.Cells[ColumnTag.Index].Value;
+                LogixTagHandler tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
                 object obj = Enum.Parse(typeof(TagValueRadix), row.Cells[this.ColumnRadix.Index].Value.ToString(), true);
                 tag.Radix = (TagValueRadix)obj;
                 /*===========================================================================================*/
@@ -656,13 +656,13 @@ namespace LogixTool.Controls
             {
                 #region [ 6. COLUMN WRITE VALUE. ]
                 /*===========================================================================================*/
-                if (row.Cells[ColumnTag.Index].Value is TagHandler)
+                if (row.Cells[ColumnTag.Index].Value is LogixTagHandler)
                 {
                     #region [ CLX TAG ]
                     /*===========================================================================================*/
                     bool resultIsOk = false;
 
-                    TagHandler tag = (TagHandler)row.Cells[ColumnTag.Index].Value;
+                    LogixTagHandler tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
 
                     if (tag.Type == null || tag.Type.Code == 0)
                     {
@@ -707,12 +707,12 @@ namespace LogixTool.Controls
             {
                 #region [ 7. COLUMN TAG RADIX VALUE. ]
                 /*===========================================================================================*/
-                if (row.Cells[this.ColumnComMethod.Index].Value == null || !(row.Cells[ColumnTag.Index].Value is TagHandler))
+                if (row.Cells[this.ColumnComMethod.Index].Value == null || !(row.Cells[ColumnTag.Index].Value is LogixTagHandler))
                 {
                     return;
                 }
 
-                TagHandler tag = (TagHandler)row.Cells[ColumnTag.Index].Value;
+                LogixTagHandler tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
                 object obj = Enum.Parse(typeof(TagReadMethod), row.Cells[this.ColumnComMethod.Index].Value.ToString(), true);
                 tag.ReadMethod = (TagReadMethod)obj;
                 /*===========================================================================================*/
@@ -752,9 +752,9 @@ namespace LogixTool.Controls
             if (e.Row != null)
             {
                 object value = e.Row.Cells[this.ColumnTag.Index].Value;
-                if (value != null && value is TagHandler)
+                if (value != null && value is LogixTagHandler)
                 {
-                    Event_TagsWasRemoved((TagHandler)value);
+                    Event_TagsWasRemoved((LogixTagHandler)value);
                 }
             }
         }
@@ -807,14 +807,14 @@ namespace LogixTool.Controls
                 }
 
                 object tagObject = row.Cells[this.ColumnTag.Index].Value;
-                if (tagObject == null || !(tagObject is TagHandler))
+                if (tagObject == null || !(tagObject is LogixTagHandler))
                 {
                     return;
                 }
 
                 if (e.ColumnIndex == this.ColumnWriteButton.Index)
                 {
-                    TagHandler tag = (TagHandler)tagObject;
+                    LogixTagHandler tag = (LogixTagHandler)tagObject;
                     tag.WriteEnable = true;
                 }
             }
@@ -861,7 +861,7 @@ namespace LogixTool.Controls
 
             string text = textBox_CommonUpdateRate.Text.Trim();
 
-            if (text == "" || !text.IsDigits())
+            if (text == "" || !text.All(c => Char.IsDigit(c)))
             {
                 MessageBox.Show("Imposible to set Update Rate Value.\r\nInput value must be contains digits only.", MESSAGE_BOX_HEADER, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -876,9 +876,9 @@ namespace LogixTool.Controls
             foreach (DataGridViewRow row in dataGridView.Rows)
             {
                 object tagObject = row.Cells[this.ColumnTag.Index].Value;
-                if (tagObject != null && tagObject is TagHandler)
+                if (tagObject != null && tagObject is LogixTagHandler)
                 {
-                    ((TagHandler)tagObject).ReadUpdateRate = value;
+                    ((LogixTagHandler)tagObject).ReadUpdateRate = value;
                 }
             }
         }
@@ -895,9 +895,9 @@ namespace LogixTool.Controls
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
                     object tagObject = row.Cells[this.ColumnTag.Index].Value;
-                    if (tagObject != null && tagObject is TagHandler)
+                    if (tagObject != null && tagObject is LogixTagHandler)
                     {
-                        ((TagHandler)tagObject).Radix = result;
+                        ((LogixTagHandler)tagObject).Radix = result;
                     }
                 }
             }
@@ -964,7 +964,7 @@ namespace LogixTool.Controls
                     string tagName = ((string)value).Trim();
                     if (tagName != "")
                     {
-                        TagHandler tag = new TagHandler(tagName);
+                        LogixTagHandler tag = new LogixTagHandler(tagName);
                         row.Cells[this.ColumnTag.Index].Value = tag;
 
                         // Вызываем событие.
@@ -1067,7 +1067,7 @@ namespace LogixTool.Controls
         /// </summary>
         /// <param name="deviceName">Имя устройства.</param>
         /// <param name="tag">Новый тэг.</param>
-        public void Add(string deviceName, TagHandler tag)
+        public void Add(string deviceName, LogixTagHandler tag)
         {
             // Проверяем входные параметры.
             if (tag == null || deviceName == null || this.Mode != ViewMode.Edit)
@@ -1075,7 +1075,7 @@ namespace LogixTool.Controls
                 return;
             }
 
-            List<TagHandler> tags = new List<TagHandler>();
+            List<LogixTagHandler> tags = new List<LogixTagHandler>();
             tags.Add(tag);
             this.AddRange(deviceName, tags);
         }
@@ -1084,7 +1084,7 @@ namespace LogixTool.Controls
         /// </summary>
         /// <param name="deviceName">Имя устройства.</param>
         /// <param name="tags">Новые тэги.</param>
-        public void AddRange(string deviceName, IEnumerable<TagHandler> tags)
+        public void AddRange(string deviceName, IEnumerable<LogixTagHandler> tags)
         {
             // Проверяем входные параметры.
             if (tags == null || tags.Count() == 0 || this.Mode != ViewMode.Edit)
@@ -1093,10 +1093,10 @@ namespace LogixTool.Controls
             }
 
             bool tableIsEmpty = dataGridView.Rows.Count == 0;   // Указывает что таблица не имеет строк.
-            IEnumerable<TagHandler> validTags;                      // Список корректных тэгов для добавления.
+            IEnumerable<LogixTagHandler> validTags;                      // Список корректных тэгов для добавления.
 
             // Получаем все тэги распределенные по строками таблиц.
-            Dictionary<TagHandler, DataGridViewRow> currentRows = this.TagsByRows;
+            Dictionary<LogixTagHandler, DataGridViewRow> currentRows = this.TagsByRows;
 
             // Получаем все тэги которые разрешено добавить.
             validTags = tags.Where(t => t != null && t.Name != null && !currentRows.ContainsKey(t));
@@ -1118,15 +1118,15 @@ namespace LogixTool.Controls
             int lastIndex = dataGridView.Rows.AddCopies(0, tableIsEmpty ? validTags.Count() - 1 : validTags.Count());
 
             // Установка значения устройства.
-            TagTask task = null;
-            Dictionary<string, TagTask> tasks = this.TaskCollection.ToDictionary(k => k.Device.Name, v => v);
+            LogixTask task = null;
+            Dictionary<string, LogixTask> tasks = this.TaskCollection.ToDictionary(k => k.Device.Name, v => v);
             if (deviceName != null && tasks.ContainsKey(deviceName))
             {
                 task = tasks[deviceName];
             }
 
             // Вписываем значение тэга и устройства с последней строки вверх..
-            foreach (TagHandler tag in validTags.Reverse())
+            foreach (LogixTagHandler tag in validTags.Reverse())
             {
                 DataGridViewRow row = dataGridView.Rows[lastIndex];
 
@@ -1158,7 +1158,7 @@ namespace LogixTool.Controls
                 return;
             }
 
-            this.Add(deviceName, new TagHandler(tagName.Trim()));
+            this.Add(deviceName, new LogixTagHandler(tagName.Trim()));
         }
         /// <summary>
         /// Добавляет новые тэги в коллекцию.
@@ -1173,13 +1173,13 @@ namespace LogixTool.Controls
                 return;
             }
 
-            List<TagHandler> tags = new List<TagHandler>();
+            List<LogixTagHandler> tags = new List<LogixTagHandler>();
 
             foreach (string tagName in tagNames)
             {
                 if (tagName != null && tagName.Trim() != "")
                 {
-                    tags.Add(new TagHandler(tagName.Trim()));
+                    tags.Add(new LogixTagHandler(tagName.Trim()));
                 }
             }
 
@@ -1189,7 +1189,7 @@ namespace LogixTool.Controls
         /// Удаляет текущий тэг из колллекции.
         /// </summary>
         /// <param name="tag">Тэг для удаления.</param>
-        public void Remove(TagHandler tag)
+        public void Remove(LogixTagHandler tag)
         {
             if (tag == null || tag.Name == null || this.Mode != ViewMode.Edit)
             {
@@ -1197,7 +1197,7 @@ namespace LogixTool.Controls
             }
 
             // Получаем все тэги распределенные по строками таблиц.
-            Dictionary<TagHandler, DataGridViewRow> tagsByRow = this.TagsByRows;
+            Dictionary<LogixTagHandler, DataGridViewRow> tagsByRow = this.TagsByRows;
 
             if (tagsByRow.ContainsKey(tag))
             {
@@ -1205,7 +1205,7 @@ namespace LogixTool.Controls
                 dataGridView.Rows.Remove(tagsByRow[tag]);
 
                 // Вызываем событие.
-                List<TagHandler> removedTags = new List<TagHandler>();
+                List<LogixTagHandler> removedTags = new List<LogixTagHandler>();
                 removedTags.Add(tag);
                 Event_TagsWasRemoved(removedTags);
             }
@@ -1221,7 +1221,7 @@ namespace LogixTool.Controls
             }
 
             // Получаем все тэги распределенные по строками таблиц.
-            Dictionary<TagHandler, DataGridViewRow> tagsByRow = this.TagsByRows;
+            Dictionary<LogixTagHandler, DataGridViewRow> tagsByRow = this.TagsByRows;
 
             // Очищаем все строки.
             this.dataGridView.Rows.Clear();
@@ -1242,7 +1242,7 @@ namespace LogixTool.Controls
         /// </summary>
         public void GoOnline()
         {
-            foreach (TagTask task in this.TasksByTags.Keys)
+            foreach (LogixTask task in this.TasksByTags.Keys)
             {
                 task.Begin(this.TasksByTags[task]);
             }
@@ -1270,7 +1270,7 @@ namespace LogixTool.Controls
         /// </summary>
         public void GoOffline()
         {
-            foreach (TagTask task in this.TasksByTags.Keys)
+            foreach (LogixTask task in this.TasksByTags.Keys)
             {
                 task.Finish();
             }
@@ -1450,17 +1450,17 @@ namespace LogixTool.Controls
                     object deviceObj = row.Cells[this.ColumnDevice.Index].Value;
                     object tagObj = row.Cells[this.ColumnTag.Index].Value;
 
-                    TagHandler tag = null;
-                    TagTask task = null;
+                    LogixTagHandler tag = null;
+                    LogixTask task = null;
 
-                    if (tagObj != null && (tagObj is TagHandler))
+                    if (tagObj != null && (tagObj is LogixTagHandler))
                     {
-                        tag = (TagHandler)tagObj;
+                        tag = (LogixTagHandler)tagObj;
                     }
 
-                    if (deviceObj != null && (deviceObj is TagTask))
+                    if (deviceObj != null && (deviceObj is LogixTask))
                     {
-                        task = (TagTask)deviceObj;
+                        task = (LogixTask)deviceObj;
                     }
 
                     #region [ Column "Data Type" ]
@@ -1612,18 +1612,8 @@ namespace LogixTool.Controls
 
                     if (tag != null)
                     {
-                        if (tag.Type.ArrayDimension.HasValue)
-                        {
-                            valueText = "{...}";
-                        }
-                        else
-                        {
-                            valueText = tag.GetReadedValueText();
-                            if (valueText == null)
-                            {
-                                valueText = "";
-                            }
-                        }
+                        string text = tag.GetReadedValueText();
+                        if (text != null) valueText = text;
                     }
 
                     row.Cells[this.ColumnReadValue.Index].Value = valueText;

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "vJWSfaZKtpB/cW14FiIGGUE0vn++Dimrzr3mqpLKmWqx0oOIG4bJ1+IputqQv1JR44wqZp4yS0BfmdW8afwV6A==",
+  "success": true,
+  "projectFilePath": "E:\\repos\\LogixTool\\LogixTool\\EIP\\EIP.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mikeav\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\mikeav\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -65,15 +65,15 @@ namespace LogixTool
             this.radioButton_TimeStampAsDateTime.Checked = !this.CurrentRecorder.TickTimeFormat;
             this.radioButton_TimeStampAsTicks.Checked = this.CurrentRecorder.TickTimeFormat;
             // Добавляем в список полный список тэгов и отмечаем выбранные.
-            Dictionary<TagHandler, TagHandler> selectedTags = recorder.SelectedTags.ToDictionary(k => k, v => v);   
+            Dictionary<LogixTagHandler, LogixTagHandler> selectedTags = recorder.SelectedTags.ToDictionary(k => k, v => v);   
             this.checkedListBox_SelectionRecording.Items.Clear();
             for (int ix = 0; ix< recorder.RecordedTags.Count; ix++)
             {
-                TagHandler tag = recorder.RecordedTags[ix];
+                LogixTagHandler tag = recorder.RecordedTags[ix];
                 if (tag.OwnerTask != null)
                 {
                     string deviceName = tag.OwnerTask.ToString();
-                    this.checkedListBox_SelectionRecording.Items.Add(new CheckBoxItem<TagHandler>("[" + deviceName + "]" + tag.Name, tag));
+                    this.checkedListBox_SelectionRecording.Items.Add(new CheckBoxItem<LogixTagHandler>("[" + deviceName + "]" + tag.Name, tag));
                     if (selectedTags.ContainsKey(tag))
                     {
                         this.checkedListBox_SelectionRecording.SetItemChecked(this.checkedListBox_SelectionRecording.Items.Count - 1, true);
@@ -145,12 +145,12 @@ namespace LogixTool
             this.CurrentRecorder.TickTimeFormat = this.radioButton_TimeStampAsTicks.Checked;
 
             // Устанавливаем выделенные тэги.
-            List<TagHandler> selectedTags = new List<TagHandler> ();
+            List<LogixTagHandler> selectedTags = new List<LogixTagHandler> ();
             foreach (object obj in this.checkedListBox_SelectionRecording.CheckedItems)
             {
-                if (obj is CheckBoxItem<TagHandler>)
+                if (obj is CheckBoxItem<LogixTagHandler>)
                 {
-                    CheckBoxItem<TagHandler> checkBoxItem = (CheckBoxItem<TagHandler>)obj;
+                    CheckBoxItem<LogixTagHandler> checkBoxItem = (CheckBoxItem<LogixTagHandler>)obj;
                     selectedTags.Add(checkBoxItem.Value);
                 }
             }

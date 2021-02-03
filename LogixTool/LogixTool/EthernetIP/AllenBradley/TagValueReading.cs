@@ -10,8 +10,8 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// <summary>
         /// 
         /// </summary>
-        public TagValueReading()
-            : base()
+        public TagValueReading(TagDataTypeDefinition type)
+            : base(type)
         {
         }
     }

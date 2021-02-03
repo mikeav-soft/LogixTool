@@ -25,7 +25,7 @@ namespace LogixTool.Controls
         /// <summary>
         /// Автоматизированный процесс контроля и выполнения операций над устройством.
         /// </summary>
-        public TagTask Task { get; set; }
+        public LogixTask Task { get; set; }
         /* ======================================================================================== */
         #endregion
 
@@ -45,7 +45,7 @@ namespace LogixTool.Controls
 
             // Присваиваем устройство ассоциированное с данным узлом и создаем под него задачу.
             this.Device = device;
-            this.Task = new TagTask(device);
+            this.Task = new LogixTask(device);
 
             // Вызываем прорисовку анимации узла.
             this.Refresh();
@@ -129,7 +129,7 @@ namespace LogixTool.Controls
         /// Вызывает "Событие при изменении состояния задачи устройства".
         /// </summary>
         /// <param name="task"></param>
-        private void Event_TaskStateWasChanged(TagTask task)
+        private void Event_TaskStateWasChanged(LogixTask task)
         {
             if (this.TaskStateWasChanged != null)
             {

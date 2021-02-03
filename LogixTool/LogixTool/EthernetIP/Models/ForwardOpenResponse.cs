@@ -76,19 +76,19 @@ namespace LogixTool.EthernetIP
         /// Разбирает последовательность байт в объект со значениями из данной последовательности.
         /// В случае неверной структуры, длины или ошибок возвращает значение null.
         /// </summary>
-        /// <param name="responce">Ответ от удаленного сервера.</param>
-        public static ForwardOpenResponse Parse(MessageRouterResponse responce)
+        /// <param name="response">Ответ от удаленного сервера.</param>
+        public static ForwardOpenResponse Parse(MessageRouterResponse response)
         {
             ForwardOpenResponse forwardOpenResponse = new ForwardOpenResponse();
 
-            if (responce == null || responce.ResponseData == null)
+            if (response == null || response.ResponseData == null)
             {
                 return null;
             }
 
-            List<byte> bytes = responce.ResponseData;
+            List<byte> bytes = response.ResponseData;
 
-            if (responce.GeneralStatus == 0)
+            if (response.GeneralStatus == 0)
             {
                 if (bytes.Count >= 26)
                 {

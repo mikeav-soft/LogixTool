@@ -14,13 +14,13 @@ namespace LogixTool.EthernetIP.AllenBradley.Models.Events
         /// <summary>
         /// Текущий тэг.
         /// </summary>
-        public TagHandler Tag { get; private set; }
+        public LogixTagHandler Tag { get; private set; }
 
         /// <summary>
         /// Создает новый аргумент события.
         /// </summary>
         /// <param name="tag"></param>
-        public TagEventArgs(TagHandler tag)
+        public TagEventArgs(LogixTagHandler tag)
         {
             this.Tag = tag;
         }

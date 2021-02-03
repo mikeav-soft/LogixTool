@@ -15,21 +15,15 @@ namespace LogixTool.EthernetIP.AllenBradley
         /// </summary>
         public List<byte[]> RequestedData
         {
-            get
-            {
-                return this._RequestedData;
-            }
-            set
-            {
-                this._RequestedData = value;
-            }
+            get { return this._RequestedData; }
+            set { this._RequestedData = value; }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public TagValueWriting()
-            : base()
+        public TagValueWriting(TagDataTypeDefinition type)
+            : base(type)
         {
         }
 

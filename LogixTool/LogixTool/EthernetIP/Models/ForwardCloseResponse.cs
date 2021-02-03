@@ -51,16 +51,16 @@ namespace LogixTool.EthernetIP
         /// Разбирает последовательность байт в объект со значениями из данной последовательности.
         /// В случае неверной структуры, длины или ошибок возвращает значение null.
         /// </summary>
-        /// <param name="responce">Ответ от удаленного сервера.</param>
-        public static ForwardCloseResponse Parse(MessageRouterResponse responce)
+        /// <param name="response">Ответ от удаленного сервера.</param>
+        public static ForwardCloseResponse Parse(MessageRouterResponse response)
         {
             ForwardCloseResponse forwardCloseResponse = new ForwardCloseResponse();
-            if (responce == null || responce == null)
+            if (response == null || response == null)
             {
                 return null;
             }
 
-            List<byte> bytes = responce.ResponseData;
+            List<byte> bytes = response.ResponseData;
             forwardCloseResponse.IsSuccessful = false;
 
             if (bytes.Count >= 9)
@@ -70,7 +70,7 @@ namespace LogixTool.EthernetIP
                 forwardCloseResponse.OriginatorSerialNumber = (uint)(bytes[4] | bytes[5] << 8 | bytes[6] << 16 | bytes[7] << 24);
                 int applicationReplySize = bytes[8];
 
-                if (responce.GeneralStatus == 0)
+                if (response.GeneralStatus == 0)
                 {
                     for (int ix = 0; ix < applicationReplySize; ix++)
                     {

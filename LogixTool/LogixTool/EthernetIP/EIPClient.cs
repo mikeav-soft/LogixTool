@@ -681,7 +681,7 @@ namespace LogixTool.EthernetIP
                         #region [ MULTIPLY SERVICE REQUEST = 0x8A]
                         if (messageRouterResponse.ReplyServiceCode == 0x8A && messageRouterResponse.ResponseData.Count >= 2)
                         {
-                            List<MessageRouterResponse> multiplyMessageRouterResponces = new List<MessageRouterResponse>();
+                            List<MessageRouterResponse> multiplyMessageRouterResponses = new List<MessageRouterResponse>();
 
                             // Полечаем кол-во сервисов.
                             UInt16 responsesCount = (UInt16)(messageRouterResponse.ResponseData[0] | messageRouterResponse.ResponseData[1] << 8);
@@ -712,10 +712,10 @@ namespace LogixTool.EthernetIP
                                     }
 
                                     currBytes = messageRouterResponse.ResponseData.GetRange(offset, count);
-                                    multiplyMessageRouterResponces.Add(MessageRouterResponse.Parse(currBytes));
+                                    multiplyMessageRouterResponses.Add(MessageRouterResponse.Parse(currBytes));
                                 }
 
-                                obj.Add(multiplyMessageRouterResponces);
+                                obj.Add(multiplyMessageRouterResponses);
                             }
                         }
                         #endregion

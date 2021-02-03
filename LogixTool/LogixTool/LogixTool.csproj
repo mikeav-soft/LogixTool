@@ -79,7 +79,7 @@
     <Compile Include="Common\MessageControl.designer.cs">
       <DependentUpon>MessageControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="EthernetIP\AllenBradley\TagHandler.cs" />
+    <Compile Include="EthernetIP\AllenBradley\LogixTagHandler.cs" />
     <Compile Include="EthernetIP\AllenBradley\Models\ArrayDefinition.cs" />
     <Compile Include="EthernetIP\AllenBradley\TagValueReading.cs" />
     <Compile Include="EthernetIP\AllenBradley\Models\Events\TagsEventArgs.cs" />
@@ -117,7 +117,7 @@
     <Compile Include="EthernetIP\AllenBradley\Models\CLXTag.cs" />
     <Compile Include="EthernetIP\AllenBradley\Models\CLXSymbolTypeAttribute.cs" />
     <Compile Include="EthernetIP\AllenBradley\LogixTag.cs" />
-    <Compile Include="EthernetIP\AllenBradley\TagTask.cs" />
+    <Compile Include="EthernetIP\AllenBradley\LogixTask.cs" />
     <Compile Include="EthernetIP\AllenBradley\Models\CLXTemplate.cs" />
     <Compile Include="EthernetIP\AllenBradley\Models\CLXTemplateMember.cs" />
     <Compile Include="EthernetIP\AllenBradley\TagDataTypeDefinition.cs" />
@@ -164,7 +164,6 @@
     <Compile Include="LocalDatabase\OwnerAttribute.cs" />
     <Compile Include="LocalDatabase\StorageItemInfo.cs" />
     <Compile Include="Common\MessageEventArgs.cs" />
-    <Compile Include="Common\Tree.cs" />
     <Compile Include="Common\RadixConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

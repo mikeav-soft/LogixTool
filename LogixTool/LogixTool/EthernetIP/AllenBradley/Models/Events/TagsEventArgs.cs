@@ -10,13 +10,13 @@ namespace LogixTool.EthernetIP.AllenBradley.Models.Events
         /// <summary>
         /// 
         /// </summary>
-        public List<TagHandler> Tags { get; set; }
+        public List<LogixTagHandler> Tags { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="tags"></param>
-        public TagsEventArgs(List<TagHandler> tags)
+        public TagsEventArgs(List<LogixTagHandler> tags)
         {
             this.Tags = tags;
         }

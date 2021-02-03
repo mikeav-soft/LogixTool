@@ -38,7 +38,7 @@ namespace LogixTool.EthernetIP.AllenBradley
         AtomicBool,
         AtomicFloat,
         AtomicDecimal,
-        AtomicLong,
+        AtomicBoolArray,
         Structure
     }
     /// <summary>
