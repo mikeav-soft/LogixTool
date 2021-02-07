@@ -12,8 +12,8 @@ using System.Xml.Linq;
 using System.Timers;
 using LogixTool.Common;
 using LogixTool.Common.Extension;
-using LogixTool.EthernetIP.AllenBradley;
-using LogixTool.EthernetIP.AllenBradley.Models.Events;
+using EIP.AllenBradley;
+using EIP.AllenBradley.Models.Events;
 using LogixTool.LocalDatabase;
 
 namespace LogixTool.Controls
@@ -583,63 +583,9 @@ namespace LogixTool.Controls
                 /*===========================================================================================*/
                 #endregion
             }
-            else if (e.ColumnIndex == this.ColumnFragmentLength.Index)
-            {
-                #region [ 4. COLUMN TAG FRAGMENT LENGTH. ]
-                /*===========================================================================================*/
-                // Проверяем что содержимое ячейки не равно NULL.
-                if (row.Cells[this.ColumnFragmentLength.Index].Value == null)
-                {
-                    return;
-                }
-
-                // Проверяем что в текущей строке в ячейке отвечающей за хранение объекта CLXTag имеется реализация данного объекта.
-                // Получаем объект CLXTag.
-                LogixTagHandler tag;
-                if (row.Cells[ColumnTag.Index].Value != null && row.Cells[ColumnTag.Index].Value is LogixTagHandler)
-                {
-                    tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
-                }
-                else
-                {
-                    return;
-                }
-
-                object valueObj = row.Cells[ColumnFragmentLength.Index].Value;
-
-                if (valueObj != null)
-                {
-                    // Получаем текст значения ячейки.
-                    // Проверяем что текст содержит в себе только сиволы - цифры.
-                    string fragmentLengthValueText = valueObj.ToString();
-                    if (fragmentLengthValueText == null || fragmentLengthValueText.Trim() == "" || !fragmentLengthValueText.Trim().All(c => Char.IsDigit(c)))
-                    {
-                        MessageBox.Show("Imposible to set Fragment Length Value.\r\nInput value must be contains digits only.", MESSAGE_BOX_HEADER, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    // Преобразовываем текст в целочисленный тип.
-                    UInt16 value;
-                    if (UInt16.TryParse(fragmentLengthValueText, out value))
-                    {
-                        // Присваиваем длину фрагмента чтения.
-                        tag.Type.ArrayDimension.Value = value;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Imposible to set Fragment Length Value.\r\nInput value must be in range " + UInt16.MinValue.ToString() + "..." + UInt16.MaxValue.ToString() + ".", MESSAGE_BOX_HEADER, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                }
-                else
-                {
-                    tag.Type.ArrayDimension.Value = 0;
-                }
-                /*===========================================================================================*/
-                #endregion
-            }
             else if (e.ColumnIndex == this.ColumnRadix.Index)
             {
-                #region [ 5. COLUMN TAG RADIX VALUE. ]
+                #region [ 4. COLUMN TAG RADIX VALUE. ]
                 /*===========================================================================================*/
                 if (row.Cells[this.ColumnRadix.Index].Value == null || !(row.Cells[ColumnTag.Index].Value is LogixTagHandler))
                 {
@@ -654,7 +600,7 @@ namespace LogixTool.Controls
             }
             else if (e.ColumnIndex == this.ColumnWriteValue.Index)
             {
-                #region [ 6. COLUMN WRITE VALUE. ]
+                #region [ 5. COLUMN WRITE VALUE. ]
                 /*===========================================================================================*/
                 if (row.Cells[ColumnTag.Index].Value is LogixTagHandler)
                 {
@@ -705,7 +651,7 @@ namespace LogixTool.Controls
             }
             else if (e.ColumnIndex == this.ColumnComMethod.Index)
             {
-                #region [ 7. COLUMN TAG RADIX VALUE. ]
+                #region [ 6. COLUMN TAG RADIX VALUE. ]
                 /*===========================================================================================*/
                 if (row.Cells[this.ColumnComMethod.Index].Value == null || !(row.Cells[ColumnTag.Index].Value is LogixTagHandler))
                 {
@@ -1000,8 +946,7 @@ namespace LogixTool.Controls
             this.actualUpdateRateToolStripMenuItem.Checked = this.ColumnActualUpdateRate.Visible;
             this.actualServerReplyToolStripMenuItem.Checked = this.ColumnActualServerReply.Visible;
             this.dataTypeVisibleToolStripMenuItem.Checked = this.ColumnDataType.Visible;
-            this.fragmentLengthVisibleToolStripMenuItem.Checked = this.ColumnFragmentLength.Visible;
-            this.tableInstanceIDToolStripMenuItem.Checked = this.ColumnTableInstanceID.Visible; 
+            this.tableInstanceIDToolStripMenuItem.Checked = this.ColumnTableNumber.Visible; 
         }
         /// <summary>
         /// Подписка на событие : ContextMenuStrip : Нажатие на элемент меню.
@@ -1044,18 +989,9 @@ namespace LogixTool.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void fragmentLengthVisibleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.ColumnFragmentLength.Visible = !this.ColumnFragmentLength.Visible;
-        }
-        /// <summary>
-        /// Подписка на событие : ContextMenuStrip : Нажатие на элемент меню.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void tableInstanceIDToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.ColumnTableInstanceID.Visible = !this.ColumnTableInstanceID.Visible;
+            this.ColumnTableNumber.Visible = !this.ColumnTableNumber.Visible;
         }
         /* ======================================================================================== */
         #endregion
@@ -1368,7 +1304,6 @@ namespace LogixTool.Controls
 
             this.SetDataGridColumnReadOnlyProperty(this.ColumnDevice, this.Mode != ViewMode.Edit);
             this.SetDataGridColumnReadOnlyProperty(this.ColumnTag, this.Mode != ViewMode.Edit);
-            this.SetDataGridColumnReadOnlyProperty(this.ColumnFragmentLength, this.Mode != ViewMode.Edit);
             this.SetDataGridColumnReadOnlyProperty(this.ColumnDataType, true);
             this.SetDataGridColumnReadOnlyProperty(this.ColumnStatus, true);
             this.SetDataGridColumnReadOnlyProperty(this.ColumnReadRate, this.Mode == ViewMode.Lock);
@@ -1378,7 +1313,7 @@ namespace LogixTool.Controls
             this.SetDataGridColumnReadOnlyProperty(this.ColumnReadValue, true);
             this.SetDataGridColumnReadOnlyProperty(this.ColumnWriteValue, this.Mode == ViewMode.Lock);
             this.SetDataGridColumnReadOnlyProperty(this.ColumnComMethod, this.Mode != ViewMode.Edit);
-            this.SetDataGridColumnReadOnlyProperty(this.ColumnTableInstanceID, true);
+            this.SetDataGridColumnReadOnlyProperty(this.ColumnTableNumber, true);
 
             this.dataGridView.AllowUserToAddRows = (this.Mode == ViewMode.Edit);
             this.dataGridView.AllowUserToDeleteRows = (this.Mode == ViewMode.Edit);
@@ -1469,30 +1404,10 @@ namespace LogixTool.Controls
 
                     if (tag != null)
                     {
-                        dataTypeText = tag.Type.Name;
+                        dataTypeText = tag.Type.ToString();
                     }
 
                     row.Cells[this.ColumnDataType.Index].Value = dataTypeText;
-                    /* ======================================================================================== */
-                    #endregion
-
-                    #region [ Column "Fragment Length" ]
-                    /* ======================================================================================== */
-                    string fragmentLengthText = "...";
-
-                    if (tag != null)
-                    {
-                        if (tag.Type.ArrayDimension.HasValue)
-                        {
-                            fragmentLengthText = tag.Type.ArrayDimension.ToString();
-                        }
-                        else
-                        {
-                            fragmentLengthText = "";
-                        }
-                    }
-
-                    row.Cells[this.ColumnFragmentLength.Index].Value = fragmentLengthText;
                     /* ======================================================================================== */
                     #endregion
 
@@ -1713,7 +1628,7 @@ namespace LogixTool.Controls
                         }
                     }
 
-                    row.Cells[this.ColumnTableInstanceID.Index].Value = value;
+                    row.Cells[this.ColumnTableNumber.Index].Value = value;
                     /* ======================================================================================== */
                     #endregion
 
@@ -1724,7 +1639,5 @@ namespace LogixTool.Controls
         }
         /* ======================================================================================== */
         #endregion
-
-
     }
 }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.IO;
 using System.Threading;
-using LogixTool.EthernetIP.AllenBradley;
+using EIP.AllenBradley;
+using EIP.AllenBradley.Models.Events;
 using LogixTool.Common;
 using LogixTool.Common.Extension;
 

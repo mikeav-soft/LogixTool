@@ -334,7 +334,7 @@ namespace EIP.AllenBradley
         {
             while (runCyclicProcess)
             {
-                #region [ 1. ПРОЦЕСС ПОДКЛЮЧЕНИЯ К СЕРВЕРУ ]
+                #region [ 1. CONNECTION TO SERVER ]
                 /* ====================================================================================== */
                 // В начале главного процесса присваиваем состояние разрешения подключения 
                 // к удаленному устройству. Данная точка необходимо для того чтобы избежать отключения разрешения
@@ -361,13 +361,13 @@ namespace EIP.AllenBradley
                     switch (this.ServerState)
                     {
                         case ServerState.Off:
-                            if (!this.Device.IsConnected)
+                            if (this.Device.IsConnected)
                             {
-                                this.ServerState = ServerState.TcpConnection;
+                                this.Device.Disconnect();
                             }
                             else
                             {
-                                this.ServerState = ServerState.Register;
+                                this.ServerState = ServerState.TcpConnection;
                             }
                             break;
 
@@ -422,7 +422,7 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ 2. ПОДГОТОВКА СУЩЕСТВУЮЩИХ ТЭГОВ ]
+                #region [ 2. PREPARATION OF TAGS ]
                 /* ====================================================================================== */
                 if (this.processRunEnable && this.ServerState == ServerState.Init)
                 {
@@ -604,7 +604,7 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ 3. ПРОЦЕСС ЧТЕНИЯ И ЗАПИСИ ЗНАЧЕНИЙ ТЭГОВ ]
+                #region [ 3. READING/WRITING OF TAG VALUES ]
                 /* ====================================================================================== */
                 if (this.processRunEnable && this.ServerState == ServerState.Run)
                 {
@@ -677,6 +677,7 @@ namespace EIP.AllenBradley
                         int maxValidPacketSizeResponse = this.Device.MaxPacketSizeTtoO;
                         int encapsulatedHeader = 4;
 
+                        // Ищмем подходящую таблицу со свободным местом для размещения текущего тэга.
                         List<CLXCustomTagMemoryTable> validTables = this.tables.Where(t =>
                             encapsulatedHeader + headerPacketSize + t.ExpectedTotalSize + expectedResponsedTagSizeInTable < maxValidPacketSizeResponse).ToList();
 
@@ -762,7 +763,7 @@ namespace EIP.AllenBradley
 
                     IEnumerable<LogixTagHandler> atomicBitTags = currentTags.Where(f =>
                         f.Type.AtomicBitPosition != null
-                        && f.Type.Family == TagDataTypeFamily.AtomicDecimal
+                        && f.Type.Family == TagDataTypeFamily.AtomicInteger
                         && f.WriteValue.RequestedData != null
                         && f.WriteValue.RequestedData.Count > 0
                         && f.WriteValue.RequestedData[0].Length > 0);
@@ -890,7 +891,7 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ 4. ПРОЦЕСС ОТКЛЮЧЕНИЯ ОТ СЕРВЕРА. ]
+                #region [ 4. DISCONNESTION FROM SERVER. ]
                 /* ====================================================================================== */
                 // В случае закрытия разрешения подключения пытаемся поэтапно произвести действия с удаленным устройством
                 // при условии что сохранено подключение TCP/IP.
@@ -1090,7 +1091,6 @@ namespace EIP.AllenBradley
             string typeName = null;                 // Текущее название типа данных.
             string hiddenMemberName = null;         // Текущее имя скрытого члена структуры типа данных к которой относится бит (его место определения в данном члене).
             UInt16 typeCode = 0;                    // Текущий код типа данных.
-            UInt16 arrayLinearMaxLength = 0;        // Текущая линейная максимальная длина элементов массива в случае если данный тэг определен как массив.
             UInt16? atomicBitPosition = null;       // Текущий номер бита атомарного числа.
             UInt16? structureBitPosition = null;    // Текущее значение позиции бита структурного типа данных.
             UInt32 structureMemberByteOffset = 0;   // Текущее значение смещения члена структуры в байтах.
@@ -1104,7 +1104,8 @@ namespace EIP.AllenBradley
             UInt32? arrayIndex0 = null;             // Индекс массива размерности 0.
             UInt32? arrayIndex1 = null;             // Индекс массива размерности 1.
             UInt32? arrayIndex2 = null;             // Индекс массива размерности 2.
-            UInt32? arrayLinearIndex = null;        // Линейный индекс массива исходя из трех рамерностей.
+            ArrayDefinition arrayDefinition = new ArrayDefinition();
+
 
             if (logixTag == null)
             {
@@ -1149,7 +1150,6 @@ namespace EIP.AllenBradley
                 arrayIndex0 = null;
                 arrayIndex1 = null;
                 arrayIndex2 = null;
-                arrayLinearIndex = null;
 
                 #region [ ИЗВЛЕЧЕНИЕ ИНДЕКСОВ ЭЛЕМЕНТА МАССИВА ]
                 /* ====================================================================================== */
@@ -1243,8 +1243,9 @@ namespace EIP.AllenBradley
                     structureMemberByteOffset = 0;
                     bitArrayDWordBitPosition = null;
                     bitArrayDWordOffset = null;
-                    arrayLinearMaxLength = 0;
-                    arrayLinearIndex = null;
+                    arrayDefinition.ArrayDim0 = 0;
+                    arrayDefinition.ArrayDim1 = 0;
+                    arrayDefinition.ArrayDim2 = 0;
                     hiddenMemberName = null;
                 }
 
@@ -1301,25 +1302,26 @@ namespace EIP.AllenBradley
 
                     if (currentArrayIndexRank > 0)
                     {
-                        #region [ ЭЛЕМЕНТ МАССИВА ]
+                        #region [ ЧАСТНЫЙ СЛУЧАЙ : ТЕКУЩИЙ ТИП ДАННЫХ ЯВЛЯЕТСЯ БИТОВЫМ МАССИВОМ ]
                         /* ====================================================================================== */
                         if (isBitArray)
                         {
-                            #region [ ЧАСТНЫЙ СЛУЧАЙ : ТЕКУЩИЙ ТИП ДАННЫХ ЯВЛЯЕТСЯ БИТОВЫМ МАССИВОМ ]
-                            /* ====================================================================================== */
+                            UInt32 arrayLinearIndex = 0;
+
                             // На основании данных о размере массива и о индексе элемента производим преобразование
                             // в линейное значение индекса. Следим за тем чтобы не произошло переполнение UInt32.
+
                             try
                             {
                                 checked
                                 {
                                     // Создаем линейный индекс массива для текущего элемента.
                                     // Для индекса размерности 1.
-                                    if (currentArrayIndexRank >= 1) arrayLinearIndex = arrayIndex0;
+                                    if (currentArrayIndexRank >= 1) arrayLinearIndex = arrayIndex0.Value;
                                     // Для индекса размерности 2.
-                                    if (currentArrayIndexRank >= 2) arrayLinearIndex += arrayIndex1 * clxTag.ArrayDim0;
+                                    if (currentArrayIndexRank >= 2) arrayLinearIndex += arrayIndex1.Value * clxTag.ArrayDim0;
                                     // Для индекса размерности 3.
-                                    if (currentArrayIndexRank == 3) arrayLinearIndex += arrayIndex2 * clxTag.ArrayDim1 * clxTag.ArrayDim0;
+                                    if (currentArrayIndexRank == 3) arrayLinearIndex += arrayIndex2.Value * clxTag.ArrayDim1 * clxTag.ArrayDim0;
                                 }
                             }
                             catch
@@ -1330,34 +1332,6 @@ namespace EIP.AllenBradley
                             // Также вычисляем положение Байта и Бита для Битового массива.
                             bitArrayDWordOffset = (UInt16)(arrayLinearIndex / 32);
                             bitArrayDWordBitPosition = (UInt16)(arrayLinearIndex % 32);
-                            /* ====================================================================================== */
-                            #endregion
-                        }
-                        else
-                        {
-                            #region [ ВЫЧИСЛЕНИЕ ЛИНЕЙНОГО ИНДЕКСА МАССИВА ]
-                            /* ====================================================================================== */
-                            // На основании данных о размере массива и о индексе элемента производим преобразование
-                            // в линейное значение индекса. Следим за тем чтобы не произошло переполнение UInt32.
-                            try
-                            {
-                                checked
-                                {
-                                    // Создаем линейный индекс массива для текущего элемента.
-                                    // Для индекса размерности 1.
-                                    if (currentArrayIndexRank >= 1) arrayLinearIndex = arrayIndex0;
-                                    // Для индекса размерности 2.
-                                    if (currentArrayIndexRank >= 2) arrayLinearIndex += arrayIndex1 * clxTag.ArrayDim0;
-                                    // Для индекса размерности 3.
-                                    if (currentArrayIndexRank == 3) arrayLinearIndex += arrayIndex2 * clxTag.ArrayDim1 * clxTag.ArrayDim0;
-                                }
-                            }
-                            catch
-                            {
-                                return false;
-                            }
-                            /* ====================================================================================== */
-                            #endregion
                         }
                         /* ====================================================================================== */
                         #endregion
@@ -1368,9 +1342,9 @@ namespace EIP.AllenBradley
                         /* ====================================================================================== */
                         // Присваиваем текущей длине фрагмента значение размерности массива из полученного 
                         // найденного тэга.
-                        if (clxTag.ArrayRank >= 1) arrayLinearMaxLength = (UInt16)clxTag.ArrayDim0;
-                        if (clxTag.ArrayRank >= 2) arrayLinearMaxLength *= (UInt16)clxTag.ArrayDim1;
-                        if (clxTag.ArrayRank == 3) arrayLinearMaxLength *= (UInt16)clxTag.ArrayDim2;
+                        arrayDefinition.ArrayDim0 = clxTag.ArrayDim0;
+                        arrayDefinition.ArrayDim1 = clxTag.ArrayDim1;
+                        arrayDefinition.ArrayDim2 = clxTag.ArrayDim2;
                         /* ====================================================================================== */
                         #endregion
                     }
@@ -1405,8 +1379,6 @@ namespace EIP.AllenBradley
                     /* ====================================================================================== */
                     if (!isNumericPartName)
                     {
-                        // Обнуляем каждый раз текущий фрагмент для последующего члена структуры.
-                        arrayLinearMaxLength = 0;
                         // Обнуляем каждый раз текущее название элемента структуры - держателя для текущего элемента являющегося байтом (BOOL, 0xC1).
                         hiddenMemberName = null;
 
@@ -1461,30 +1433,17 @@ namespace EIP.AllenBradley
 
                         if (currentArrayIndexRank > 0)
                         {
-                            #region [ ЭЛЕМЕНТ МАССИВА ]
+                            #region [ ЧАСТНЫЙ СЛУЧАЙ : ТЕКУЩИЙ ТИП ДАННЫХ ЯВЛЯЕТСЯ БИТОВЫМ МАССИВОМ ]
                             /* ====================================================================================== */
                             if (isBitArray)
                             {
-                                #region [ ЧАСТНЫЙ СЛУЧАЙ : ТЕКУЩИЙ ТИП ДАННЫХ ЯВЛЯЕТСЯ БИТОВЫМ МАССИВОМ ]
-                                /* ====================================================================================== */
+                                UInt32 arrayLinearIndex = 0;
                                 // Для индекса размерности 1.
-                                if (currentArrayIndexRank >= 1) arrayLinearIndex = arrayIndex0;
+                                if (currentArrayIndexRank >= 1) arrayLinearIndex = arrayIndex0.Value;
 
                                 // Также вычисляем положение Байта и Бита для Битового массива.
                                 bitArrayDWordOffset = (UInt16)(arrayLinearIndex / 32);
                                 bitArrayDWordBitPosition = (UInt16)(arrayLinearIndex % 32);
-                                /* ====================================================================================== */
-                                #endregion
-                            }
-                            else
-                            {
-                                #region [ ВЫЧИСЛЕНИЕ ЛИНЕЙНОГО ИНДЕКСА МАССИВА ]
-                                /* ====================================================================================== */
-                                // Создаем линейный индекс массива для текущего элемента. У элемента структуры типа данных
-                                // только одна размерность.
-                                arrayLinearIndex = arrayIndex0;
-                                /* ====================================================================================== */
-                                #endregion
                             }
                             /* ====================================================================================== */
                             #endregion
@@ -1497,7 +1456,9 @@ namespace EIP.AllenBradley
                             {
                                 // Присваиваем текущей длине фрагмента значение размерности массива из полученного 
                                 // члена найденной структуры.
-                                arrayLinearMaxLength = (ushort)currentTemplateMember.ArrayDimension;
+                                arrayDefinition.ArrayDim0 = currentTemplateMember.ArrayDimension.Value;
+                                arrayDefinition.ArrayDim1 = 0;
+                                arrayDefinition.ArrayDim2 = 0;
                             }
                             /* ====================================================================================== */
                             #endregion
@@ -1599,9 +1560,9 @@ namespace EIP.AllenBradley
                         logixTag.Type.StructureByteOffset = structureMemberByteOffset;
                         logixTag.Type.BitArrayDWordBitPosition = bitArrayDWordBitPosition;
                         logixTag.Type.BitArrayDWordOffset = bitArrayDWordOffset;
-                        logixTag.Type.ArrayDimension.Max = arrayLinearMaxLength;
-                        logixTag.Type.ArrayDimension.Value = arrayLinearMaxLength;
-                        logixTag.Type.ArrayIndex = arrayLinearIndex;
+                        logixTag.Type.ArrayDimension = arrayDefinition;
+                        logixTag.Type.ArrayDimension.Value = (ushort)logixTag.Type.ArrayDimension.Length;
+                        logixTag.Type.ArrayIndex = logixTag.Type.ArrayDimension.Length;
                         logixTag.Type.HiddenMemberName = hiddenMemberName;
 
                         return true;

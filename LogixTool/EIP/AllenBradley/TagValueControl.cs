@@ -291,7 +291,7 @@ namespace EIP.AllenBradley
                     }
                     break;
 
-                case TagDataTypeFamily.AtomicDecimal:
+                case TagDataTypeFamily.AtomicInteger:
                     {
                         #region [ POST EXTRACTION OF ATOMIC NUMERIC BITS ]
                         /* ======================================================================================== */

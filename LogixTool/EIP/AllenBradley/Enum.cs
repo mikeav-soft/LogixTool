@@ -37,7 +37,7 @@ namespace EIP.AllenBradley
         Null,
         AtomicBool,
         AtomicFloat,
-        AtomicDecimal,
+        AtomicInteger,
         AtomicBoolArray,
         Structure
     }

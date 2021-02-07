@@ -129,7 +129,7 @@ namespace EIP.AllenBradley
         /// <returns></returns>
         public string GetReadedValueText()
         {
-            return this.GetValueText(this.ReadValue.Report.Data, " ");
+            return this.GetValueText(this.ReadValue.Report.Data, "; ");
         }
         /// <summary>
         /// Возвращает текущее заданное значение тэга для записи в строковом формате соответствующее текущему значению свойства Radix
@@ -138,7 +138,7 @@ namespace EIP.AllenBradley
         /// <returns></returns>
         public string GetWritedValueText()
         {
-            return this.GetValueText(this.WriteValue.RequestedData, " ");
+            return this.GetValueText(this.WriteValue.RequestedData, "; ");
         }
         /// <summary>
         /// Устанавливает текущее заданное значение тэга для записи из строкового формата соответствующее текущему значению свойства Radix
@@ -227,7 +227,7 @@ namespace EIP.AllenBradley
                     }
                     break;
 
-                case TagDataTypeFamily.AtomicDecimal:
+                case TagDataTypeFamily.AtomicInteger:
                     switch (this.Radix)
                     {
                         case TagValueRadix.Decimal:

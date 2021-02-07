@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Timers;
 using System.Xml.Linq;
+using EIP.AllenBradley.Models.Events;
 
 namespace LogixTool.Common
 {

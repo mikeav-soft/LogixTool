@@ -10,10 +10,8 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Windows.Threading;
 using LogixTool.LocalDatabase;
-using LogixTool.EthernetIP;
-using LogixTool.Controls;
-using LogixTool.EthernetIP.AllenBradley;
-using LogixTool.EthernetIP.AllenBradley.Models.Events;
+using EIP.AllenBradley;
+using EIP.AllenBradley.Models.Events;
 using LogixTool.Common;
 
 namespace LogixTool

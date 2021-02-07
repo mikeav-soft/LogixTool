@@ -29,7 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -39,9 +41,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.contextMenuStrip_Cells = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem_Copy = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Paste = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,7 +50,7 @@
             this.actualUpdateRateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actualServerReplyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataTypeVisibleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fragmentLengthVisibleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableInstanceIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox_CommonUpdateRate = new System.Windows.Forms.TextBox();
             this.splitContainer_Grid = new System.Windows.Forms.SplitContainer();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -59,10 +58,11 @@
             this.button_MoveRowsDown = new System.Windows.Forms.Button();
             this.comboBox_CommonRadix = new System.Windows.Forms.ComboBox();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewDisableButtonColumn1 = new LogixTool.Controls.DataGridViewDisableButtonColumn();
+            this.dataGridViewButtonColumn1 = new System.Windows.Forms.DataGridViewButtonColumn();
             this.ColumnDevice = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.ColumnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnFragmentLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnReadRate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnActualUpdateRate = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -72,10 +72,7 @@
             this.ColumnWriteButton = new LogixTool.Controls.DataGridViewDisableButtonColumn();
             this.ColumnWriteValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnComMethod = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.ColumnTableInstanceID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewDisableButtonColumn1 = new LogixTool.Controls.DataGridViewDisableButtonColumn();
-            this.dataGridViewButtonColumn1 = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.tableInstanceIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ColumnTableNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip_Cells.SuspendLayout();
             this.contextMenuStrip_ColumnHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer_Grid)).BeginInit();
@@ -124,46 +121,45 @@
             this.actualUpdateRateToolStripMenuItem,
             this.actualServerReplyToolStripMenuItem,
             this.dataTypeVisibleToolStripMenuItem,
-            this.fragmentLengthVisibleToolStripMenuItem,
             this.tableInstanceIDToolStripMenuItem});
             this.contextMenuStrip_ColumnHeader.Name = "contextMenuStrip";
-            this.contextMenuStrip_ColumnHeader.Size = new System.Drawing.Size(189, 158);
+            this.contextMenuStrip_ColumnHeader.Size = new System.Drawing.Size(189, 136);
             this.contextMenuStrip_ColumnHeader.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_ColumnHeader_Opening);
             // 
-            // toolStripMenuItem_RequiredUpdateRate
+            // requiredUpdateRateToolStripMenuItem
             // 
-            this.requiredUpdateRateToolStripMenuItem.Name = "toolStripMenuItem_RequiredUpdateRate";
+            this.requiredUpdateRateToolStripMenuItem.Name = "requiredUpdateRateToolStripMenuItem";
             this.requiredUpdateRateToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.requiredUpdateRateToolStripMenuItem.Text = "Required Update Rate";
             this.requiredUpdateRateToolStripMenuItem.Click += new System.EventHandler(this.requiredUpdateRateToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem_ActualUpdateRate
+            // actualUpdateRateToolStripMenuItem
             // 
-            this.actualUpdateRateToolStripMenuItem.Name = "toolStripMenuItem_ActualUpdateRate";
+            this.actualUpdateRateToolStripMenuItem.Name = "actualUpdateRateToolStripMenuItem";
             this.actualUpdateRateToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.actualUpdateRateToolStripMenuItem.Text = "Actual Update Rate";
             this.actualUpdateRateToolStripMenuItem.Click += new System.EventHandler(this.actualUpdateRateToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem_ActualServerReply
+            // actualServerReplyToolStripMenuItem
             // 
-            this.actualServerReplyToolStripMenuItem.Name = "toolStripMenuItem_ActualServerReply";
+            this.actualServerReplyToolStripMenuItem.Name = "actualServerReplyToolStripMenuItem";
             this.actualServerReplyToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.actualServerReplyToolStripMenuItem.Text = "Actual Server Reply";
             this.actualServerReplyToolStripMenuItem.Click += new System.EventHandler(this.actualServerReplyToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem_DataTypeVisible
+            // dataTypeVisibleToolStripMenuItem
             // 
-            this.dataTypeVisibleToolStripMenuItem.Name = "toolStripMenuItem_DataTypeVisible";
+            this.dataTypeVisibleToolStripMenuItem.Name = "dataTypeVisibleToolStripMenuItem";
             this.dataTypeVisibleToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.dataTypeVisibleToolStripMenuItem.Text = "Data Type";
             this.dataTypeVisibleToolStripMenuItem.Click += new System.EventHandler(this.dataTypeVisibleToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem_FragmentLengthVisible
+            // tableInstanceIDToolStripMenuItem
             // 
-            this.fragmentLengthVisibleToolStripMenuItem.Name = "toolStripMenuItem_FragmentLengthVisible";
-            this.fragmentLengthVisibleToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.fragmentLengthVisibleToolStripMenuItem.Text = "Fragment Length";
-            this.fragmentLengthVisibleToolStripMenuItem.Click += new System.EventHandler(this.fragmentLengthVisibleToolStripMenuItem_Click);
+            this.tableInstanceIDToolStripMenuItem.Name = "tableInstanceIDToolStripMenuItem";
+            this.tableInstanceIDToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.tableInstanceIDToolStripMenuItem.Text = "Table Instance/ID";
+            this.tableInstanceIDToolStripMenuItem.Click += new System.EventHandler(this.tableInstanceIDToolStripMenuItem_Click);
             // 
             // textBox_CommonUpdateRate
             // 
@@ -249,7 +245,6 @@
             this.ColumnDevice,
             this.ColumnTag,
             this.ColumnDataType,
-            this.ColumnFragmentLength,
             this.ColumnStatus,
             this.ColumnReadRate,
             this.ColumnActualUpdateRate,
@@ -259,15 +254,15 @@
             this.ColumnWriteButton,
             this.ColumnWriteValue,
             this.ColumnComMethod,
-            this.ColumnTableInstanceID});
+            this.ColumnTableNumber});
             this.dataGridView.ContextMenuStrip = this.contextMenuStrip_Cells;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView.GridColor = System.Drawing.Color.LightGray;
             this.dataGridView.Location = new System.Drawing.Point(0, 0);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidth = 30;
-            dataGridViewCellStyle25.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.dataGridView.RowsDefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle23.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.dataGridView.RowsDefaultCellStyle = dataGridViewCellStyle23;
             this.dataGridView.Size = new System.Drawing.Size(984, 204);
             this.dataGridView.TabIndex = 1;
             this.dataGridView.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView_CellBeginEdit);
@@ -279,6 +274,23 @@
             this.dataGridView.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dataGridView_Scroll);
             this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserAddedRow);
             this.dataGridView.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            // 
+            // dataGridViewDisableButtonColumn1
+            // 
+            this.dataGridViewDisableButtonColumn1.HeaderText = "";
+            this.dataGridViewDisableButtonColumn1.Name = "dataGridViewDisableButtonColumn1";
+            this.dataGridViewDisableButtonColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewDisableButtonColumn1.Width = 25;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.dataGridViewButtonColumn1.DefaultCellStyle = dataGridViewCellStyle11;
+            this.dataGridViewButtonColumn1.HeaderText = "*";
+            this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            this.dataGridViewButtonColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewButtonColumn1.Width = 25;
             // 
             // ColumnDevice
             // 
@@ -296,27 +308,18 @@
             // 
             // ColumnDataType
             // 
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle14.BackColor = System.Drawing.Color.Gainsboro;
-            this.ColumnDataType.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle13.BackColor = System.Drawing.Color.Gainsboro;
+            this.ColumnDataType.DefaultCellStyle = dataGridViewCellStyle13;
             this.ColumnDataType.HeaderText = "Data Type";
             this.ColumnDataType.Name = "ColumnDataType";
             this.ColumnDataType.ReadOnly = true;
             // 
-            // ColumnFragmentLength
-            // 
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.ColumnFragmentLength.DefaultCellStyle = dataGridViewCellStyle15;
-            this.ColumnFragmentLength.HeaderText = "Fragment Length";
-            this.ColumnFragmentLength.Name = "ColumnFragmentLength";
-            this.ColumnFragmentLength.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.ColumnFragmentLength.Width = 60;
-            // 
             // ColumnStatus
             // 
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle16.BackColor = System.Drawing.Color.Gainsboro;
-            this.ColumnStatus.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle14.BackColor = System.Drawing.Color.Gainsboro;
+            this.ColumnStatus.DefaultCellStyle = dataGridViewCellStyle14;
             this.ColumnStatus.HeaderText = "Status";
             this.ColumnStatus.Name = "ColumnStatus";
             this.ColumnStatus.ReadOnly = true;
@@ -325,8 +328,8 @@
             // 
             // ColumnReadRate
             // 
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.ColumnReadRate.DefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.ColumnReadRate.DefaultCellStyle = dataGridViewCellStyle15;
             this.ColumnReadRate.HeaderText = "Req. Update Rate (ms)";
             this.ColumnReadRate.Name = "ColumnReadRate";
             this.ColumnReadRate.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -334,9 +337,9 @@
             // 
             // ColumnActualUpdateRate
             // 
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle18.BackColor = System.Drawing.Color.Gainsboro;
-            this.ColumnActualUpdateRate.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle16.BackColor = System.Drawing.Color.Gainsboro;
+            this.ColumnActualUpdateRate.DefaultCellStyle = dataGridViewCellStyle16;
             this.ColumnActualUpdateRate.HeaderText = "Actual Update Rate (ms)";
             this.ColumnActualUpdateRate.Name = "ColumnActualUpdateRate";
             this.ColumnActualUpdateRate.ReadOnly = true;
@@ -344,9 +347,9 @@
             // 
             // ColumnActualServerReply
             // 
-            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle19.BackColor = System.Drawing.Color.Gainsboro;
-            this.ColumnActualServerReply.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle17.BackColor = System.Drawing.Color.Gainsboro;
+            this.ColumnActualServerReply.DefaultCellStyle = dataGridViewCellStyle17;
             this.ColumnActualServerReply.HeaderText = "Actual Server Reply (ms)";
             this.ColumnActualServerReply.Name = "ColumnActualServerReply";
             this.ColumnActualServerReply.ReadOnly = true;
@@ -354,17 +357,17 @@
             // 
             // ColumnRadix
             // 
-            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.ColumnRadix.DefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.ColumnRadix.DefaultCellStyle = dataGridViewCellStyle18;
             this.ColumnRadix.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.ColumnRadix.HeaderText = "Radix";
             this.ColumnRadix.Name = "ColumnRadix";
             // 
             // ColumnReadValue
             // 
-            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle21.BackColor = System.Drawing.Color.Gainsboro;
-            this.ColumnReadValue.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle19.BackColor = System.Drawing.Color.Gainsboro;
+            this.ColumnReadValue.DefaultCellStyle = dataGridViewCellStyle19;
             this.ColumnReadValue.HeaderText = "Read Value";
             this.ColumnReadValue.Name = "ColumnReadValue";
             this.ColumnReadValue.ReadOnly = true;
@@ -379,16 +382,16 @@
             // 
             // ColumnWriteValue
             // 
-            dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.ColumnWriteValue.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.ColumnWriteValue.DefaultCellStyle = dataGridViewCellStyle20;
             this.ColumnWriteValue.HeaderText = "Write Value";
             this.ColumnWriteValue.Name = "ColumnWriteValue";
             this.ColumnWriteValue.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // ColumnComMethod
             // 
-            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.ColumnComMethod.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.ColumnComMethod.DefaultCellStyle = dataGridViewCellStyle21;
             this.ColumnComMethod.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.ColumnComMethod.HeaderText = "Method";
             this.ColumnComMethod.Name = "ColumnComMethod";
@@ -396,35 +399,11 @@
             // 
             // ColumnTableNumber
             // 
-            dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.ColumnTableInstanceID.DefaultCellStyle = dataGridViewCellStyle24;
-            this.ColumnTableInstanceID.HeaderText = "Table Number";
-            this.ColumnTableInstanceID.Name = "ColumnTableNumber";
-            this.ColumnTableInstanceID.ReadOnly = true;
-            // 
-            // dataGridViewDisableButtonColumn1
-            // 
-            this.dataGridViewDisableButtonColumn1.HeaderText = "";
-            this.dataGridViewDisableButtonColumn1.Name = "dataGridViewDisableButtonColumn1";
-            this.dataGridViewDisableButtonColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewDisableButtonColumn1.Width = 25;
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.dataGridViewButtonColumn1.DefaultCellStyle = dataGridViewCellStyle12;
-            this.dataGridViewButtonColumn1.HeaderText = "*";
-            this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-            this.dataGridViewButtonColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewButtonColumn1.Width = 25;
-            // 
-            // tableInstanceIDToolStripMenuItem
-            // 
-            this.tableInstanceIDToolStripMenuItem.Name = "tableInstanceIDToolStripMenuItem";
-            this.tableInstanceIDToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.tableInstanceIDToolStripMenuItem.Text = "Table Instance/ID";
-            this.tableInstanceIDToolStripMenuItem.Click += new System.EventHandler(this.tableInstanceIDToolStripMenuItem_Click);
+            dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.ColumnTableNumber.DefaultCellStyle = dataGridViewCellStyle22;
+            this.ColumnTableNumber.HeaderText = "Table Number";
+            this.ColumnTableNumber.Name = "ColumnTableNumber";
+            this.ColumnTableNumber.ReadOnly = true;
             // 
             // TagBrowserControl
             // 
@@ -463,14 +442,13 @@
         private System.Windows.Forms.Button button_MoveRowsDown;
         private System.Windows.Forms.Button button_MoveRowsUp;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ToolStripMenuItem fragmentLengthVisibleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Delete;
         private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn1;
         private DataGridViewDisableButtonColumn dataGridViewDisableButtonColumn1;
+        private System.Windows.Forms.ToolStripMenuItem tableInstanceIDToolStripMenuItem;
         private System.Windows.Forms.DataGridViewComboBoxColumn ColumnDevice;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTag;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnDataType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFragmentLength;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnStatus;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnReadRate;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnActualUpdateRate;
@@ -480,7 +458,6 @@
         private DataGridViewDisableButtonColumn ColumnWriteButton;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnWriteValue;
         private System.Windows.Forms.DataGridViewComboBoxColumn ColumnComMethod;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTableInstanceID;
-        private System.Windows.Forms.ToolStripMenuItem tableInstanceIDToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTableNumber;
     }
 }

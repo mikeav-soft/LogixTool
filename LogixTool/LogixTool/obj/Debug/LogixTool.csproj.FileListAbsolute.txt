@@ -28,3 +28,6 @@ E:\repos\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResour
 E:\repos\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CoreCompileInputs.cache
 E:\repos\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.exe
 E:\repos\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
+E:\repos\LogixTool\LogixTool\LogixTool\bin\Debug\EIP.dll
+E:\repos\LogixTool\LogixTool\LogixTool\bin\Debug\EIP.pdb
+E:\repos\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CopyComplete

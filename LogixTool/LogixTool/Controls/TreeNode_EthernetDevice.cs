@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using LogixTool.EthernetIP;
-using LogixTool.EthernetIP.AllenBradley;
-using LogixTool.EthernetIP.AllenBradley.Models.Events;
+using EIP.AllenBradley;
+using EIP.AllenBradley.Models.Events;
 using LogixTool.Common;
 
 

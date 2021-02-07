@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="settings" ID="recorder" Saved="637479909292928279">
+<storage Owner="app.registrator" Type="settings" ID="recorder" Saved="637483155672456528">
   <data>
     <Settings FileLocation="E:\" FilePrefix="bit_test" SeparationFileSize="1" SeparationPeriod="Day" RecordingType="All" RecordingPeriodValue="1" RecordingPeriodUnit="Sec" TickTimeFormat="false" />
   </data>

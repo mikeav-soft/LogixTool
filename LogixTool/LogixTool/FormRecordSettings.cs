@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LogixTool.EthernetIP.AllenBradley;
+using EIP.AllenBradley;
 using LogixTool.Common;
 
 namespace LogixTool
@@ -218,6 +218,5 @@ namespace LogixTool
             this.comboBox_PeriodRecordingUnit.Enabled = radioButton_PeriodRecording.Checked;
             this.checkedListBox_SelectionRecording.Enabled = radioButton_SelectionRecording.Checked;
         }
-
     }
 }

@@ -57,12 +57,6 @@
     <Compile Include="Common\Extension\Strings.cs" />
     <Compile Include="Common\Extension\TextFragment.cs" />
     <Compile Include="Common\Extension\XLinqExtensions.cs" />
-    <Compile Include="EthernetIP\Models\MessageRouterRequest.cs" />
-    <Compile Include="EthernetIP\Models\MessageRouterResponse.cs" />
-    <Compile Include="EthernetIP\Models\ForwardOpenRequest.cs" />
-    <Compile Include="EthernetIP\Models\ForwardOpenResponse.cs" />
-    <Compile Include="EthernetIP\Models\ForwardCloseResponse.cs" />
-    <Compile Include="EthernetIP\Models\ForwardCloseRequest.cs" />
     <Compile Include="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -79,12 +73,6 @@
     <Compile Include="Common\MessageControl.designer.cs">
       <DependentUpon>MessageControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="EthernetIP\AllenBradley\LogixTagHandler.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\ArrayDefinition.cs" />
-    <Compile Include="EthernetIP\AllenBradley\TagValueReading.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagsEventArgs.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagsEventHandler.cs" />
-    <Compile Include="EthernetIP\AllenBradley\TagValueControl.cs" />
     <Compile Include="Controls\DataGridViewDisableButtonCell.cs" />
     <Compile Include="Controls\DataGridViewDisableButtonColumn.cs" />
     <Compile Include="Controls\TreeNode_EthernetDevice.cs" />
@@ -109,33 +97,6 @@
     <Compile Include="Common\DataGridViewExtensions.cs" />
     <Compile Include="Common\DateTimeExtensions.cs" />
     <Compile Include="Common\FormsExtensions.cs" />
-    <Compile Include="Common\MessageEvent.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\CLXCustomTagMemoryItem.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\CLXCustomTagMemoryTable.cs" />
-    <Compile Include="EthernetIP\AllenBradley\LogixDevice.cs" />
-    <Compile Include="EthernetIP\AllenBradley\LogixRadixConvertor.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\CLXTag.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\CLXSymbolTypeAttribute.cs" />
-    <Compile Include="EthernetIP\AllenBradley\LogixTag.cs" />
-    <Compile Include="EthernetIP\AllenBradley\LogixTask.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\CLXTemplate.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\CLXTemplateMember.cs" />
-    <Compile Include="EthernetIP\AllenBradley\TagDataTypeDefinition.cs" />
-    <Compile Include="EthernetIP\AllenBradley\TagValueReport.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TaskEventArgs.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TaskEventHandler.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\DeviceEventHandler.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Enum.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\DeviceEventArgs.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskEndEditEventArgs.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskBeginEditEventArgs.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskeEndEditEventHandler.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagTaskBeginEditEventHandler.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagEventArgs.cs" />
-    <Compile Include="EthernetIP\AllenBradley\Models\Events\TagEventHandler.cs" />
-    <Compile Include="EthernetIP\AllenBradley\TagValueWriting.cs" />
-    <Compile Include="EthernetIP\EIPClient.cs" />
-    <Compile Include="EthernetIP\Enumerations.cs" />
     <Compile Include="Controls\DeviceBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -148,23 +109,11 @@
     <Compile Include="Controls\TagBrowserControl.Designer.cs">
       <DependentUpon>TagBrowserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="EthernetIP\Models\CommonPacketFormat.cs" />
-    <Compile Include="EthernetIP\Models\CommonPacketItem.cs" />
-    <Compile Include="EthernetIP\Models\EncapsulatedPacket.cs" />
-    <Compile Include="EthernetIP\Models\EPath.cs" />
-    <Compile Include="EthernetIP\Models\EPathSegment.cs" />
-    <Compile Include="EthernetIP\Models\ListIdentityResponse.cs" />
-    <Compile Include="EthernetIP\Models\NetworkConnectionParameter.cs" />
-    <Compile Include="EthernetIP\Models\SocketAddressInfo.cs" />
-    <Compile Include="EthernetIP\Models\TransportTypeAndTrigger.cs" />
-    <Compile Include="EthernetIP\Models\UnconnectedSendRequest.cs" />
     <Compile Include="LocalDatabase\Enumerations.cs" />
     <Compile Include="LocalDatabase\TypeAttribute.cs" />
     <Compile Include="LocalDatabase\LocalDataBase.cs" />
     <Compile Include="LocalDatabase\OwnerAttribute.cs" />
     <Compile Include="LocalDatabase\StorageItemInfo.cs" />
-    <Compile Include="Common\MessageEventArgs.cs" />
-    <Compile Include="Common\RadixConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormAbout.resx">
@@ -190,9 +139,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="EthernetIP\_doc\1756-pm020_-en-p.pdf" />
-    <None Include="EthernetIP\_doc\EIP-CIP-V1-1.0.pdf" />
-    <None Include="EthernetIP\_doc\EIP-CIP-V2-1.0.pdf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -211,7 +157,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\EIP\EIP.csproj">
+      <Project>{942edf61-64ba-4a60-91ef-3e8c691bd7c9}</Project>
+      <Name>EIP</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ico_plus.png" />
   </ItemGroup>
@@ -220,7 +171,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configuration.ico" />
-    <Content Include="EthernetIP\Notes.txt" />
     <Content Include="Icons\Configuration.ico" />
     <Content Include="Resources\ico_logix_module_add.png" />
     <Content Include="Resources\ico_logix_module_init.png" />

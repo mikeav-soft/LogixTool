@@ -29,32 +29,18 @@ namespace EIP.AllenBradley
                 }
                 else
                 {
-                    string result = "";
-
                     switch (this.Code)
                     {
-                        case 0x00: result = ""; return result;
-                        case 0xC1: result = "BOOL"; break;
-                        case 0xC2: result = "SINT"; break;
-                        case 0xC3: result = "INT"; break;
-                        case 0xC4: result = "DINT"; break;
-                        case 0xC5: result = "LINT"; break;
-                        case 0xCA: result = "REAL"; break;
-                        case 0xD3:
-                            {
-                                result = "BOOL[..]";
-                            }
-                            break;
-
-                        default: result = "STRUCT"; break;
+                        case 0x00: return "";
+                        case 0xC1: return "BOOL";
+                        case 0xC2: return "SINT";
+                        case 0xC3: return "INT";
+                        case 0xC4: return "DINT";
+                        case 0xC5: return "LINT";
+                        case 0xCA: return "REAL";
+                        case 0xD3: return "BOOL32";
+                        default: return "STRUCT";
                     }
-
-                    if (this.AtomicBitPosition != null)
-                    {
-                        result += "." + this.AtomicBitPosition;
-                    }
-
-                    return result;
                 }
             }
             set
@@ -83,7 +69,7 @@ namespace EIP.AllenBradley
                     case 0xC2:
                     case 0xC3:
                     case 0xC4:
-                        return TagDataTypeFamily.AtomicDecimal;
+                        return TagDataTypeFamily.AtomicInteger;
                     case 0xC5:
                     case 0xD3:
                         return TagDataTypeFamily.AtomicBoolArray;
@@ -224,7 +210,10 @@ namespace EIP.AllenBradley
             this._Name = null;
 
             this.ArrayIndex = null;
-            this.ArrayDimension.Max = 0;
+            this.ArrayDimension.ArrayDim0 = 0;
+            this.ArrayDimension.ArrayDim1 = 0;
+            this.ArrayDimension.ArrayDim2 = 0;
+            this.ArrayDimension.Value = 0;
             this.AtomicBitPosition = null;
             this.StructureByteOffset = 0;
             this.StructureBitPosition = null;
@@ -232,7 +221,6 @@ namespace EIP.AllenBradley
             this.BitArrayDWordBitPosition = 0;
             this.HiddenMemberName = null;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -244,7 +232,9 @@ namespace EIP.AllenBradley
             this._Name = typeDefinition._Name;
 
             this.ArrayIndex = typeDefinition.ArrayIndex;
-            this.ArrayDimension.Max = typeDefinition.ArrayDimension.Max;
+            this.ArrayDimension.ArrayDim0 = typeDefinition.ArrayDimension.ArrayDim0;
+            this.ArrayDimension.ArrayDim1 = typeDefinition.ArrayDimension.ArrayDim1;
+            this.ArrayDimension.ArrayDim2 = typeDefinition.ArrayDimension.ArrayDim2;
             this.ArrayDimension.Value = typeDefinition.ArrayDimension.Value;
             this.AtomicBitPosition = typeDefinition.AtomicBitPosition;
             this.StructureByteOffset = typeDefinition.StructureByteOffset;
@@ -252,6 +242,45 @@ namespace EIP.AllenBradley
             this.BitArrayDWordOffset = typeDefinition.BitArrayDWordOffset;
             this.BitArrayDWordBitPosition = typeDefinition.BitArrayDWordBitPosition;
             this.HiddenMemberName = typeDefinition.HiddenMemberName;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            // Случай когда текущий тип является целым числом и задан конкретный номер бита.
+            if (this.Family == TagDataTypeFamily.AtomicInteger)
+            {
+                if (this.AtomicBitPosition != null)
+                {
+                    return "BOOL";
+                }
+            }
+
+            // Случай когда текущий тип является битовым массивом.
+            if (this.Family == TagDataTypeFamily.AtomicBoolArray)
+            {
+                if (this.BitArrayDWordBitPosition != null && this.BitArrayDWordOffset != null)
+                {
+                    return "BOOL";
+                }
+                else
+                {
+                    string dims = "";
+                    byte rank = this.ArrayDimension.ArrayRank;
+
+                    if (rank > 0) dims = (this.ArrayDimension.ArrayDim0 * 32).ToString();
+                    if (rank > 1) dims += "," + (this.ArrayDimension.ArrayDim1 * 32).ToString();
+                    if (rank > 2) dims += "," + (this.ArrayDimension.ArrayDim2 * 32).ToString();
+                    if (rank > 0)
+                        return "BOOL[" + dims + "]";
+                    else
+                        return "BOOL[?]";
+                }
+            }
+
+            return this.Name + this.ArrayDimension.ToString();
         }
         /* ================================================================================================== */
         #endregion

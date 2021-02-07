@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Windows.Forms;
 using System.IO;
-using LogixTool.Common;
+using EIP.AllenBradley.Models.Events;
 using LogixTool.Common.Extension;
 
 namespace LogixTool.LocalDatabase

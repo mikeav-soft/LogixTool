@@ -1131,7 +1131,7 @@ namespace EIP.AllenBradley
             // Прогнозируем размер дпринимаемых данных MessageRouterResponse.
             // Спрогнозировать ответ можно лишь в том случае если существует значение кода типа данных.
             if (tag.Type.Family == TagDataTypeFamily.AtomicBool
-                || tag.Type.Family == TagDataTypeFamily.AtomicDecimal
+                || tag.Type.Family == TagDataTypeFamily.AtomicInteger
                 || tag.Type.Family == TagDataTypeFamily.AtomicFloat
                 || tag.Type.Family == TagDataTypeFamily.AtomicBoolArray)
             {
@@ -1415,7 +1415,7 @@ namespace EIP.AllenBradley
                 // Спрогнозировать ответ можно лишь в том случае если существует значение кода типа данных.
                 int responseSize = MESSAGE_ROUTER_RESPONSE_HEADER_SIZE + 2;
                 if (tag.Type.Family == TagDataTypeFamily.AtomicBool
-                    || tag.Type.Family == TagDataTypeFamily.AtomicDecimal
+                    || tag.Type.Family == TagDataTypeFamily.AtomicInteger
                     || tag.Type.Family == TagDataTypeFamily.AtomicFloat
                     || tag.Type.Family == TagDataTypeFamily.AtomicBoolArray)
                 {
@@ -1895,7 +1895,7 @@ namespace EIP.AllenBradley
             }
 
             if ((tag.Type.Family != TagDataTypeFamily.AtomicBool)
-                && (tag.Type.Family != TagDataTypeFamily.AtomicDecimal)
+                && (tag.Type.Family != TagDataTypeFamily.AtomicInteger)
                 && (tag.Type.Family != TagDataTypeFamily.AtomicFloat)
                 && (tag.Type.Family != TagDataTypeFamily.AtomicBoolArray))
             {
@@ -2072,7 +2072,7 @@ namespace EIP.AllenBradley
                 t.WriteValue.BeginEdition();
 
                 if ((t.Type.Family != TagDataTypeFamily.AtomicBool)
-                    && (t.Type.Family != TagDataTypeFamily.AtomicDecimal)
+                    && (t.Type.Family != TagDataTypeFamily.AtomicInteger)
                     && (t.Type.Family != TagDataTypeFamily.AtomicFloat)
                     && (t.Type.Family != TagDataTypeFamily.AtomicBoolArray))
                 {
@@ -2736,37 +2736,49 @@ namespace EIP.AllenBradley
         /// <returns></returns>
         public bool SetXElement(XElement xdevice)
         {
-            if (xdevice != null && xdevice.Name == "Device")
+            if (xdevice == null || xdevice.Name != "Device")
             {
                 return false;
             }
 
-            string name;            // Название устройства.
-            string ipAddress;       // IP адрес.
-            string processorSlot;   // Номер слота процессора.
+            XAttribute xattrName;            // Название устройства.
+            XAttribute xattrIpAddress;       // IP адрес.
+            XAttribute xattrProcessorSlot;   // Номер слота процессора.
 
             // Получам значения атрибутов.
-            name = xdevice.Attribute("Name").Value;
-            ipAddress = xdevice.Attribute("IPAddress").Value;
-            processorSlot = xdevice.Attribute("ProcessorSlot").Value;
+            xattrName = xdevice.Attribute("Name");
+            xattrIpAddress = xdevice.Attribute("IPAddress");
+            xattrProcessorSlot = xdevice.Attribute("ProcessorSlot");
 
             // Проверяем промжуточные перемнные.
-            if (name == null || ipAddress == null || processorSlot == null || !processorSlot.All(c => Char.IsDigit(c)))
+            if (xattrName == null || xattrIpAddress == null || xattrProcessorSlot == null)
+            {
+                return false;
+            }
+
+            if (!xattrProcessorSlot.Value.All(c => Char.IsDigit(c)))
             {
                 return false;
             }
 
             // Преобразовываем IP адрес из текста.
             System.Net.IPAddress ipaddress;
-            if (!System.Net.IPAddress.TryParse(ipAddress, out ipaddress))
+            if (!System.Net.IPAddress.TryParse(xattrIpAddress.Value, out ipaddress))
+            {
+                return false;
+            }
+
+            // Преобразовываем номер слота процессора.
+            byte processorSlot;
+            if (!Byte.TryParse(xattrProcessorSlot.Value, out processorSlot))
             {
                 return false;
             }
 
             // Устанавливаем значения свойств.
-            this.Name = name;
+            this.Name = xattrName.Value;
             this.Address = ipaddress;
-            this.ProcessorSlot = Convert.ToByte(processorSlot);
+            this.ProcessorSlot = processorSlot;
 
             return true;
         }
@@ -2807,6 +2819,12 @@ namespace EIP.AllenBradley
         {
             response = null;
 
+            if (responses == null)
+            {
+                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Response data is Null."));
+                return false;
+            }
+
             EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responses);
             if (encapsulatedPacket == null)
             {
@@ -2842,6 +2860,12 @@ namespace EIP.AllenBradley
         {
             response = null;
             multiplyResponses = null;
+
+            if (responses == null)
+            {
+                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Response data is Null."));
+                return false;
+            }
 
             EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responses);
             if (encapsulatedPacket == null)

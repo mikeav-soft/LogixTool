@@ -133,8 +133,8 @@ namespace EIP
             try
             {
                 client = new TcpClient();
-                client.ReceiveTimeout = 5000;
-                client.SendTimeout = 5000;
+                client.ReceiveTimeout = 10000;
+                client.SendTimeout = 10000;
                 client.Connect(this.IPAddress, this.TargetTCPPort);
 
                 if (client.Connected)

@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="settings" ID="tagbrowser" Saved="637479909292841140">
+<storage Owner="app.registrator" Type="settings" ID="tagbrowser" Saved="637483155672340037">
   <data>
     <Settings>
       <Columns>
         <Column Name="ColumnDevice" Width="90" Visible="true" />
-        <Column Name="ColumnTag" Width="141" Visible="true" />
-        <Column Name="ColumnDataType" Width="100" Visible="true" />
-        <Column Name="ColumnFragmentLength" Width="60" Visible="true" />
+        <Column Name="ColumnTag" Width="170" Visible="true" />
+        <Column Name="ColumnDataType" Width="139" Visible="true" />
         <Column Name="ColumnStatus" Width="60" Visible="true" />
         <Column Name="ColumnReadRate" Width="95" Visible="true" />
         <Column Name="ColumnActualUpdateRate" Width="100" Visible="true" />
-        <Column Name="ColumnActualServerReply" Width="100" Visible="true" />
+        <Column Name="ColumnActualServerReply" Width="100" Visible="false" />
         <Column Name="ColumnRadix" Width="100" Visible="true" />
         <Column Name="ColumnReadValue" Width="575" Visible="true" />
         <Column Name="ColumnWriteButton" Width="25" Visible="false" />
