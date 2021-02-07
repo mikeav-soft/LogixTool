@@ -1,0 +1,9 @@
+E:\repos\LogixTool\LogixTool\EIP\bin\Release\netstandard2.0\EIP.deps.json
+E:\repos\LogixTool\LogixTool\EIP\bin\Release\netstandard2.0\EIP.dll
+E:\repos\LogixTool\LogixTool\EIP\bin\Release\netstandard2.0\EIP.pdb
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\netstandard2.0\EIP.csprojAssemblyReference.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\netstandard2.0\EIP.AssemblyInfoInputs.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\netstandard2.0\EIP.AssemblyInfo.cs
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\netstandard2.0\EIP.csproj.CoreCompileInputs.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\netstandard2.0\EIP.dll
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\netstandard2.0\EIP.pdb

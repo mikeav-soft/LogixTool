@@ -1,0 +1,8 @@
+E:\repos\LogixTool\LogixTool\EIP\bin\Release\net45\EIP.dll
+E:\repos\LogixTool\LogixTool\EIP\bin\Release\net45\EIP.pdb
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.csprojAssemblyReference.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.AssemblyInfoInputs.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.AssemblyInfo.cs
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.csproj.CoreCompileInputs.cache
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.dll
+E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.pdb

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="settings" ID="message_control" Saved="637462658796761683">
+<storage Owner="app.registrator" Type="settings" ID="message_control" Saved="637483169246462479">
   <data>
     <MessageControl MessageCapacity="10000" TimeStampFormat="dd.MM.yyyy HH:mm:ss:fffffff" UpdateInterval="1000" NewMessagesOnTop="True">
       <MessageTypes>
