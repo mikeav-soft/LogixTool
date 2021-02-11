@@ -142,6 +142,8 @@ namespace EIP.AllenBradley
         /* ================================================================================================== */
         #endregion
 
+        #region [ PRIVATE PROPERTIES ]
+        /* ================================================================================================== */
         /// <summary>
         /// Возвращает значение true в случае работы основного процесса обробоки. 
         /// </summary>
@@ -152,22 +154,24 @@ namespace EIP.AllenBradley
                 return thread != null && (thread.ThreadState == ThreadState.Running || thread.ThreadState == ThreadState.Background);
             }
         }
+        /* ================================================================================================== */
+        #endregion
 
         #region [ FIELDS ]
         /* ================================================================================================== */
-        private bool processRunRequest;                                     // 
-        private bool processRunEnable;                                      // 
-        private Dictionary<LogixTagHandler, ReportContainer> mainProcessTags;      // Список тэгов которые участсвуют в циклическом записи/чтении.
-        private Thread thread;                                              // Поток в котором ведется управление со связью с удаленым контроллером.
-        private bool runCyclicProcess;                                      // Разрешение на работу циклического процесса основной обработки данных.
-        private List<CLXCustomTagMemoryTable> tables;                       // Таблицы для группового чтения данных с контроллера.
+        private bool processRunRequest;                                         // Запрос фонового потока/процесса на запуск.
+        private bool processRunEnable;                                          // Фоновый поток запущен.
+        private Dictionary<LogixTagHandler, ReportContainer> mainProcessTags;   // Список тэгов которые участсвуют в циклическом записи/чтении.
+        private Thread thread;                                                  // Поток в котором ведется управление со связью с удаленым контроллером.
+        private bool runCyclicProcess;                                          // Разрешение на работу циклического процесса основной обработки данных.
+        private List<CLXCustomTagMemoryTable> tables;                           // Таблицы для группового чтения данных с контроллера.
         /* ================================================================================================== */
         #endregion
 
         /// <summary>
         /// Создает новую задачу для автоматического процесса обновления данных устройства.
         /// </summary>
-        /// <param name="device">Устрйоство с которым происходит работа.</param>
+        /// <param name="device">Устрйоство с которым происходит взаимодействие.</param>
         public LogixTask(LogixDevice device)
         {
             if (device == null)
@@ -330,7 +334,7 @@ namespace EIP.AllenBradley
         /// <summary>
         /// Содержит основной процесс управления.
         /// </summary>
-        private void Process()
+        protected void Process()
         {
             while (runCyclicProcess)
             {
@@ -1100,6 +1104,7 @@ namespace EIP.AllenBradley
             UInt16 size = 0;                        // Текущее значение размера типа данных.
 
             // Присваивает начальные значения возвращаемым параметрам.
+            bool isProgramTag = false;              // Показывает на что данный тэг является программным.
             EPath epath = null;                     // Определение пути для текущего тэга.
             UInt32? arrayIndex0 = null;             // Индекс массива размерности 0.
             UInt32? arrayIndex1 = null;             // Индекс массива размерности 1.
@@ -1122,36 +1127,26 @@ namespace EIP.AllenBradley
             string[] nameParts = logixTag.Name.Split(".".ToCharArray());
             // Создаем новый объект пути в удаленном устройстве для текущего тэга.
             epath = new EPath();
-
-
-            // В случае если текущий тэг подразумевается как программный или другими словами локальный (начитанется как Program:ИМЯ_ПРОГРАММЫ)
-            // Преобразовываем разделение частей имени тэга в виде Program:ИМЯ_ПРОГРАММЫ.Имя_Тэга как первая часть и тем самым имя тэга поиска.
-            if (nameParts.Length > 1 && nameParts[0].StartsWith("Program:"))
-            {
-                List<string> parts = new List<string>();
-                for (int ix = 0; ix < nameParts.Length; ix++)
-                {
-                    if (ix == 1)
-                        parts[0] += ("." + nameParts[ix]);
-                    else
-                        parts.Add(nameParts[ix]);
-                }
-                nameParts = parts.ToArray();
-            }
+            // По названию тэга определяем является ли он программным.
+            isProgramTag = nameParts.Length > 1 && nameParts[0].StartsWith("Program:");
+            // Имя программы (если задана).
+            string programName = (isProgramTag ? nameParts[0] : null);
 
             for (int ix = 0; ix < nameParts.Length; ix++)
             {
-                bool isFirstIndex = (ix == 0);                          // Возвращет True если индекс члена структуры является первым.
-                bool isLastIndex = (ix == nameParts.Length - 1);        // Возвращет True если индекс члена структуры является последним.
-                string currentPartName = nameParts[ix];                 // Текущее значение имени члены структуры по текущему индексу.
+                bool isProgramPartIndex = (isProgramTag && ix == 0);    // Возвращает True если индекс сегмента имени является названием программы.
+                bool isTagPartIndex = (ix == (isProgramTag ? 1 : 0));   // Возвращает True если индекс сегмента имени является названием тэга.
+                bool isMemberPartIndex = (ix > (isProgramTag ? 1 : 0)); // Возвращает True если индекс сегмента имени является названием члена структуры или номером бита.
+                bool isLastPartIndex = (ix == nameParts.Length - 1);    // Возвращает True если индекс сегмента имени является последним.
+                string currentPartName = nameParts[ix];                 // Текущее значение имени сегмента имени по текущему индексу.
+
                 int currentArrayIndexRank = 0;                          // Текущее значение размерности массива для текущего имени структуры может быть от 0 до 3.
-                bool isNumericPartName;
+                arrayIndex0 = null;                                     // Индекс элеменат массива размерности 0.
+                arrayIndex1 = null;                                     // Индекс элеменат массива размерности 1.
+                arrayIndex2 = null;                                     // Индекс элеменат массива размерности 2.
+                bool isNumericPartName;                                 // Текущее значение в случае True означающее что текущий член имени тэга является числом.
 
-                arrayIndex0 = null;
-                arrayIndex1 = null;
-                arrayIndex2 = null;
-
-                #region [ ИЗВЛЕЧЕНИЕ ИНДЕКСОВ ЭЛЕМЕНТА МАССИВА ]
+                #region [ ARRAY INDEXES EXTRACTION ]
                 /* ====================================================================================== */
                 // Проверяем, содержится ли в текущем имени члена структуры символ "[".
                 // При наличии такого символа делаем вывод что объялвен индекс массива вида "tagname[1,2,3]" или "tagname[8]".
@@ -1184,8 +1179,8 @@ namespace EIP.AllenBradley
 
                     // Проверяем что в получившемся имени для первого члена имени тэга имеется размерность от 1 до 3,
                     // или для последующих элементов (если член структуры) имени только 1 размерность.
-                    if (!(((splittedParts.Length > 0 && splittedParts.Length <= 3) && isFirstIndex)
-                        || (splittedParts.Length == 1 && !isFirstIndex)))
+                    if (!(((splittedParts.Length > 0 && splittedParts.Length <= 3) && isTagPartIndex)
+                        || (splittedParts.Length == 1 && !isTagPartIndex)))
                     {
                         return false;
                     }
@@ -1223,18 +1218,16 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
+                #region [ PARAMETERS INIT ]
+                /* ====================================================================================== */
                 // Проверяем что текущее имя члена структуры содержит символы отличные от пробела.
                 if (currentPartName.Trim() == "")
                 {
                     return false;
                 }
 
+                // Определяем, являются ли число текущее имя тэга.
                 isNumericPartName = currentPartName.All(c => Char.IsDigit(c));
-
-                if (isNumericPartName && !isLastIndex)
-                {
-                    return false;
-                }
 
                 if (!isNumericPartName)
                 {
@@ -1248,10 +1241,30 @@ namespace EIP.AllenBradley
                     arrayDefinition.ArrayDim2 = 0;
                     hiddenMemberName = null;
                 }
-
-                #region [ ИМЯ ЭЛЕМЕНТА С INDEX = 0 (TAG) ]
+                else if (!isLastPartIndex)
+                {
+                    return false;
+                }
                 /* ====================================================================================== */
-                if (isFirstIndex)
+                #endregion
+
+                #region [ PART NAME : "PROGRAM NAME" ]
+                /* ====================================================================================== */
+                if (isProgramPartIndex)
+                {
+                    #region [ СОЗДАНИЕ EPATH ]
+                    /* ====================================================================================== */
+                    // Добавляем в путь EPath новый сегмент с текущим именем.
+                    epath.Segments.Add(new EPathSegment(currentPartName));
+                    /* ====================================================================================== */
+                    #endregion
+                }
+                /* ====================================================================================== */
+                #endregion
+
+                #region [ PART NAME : TAG NAME ]
+                /* ====================================================================================== */
+                if (isTagPartIndex)
                 {
                     // Проверяем что текущее заданное имя полностью стостоит из символов.
                     if (isNumericPartName)
@@ -1261,14 +1274,17 @@ namespace EIP.AllenBradley
 
                     #region [ ПОИСК ДАННОГО ЭЛЕМЕНТА В СПИСКЕ ТЭГОВ ПО ИМЕНИ ]
                     /* ====================================================================================== */
+                    // Текущее имя тэга. В случае если тэг является программным то формируется имя "Program:ИМЯ_ПРОГРАММЫ.ИМЯ_ТЭГА".
+                    string tagname = (isProgramTag ? programName + "." + currentPartName : currentPartName);
+
                     // Если текущий индекс первый (=0) то ищем по имени CLXTag удаленного устройства
                     // и зпоминаем его код типа данных.
-                    if (!this.AvaliableControllerTags.ContainsKey(currentPartName))
+                    if (!this.AvaliableControllerTags.ContainsKey(tagname))
                     {
                         return false;
                     }
 
-                    CLXTag clxTag = this.AvaliableControllerTags[currentPartName];
+                    CLXTag clxTag = this.AvaliableControllerTags[tagname];
                     // Получаем Код типа данных соответствующего текущему элементу имени.
                     typeCode = clxTag.SymbolTypeAttribute.Code;
                     // Определяем по типу данных является ли данный тип битовым массивом.
@@ -1371,9 +1387,9 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ ИМЯ ЭЛЕМЕНТА С INDEX > 0 (MEMBER) ]
+                #region [ PART NAME : MEMBER NAME ]
                 /* ====================================================================================== */
-                if (!isFirstIndex)
+                if (isMemberPartIndex)
                 {
                     #region [ ПОИСК ДАННОГО ЭЛЕМЕНТА В СПИСКЕ СТРУКТУР ПО TYPE CODE ]
                     /* ====================================================================================== */
@@ -1405,7 +1421,7 @@ namespace EIP.AllenBradley
 
                         // Если текущий индекс последний и элемент является типом BOOL с кодом 0xC1,
                         // то получаем 
-                        if (isLastIndex && currentTemplateMember.CorrespondedHiddenMember != null)
+                        if (isLastPartIndex && currentTemplateMember.CorrespondedHiddenMember != null)
                         {
                             hiddenMemberName = currentTemplateMember.CorrespondedHiddenMember.Name;
                         }
@@ -1487,7 +1503,7 @@ namespace EIP.AllenBradley
                     /* ====================================================================================== */
                     if (isNumericPartName)
                     {
-                        if (!isLastIndex)
+                        if (!isLastPartIndex)
                         {
                             return false;
                         }
@@ -1533,9 +1549,9 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ УСТАНОВКА РЕЗУЛЬТАТА ]
+                #region [ FINALIZATION ]
                 /* ====================================================================================== */
-                if (isLastIndex)
+                if (isLastPartIndex)
                 {
                     // Получаем название типа данных.
                     if (this.AvaliableTemplateStructures.ContainsKey(typeCode))

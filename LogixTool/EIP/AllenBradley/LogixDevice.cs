@@ -458,7 +458,7 @@ namespace EIP.AllenBradley
                 request.RequestData.AddRange(new byte[] { 0x03, 0x00 }); //Number of attributes to retrieve
                 request.RequestData.AddRange(new byte[] { 0x01, 0x00 }); //Attribute 1 – Symbol Name
                 request.RequestData.AddRange(new byte[] { 0x02, 0x00 }); //Attribute 2 – Symbol Type
-                request.RequestData.AddRange(new byte[] { 0x08, 0x00 }); //Attribute 7 - Array Dimension?
+                request.RequestData.AddRange(new byte[] { 0x08, 0x00 }); //Attribute 8 - Array Dimension
 
                 List<object> responsedObjects = eipClient.SendUnitData(request);
 
