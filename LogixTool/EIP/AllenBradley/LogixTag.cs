@@ -34,26 +34,15 @@ namespace EIP.AllenBradley
             {
                 if (_Type != null && value != null)
                 {
-                    _Type.CopyFrom(value);
+                    _Type.CloneFrom(value);
                 }
             }
         }
-
-        /// <summary>
-        /// Возвращает или задает разрешение на выполнение операции.
-        /// </summary>
-        public bool ReadEnable { get; set; }
-        /// <summary>
-        /// Возвращает или задает разрешение на выполнение операции.
-        /// </summary>
-        public bool WriteEnable { get; set; }
-
         /// <summary>
         /// Возвращает или задает вид системы исчисления значения.
         /// Система исчисления необходима для работы с текстовым форматом значения тэга.
         /// </summary>
         public TagValueRadix Radix { get; set; }
-
         /// <summary>
         /// Возвращает структуру обслуживания чтения значения тэга.
         /// </summary>
@@ -62,7 +51,6 @@ namespace EIP.AllenBradley
         /// Возвращает структуру обслуживания записи значения тэга.
         /// </summary>
         public TagValueWriting WriteValue { get; private set; }
-
         /// <summary>
         /// Возвращает или задает ссылку на элемент таблицы используемый при групповом чтении.
         /// Устаналивается/снимается классом CLXCustomTagMemoryTable при добавлении/добавлении тэга соответственно.
@@ -77,15 +65,9 @@ namespace EIP.AllenBradley
         public LogixTag()
         {
             this._Type = new TagDataTypeDefinition(0);
-
             this.ReadValue = new TagValueReading(this._Type);
             this.WriteValue = new TagValueWriting(this._Type);
-
-            this.ReadEnable = true;
-            this.WriteEnable = false;
-
             this.OwnerTableItem = null;
-
             this.ReadValue.ReportUpdated += ReadValue_ReportUpdated;
         }
 
@@ -118,8 +100,6 @@ namespace EIP.AllenBradley
             this.Type.Init();
             this.ReadValue.Report.Init();
             this.WriteValue.Report.Init();
-            this.ReadEnable = true;
-            this.WriteEnable = false;
             this.OwnerTableItem = null;
         }
         /// <summary>
@@ -196,12 +176,6 @@ namespace EIP.AllenBradley
             {
                 return null;
             }
-
-            //// Проверяем что поступившие данные соответствуют определенному размеру типа данных.
-            //if (bytes.Length != this.Type.Size)
-            //{
-            //    return null;
-            //}
 
             // Проверяем является ли данный тип данных структурой.
             switch (this.Type.Family)
@@ -397,21 +371,21 @@ namespace EIP.AllenBradley
                             }
                             else
                             {
-                                bytes = LogixRadixConvertor.FromNumericString(s, this.Type.Size);
+                                bytes = LogixRadixConvertor.FromNumericString(s, this.Type.ElementSize);
                             }
                         }
                         break;
 
                     case TagValueRadix.Hex:
-                        bytes = LogixRadixConvertor.FromHexString(s, this.Type.Size);
+                        bytes = LogixRadixConvertor.FromHexString(s, this.Type.ElementSize);
                         break;
 
                     case TagValueRadix.Binary:
-                        bytes = LogixRadixConvertor.FromBinaryString(s, this.Type.Size);
+                        bytes = LogixRadixConvertor.FromBinaryString(s, this.Type.ElementSize);
                         break;
 
                     case TagValueRadix.ASCII:
-                        bytes = LogixRadixConvertor.FromASCIIString(s, this.Type.Size);
+                        bytes = LogixRadixConvertor.FromASCIIString(s, this.Type.ElementSize);
                         break;
                 }
             }
@@ -420,6 +394,5 @@ namespace EIP.AllenBradley
         }
         /* ================================================================================================== */
         #endregion
-
     }
 }

@@ -81,14 +81,14 @@ namespace EIP.AllenBradley
             }
         }
 
-        private UInt16 _Size;
+        private UInt16 _ElementSize;
         /// <summary>
-        /// Возвращает или задает размер в байтах текущего типа данных.
+        /// Возвращает или задает размер в байтах текущего типа данных элемента.
         /// В случае если тип данных атомарный то возвращается их значения по умолчанию несмотря на то какие значения были присвоены данному свойству.
         /// В случае если тип данных является структурой то возвращается заданное значение данному свойству. 
         /// В случае если невозможно определить размер возвращается 0.
         /// </summary>
-        public UInt16 Size
+        public UInt16 ElementSize
         {
             get
             {
@@ -115,69 +115,55 @@ namespace EIP.AllenBradley
                         }
                     default:
                         {
-                            return this._Size;
+                            return this._ElementSize;
                         }
                 }
             }
             set
             {
-                this._Size = value;
+                this._ElementSize = value;
             }
         }
-
-        /// <summary>
-        /// Возвращает или задает текущий линейный индекс элемента массива если он таковым является.
-        /// При значении Null определение не является элементом массива.
-        /// </summary>
-        public UInt32? ArrayIndex { get; set; }
-        /// <summary>
-        /// Возвращает или задает кол-во элементов чтения в случае если необходимо табличное чтение массива.
-        /// </summary>
-        public ArrayDefinition ArrayDimension { get; set; }
-        /// <summary>
-        /// Возвращает или задает возможность выбора номера бита в случае если задан целочисленном атомарном тип данных (SINT, INT, DINT).
-        /// </summary>
-        public UInt16? AtomicBitPosition { get; set; }
-        /// <summary>
-        /// Возвращает или задает смещение байт для извлечения данных структуры.
-        /// </summary>
-        public UInt32 StructureByteOffset { get; set; }
-        /// <summary>
-        /// Возвращает или задает позицию данного бита в слове для извлечения данных структуры.
-        /// Задается в случае если данный тип данных является битом (Code=0xC1).
-        /// </summary>
-        public UInt32? StructureBitPosition { get; set; }
-        /// <summary>
-        /// Возвращает или задает название элемента структуры - держателя текущего элемента который является битом (BOOL, 0xC1).
-        /// Значение может быть в случае если данный тип данных является битом (Code=0xC1).
-        /// </summary>
-        public string HiddenMemberName { get; set; }
-        /// <summary>
-        /// Возвращает или задает смещение 4-х байтных слов для извлечения данных битового массива.
-        /// </summary>
-        public UInt32? BitArrayDWordOffset { get; set; }
-        /// <summary>
-        /// Возвращает или задает позицию данного бита в 4-х байтном слове для извлечения данных битового массива.
-        /// </summary>
-        public UInt32? BitArrayDWordBitPosition { get; set; }
-
         /// <summary>
         /// Возвращяет ожидаемый размер типа данных.
         /// </summary>
-        public int ExpectedTotalSize
+        public int TotalSize
         {
             get
             {
                 if (this.ArrayDimension.HasValue)
                 {
-                    return this.Size * this.ArrayDimension.Value;
+                    return this.ElementSize * this.ArrayDimension.Value;
                 }
                 else
                 {
-                    return this.Size;
+                    return this.ElementSize;
                 }
             }
         }
+        /// <summary>
+        /// Возвращает или задает кол-во элементов чтения в случае если необходимо табличное чтение массива.
+        /// </summary>
+        public ArrayDefinition ArrayDimension { get; set; }
+
+        /// <summary>
+        /// Возвращает или задает название элемента структуры - держателя текущего элемента который является битом (BOOL, 0xC1).
+        /// Значение может быть в случае если данный тип данных является битом (Code=0xC1).
+        /// </summary>
+        public string HiddenMemberName { get; set; }
+
+        /// <summary>
+        /// Возвращает или задает смещение байт/бит для извлечения данных бита атомарного числа.
+        /// </summary>
+        public BitOffsetPosition AtomicBitDefinition { get; set; }
+        /// <summary>
+        /// Возвращает или задает смещение байт/бит для извлечения данных бита структуры.
+        /// </summary>
+        public BitOffsetPosition StructureDefinition { get; set; }
+        /// <summary>
+        /// Возвращает или задает смещение байт/бит для извлечения данных бита булевого массива.
+        /// </summary>
+        public BitOffsetPosition BitArrayDefinition { get; set; }
         /* ================================================================================================== */
         #endregion
 
@@ -187,64 +173,51 @@ namespace EIP.AllenBradley
         public TagDataTypeDefinition(UInt16 code)
         {
             this.Code = code;
-            this.ArrayIndex = null;
             this.ArrayDimension = new ArrayDefinition();
-            this.AtomicBitPosition = null;
-            this._Size = 0;
-            this.StructureByteOffset = 0;
-            this.StructureBitPosition = null;
-            this.BitArrayDWordOffset = null;
-            this.BitArrayDWordBitPosition = null;
+            this._ElementSize = 0;
             this.HiddenMemberName = null;
+
+            this.AtomicBitDefinition = null;
+            this.StructureDefinition = null;
+            this.BitArrayDefinition = null;
         }
 
-        #region [ METHODS ]
+        #region [ PUBLIC METHODS ]
         /* ================================================================================================== */
         /// <summary>
-        /// 
+        /// Производит сброс состояния содержимого объекта в первоначальное состояние.
         /// </summary>
         public void Init()
         {
             this.Code = 0;
-            this._Size = 0;
+            this._ElementSize = 0;
             this._Name = null;
 
-            this.ArrayIndex = null;
-            this.ArrayDimension.ArrayDim0 = 0;
-            this.ArrayDimension.ArrayDim1 = 0;
-            this.ArrayDimension.ArrayDim2 = 0;
-            this.ArrayDimension.Value = 0;
-            this.AtomicBitPosition = null;
-            this.StructureByteOffset = 0;
-            this.StructureBitPosition = null;
-            this.BitArrayDWordOffset = 0;
-            this.BitArrayDWordBitPosition = 0;
+            this.ArrayDimension.Init();
             this.HiddenMemberName = null;
+            this.AtomicBitDefinition = null;
+            this.StructureDefinition = null;
+            this.BitArrayDefinition = null;
         }
         /// <summary>
-        /// 
+        /// Клонирует содержимое внешнего объекта в текущий объект.
         /// </summary>
         /// <param name="typeDefinition"></param>
-        public void CopyFrom(TagDataTypeDefinition typeDefinition)
+        public void CloneFrom(TagDataTypeDefinition typeDefinition)
         {
             this.Code = typeDefinition.Code;
-            this._Size = typeDefinition._Size;
+            this._ElementSize = typeDefinition._ElementSize;
             this._Name = typeDefinition._Name;
 
-            this.ArrayIndex = typeDefinition.ArrayIndex;
-            this.ArrayDimension.ArrayDim0 = typeDefinition.ArrayDimension.ArrayDim0;
-            this.ArrayDimension.ArrayDim1 = typeDefinition.ArrayDimension.ArrayDim1;
-            this.ArrayDimension.ArrayDim2 = typeDefinition.ArrayDimension.ArrayDim2;
-            this.ArrayDimension.Value = typeDefinition.ArrayDimension.Value;
-            this.AtomicBitPosition = typeDefinition.AtomicBitPosition;
-            this.StructureByteOffset = typeDefinition.StructureByteOffset;
-            this.StructureBitPosition = typeDefinition.StructureBitPosition;
-            this.BitArrayDWordOffset = typeDefinition.BitArrayDWordOffset;
-            this.BitArrayDWordBitPosition = typeDefinition.BitArrayDWordBitPosition;
+            this.ArrayDimension.CloneFrom(typeDefinition.ArrayDimension);
+            this.AtomicBitDefinition.CloneFrom(typeDefinition.AtomicBitDefinition);
+            this.StructureDefinition.CloneFrom(typeDefinition.StructureDefinition);
+            this.BitArrayDefinition.CloneFrom(typeDefinition.BitArrayDefinition);
+
             this.HiddenMemberName = typeDefinition.HiddenMemberName;
         }
         /// <summary>
-        /// 
+        /// Преобразовывает текущий объект в строку.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -252,7 +225,7 @@ namespace EIP.AllenBradley
             // Случай когда текущий тип является целым числом и задан конкретный номер бита.
             if (this.Family == TagDataTypeFamily.AtomicInteger)
             {
-                if (this.AtomicBitPosition != null)
+                if (this.AtomicBitDefinition != null)
                 {
                     return "BOOL";
                 }
@@ -261,18 +234,18 @@ namespace EIP.AllenBradley
             // Случай когда текущий тип является битовым массивом.
             if (this.Family == TagDataTypeFamily.AtomicBoolArray)
             {
-                if (this.BitArrayDWordBitPosition != null && this.BitArrayDWordOffset != null)
+                if (this.BitArrayDefinition != null)
                 {
                     return "BOOL";
                 }
                 else
                 {
                     string dims = "";
-                    byte rank = this.ArrayDimension.ArrayRank;
+                    byte rank = this.ArrayDimension.Rank;
 
-                    if (rank > 0) dims = (this.ArrayDimension.ArrayDim0 * 32).ToString();
-                    if (rank > 1) dims += "," + (this.ArrayDimension.ArrayDim1 * 32).ToString();
-                    if (rank > 2) dims += "," + (this.ArrayDimension.ArrayDim2 * 32).ToString();
+                    if (rank > 0) dims = (this.ArrayDimension.Dim0 * 32).ToString();
+                    if (rank > 1) dims += "," + (this.ArrayDimension.Dim1 * 32).ToString();
+                    if (rank > 2) dims += "," + (this.ArrayDimension.Dim2 * 32).ToString();
                     if (rank > 0)
                         return "BOOL[" + dims + "]";
                     else

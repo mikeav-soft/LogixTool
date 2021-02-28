@@ -26,12 +26,12 @@ namespace LogixTool.Common
         #region [ PROPERTIES ]
         /* ======================================================================================== */
         /// <summary>
-        /// Возвращает или задает список всех сообщений попавших в компонент управления.
+        /// Возвращает список всех сообщений попавших в компонент управления.
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public List<MessageEventArgs> Items { get; set; }
+        public List<MessageEventArgs> Items { get; private set; }
 
         /// <summary>
         /// Возвращает или задает интервавл между перерисовками элемента управления миллисекунд.
@@ -134,6 +134,15 @@ namespace LogixTool.Common
         [Category("Специальные")]
         [DisplayName("NewMessagesOnTop")]
         public bool NewMessagesOnTop { get; set; }
+        /// <summary>
+        /// Возвращает или задает список типов сообщений существующие на данный момент.
+        /// </summary>
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+
+        public HashSet<MessageEventArgsType> ItemTypesExist { get; private set; }
+
         /* ======================================================================================== */
         #endregion
 
@@ -187,6 +196,8 @@ namespace LogixTool.Common
                 this._IgnoreItems.Add(t, false);
                 this._VisibleItems.Add(t, true);
             }
+
+            this.ItemTypesExist = new HashSet<MessageEventArgsType>();
         }
 
         #region [ PUBLIC METHODS ]
@@ -214,6 +225,9 @@ namespace LogixTool.Common
             // Добавляем новое сообщение в общий список.
             this.Items.Add(msg);
 
+            // Добавляем разновидность сообщения в список.
+            this.ItemTypesExist.Add(msg.Type);
+
             // Параллельно добавляем новое сообщение в список для отображения учитывая фильтрацию сообщений.
             if (this._VisibleItems[msg.Type])
             {
@@ -236,6 +250,7 @@ namespace LogixTool.Common
         public void ClearMessages()
         {
             this.Items.Clear();
+            this.ItemTypesExist.Clear();
 
             this.rebuildDisplayedItemsRequired = true;
             this.redrawListViewRequired = true;
@@ -663,7 +678,5 @@ namespace LogixTool.Common
         }
         /* ======================================================================================== */
         #endregion
-
-
     }
 }

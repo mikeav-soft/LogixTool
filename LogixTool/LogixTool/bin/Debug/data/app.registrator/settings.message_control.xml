@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="settings" ID="message_control" Saved="637486849742841878">
+<storage Owner="app.registrator" Type="settings" ID="message_control" Saved="637501378440177893">
   <data>
     <MessageControl MessageCapacity="10000" TimeStampFormat="dd.MM.yyyy HH:mm:ss:fffffff" UpdateInterval="1000" NewMessagesOnTop="True">
       <MessageTypes>
         <MessageType Name="Success" Visible="False" Ignored="False" />
         <MessageType Name="Info" Visible="False" Ignored="False" />
         <MessageType Name="Warning" Visible="False" Ignored="False" />
-        <MessageType Name="Error" Visible="True" Ignored="False" />
+        <MessageType Name="Error" Visible="False" Ignored="False" />
       </MessageTypes>
     </MessageControl>
   </data>

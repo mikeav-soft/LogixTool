@@ -46,11 +46,11 @@ namespace EIP.AllenBradley
         {
             get
             {
-                return this.eipClient.IPAddress;
+                return this.eipClient.TargetIPAddress;
             }
             set
             {
-                this.eipClient.IPAddress = value;
+                this.eipClient.TargetIPAddress = value;
                 Event_PropertyWasChanged();
             }
         }
@@ -77,7 +77,7 @@ namespace EIP.AllenBradley
         {
             get
             {
-                return (eipClient != null && eipClient.IsConnected);
+                return (eipClient != null && eipClient.IsTCPConnected);
             }
         }
         /// <summary>
@@ -210,14 +210,14 @@ namespace EIP.AllenBradley
         {
             string messageEventHeaderText = "[Method='TCPConnect']";
 
-            if (this.eipClient.IsConnected)
+            if (this.eipClient.IsTCPConnected)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Refused. Already connected."));
                 return true;
             }
 
             // Connection to server.
-            if (this.eipClient.Connect())
+            if (this.eipClient.TCPConnect())
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
@@ -235,14 +235,14 @@ namespace EIP.AllenBradley
         {
             string messageEventHeaderText = "[Method='TCPDisconnect']";
 
-            if (!this.eipClient.IsConnected)
+            if (!this.eipClient.IsTCPConnected)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Refused. Already disconnected."));
                 return true;
             }
 
             // Connection to server.
-            if (this.eipClient.Disconnect())
+            if (this.eipClient.TCPDisconnect())
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
@@ -882,14 +882,6 @@ namespace EIP.AllenBradley
             // Устанавливаем начало редактирования значения тэга.
             tag.ReadValue.BeginEdition();
 
-            // Проверка состояние тэга преде чтением.
-            if (!tag.ReadEnable)
-            {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Failed. Oparation was disabled by application."));
-                tag.ReadValue.FinalizeEdition(false);
-                return false;
-            }
-
             if (tag.SymbolicEPath == null)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
@@ -916,7 +908,7 @@ namespace EIP.AllenBradley
             request.RequestData.Add(0x01);
 
             // Добавляем длину байт которую необходимо зарезервировать под данный тэг.
-            request.RequestData.AddRange(BitConverter.GetBytes((UInt16)((tag.Type.Size * (tag.Type.ArrayDimension.HasValue ? tag.Type.ArrayDimension.Value : 1)) & 0xFFFF)));
+            request.RequestData.AddRange(BitConverter.GetBytes((UInt16)((tag.Type.ElementSize * (tag.Type.ArrayDimension.HasValue ? tag.Type.ArrayDimension.Value : 1)) & 0xFFFF)));
             // Добавляем строковый путь к данному тэгу.
             request.RequestData.AddRange(tag.SymbolicEPath.ToBytes(EPathToByteMethod.Complete));
             List<object> responsedObjects = eipClient.SendUnitData(request);
@@ -1086,7 +1078,7 @@ namespace EIP.AllenBradley
             tag.ReadValue.BeginEdition();
 
             // Проверка состояния тэга перед чтением на существование размера текущего типа данных.
-            if (tag.Type.Size == 0)
+            if (tag.Type.ElementSize == 0)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Tag Data Type Size not Defined."));
             }
@@ -1135,11 +1127,11 @@ namespace EIP.AllenBradley
                 || tag.Type.Family == TagDataTypeFamily.AtomicFloat
                 || tag.Type.Family == TagDataTypeFamily.AtomicBoolArray)
             {
-                currentResponsePacketSize += TAG_ATOMIC_TYPECODE_SIZE + tag.Type.ExpectedTotalSize;
+                currentResponsePacketSize += TAG_ATOMIC_TYPECODE_SIZE + tag.Type.TotalSize;
             }
             else
             {
-                currentResponsePacketSize += TAG_STRUCTURE_TYPECODE_SIZE + tag.Type.ExpectedTotalSize;
+                currentResponsePacketSize += TAG_STRUCTURE_TYPECODE_SIZE + tag.Type.TotalSize;
             }
 
             // Проверяем размер запроса.
@@ -1214,7 +1206,7 @@ namespace EIP.AllenBradley
                     // то укладываем принятые элементы 
                     List<byte> values = bytes.GetRange(4, bytes.Count - 4);
                     List<byte[]> recievedValue = new List<byte[]>();
-                    if (!tag.Type.ArrayDimension.HasValue || tag.Type.Size == 0)
+                    if (!tag.Type.ArrayDimension.HasValue || tag.Type.ElementSize == 0)
                     {
                         recievedValue.Add(values.ToArray());
 
@@ -1227,7 +1219,7 @@ namespace EIP.AllenBradley
                     {
                         // Проверяем принятые данные перед началом разделения значений по элементам 
                         // на равенство ожидаемого размера текущего тэга.
-                        if (tag.Type.ExpectedTotalSize != values.Count)
+                        if (tag.Type.TotalSize != values.Count)
                         {
                             tag.ReadValue.FinalizeEdition(false);
                             Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
@@ -1235,9 +1227,9 @@ namespace EIP.AllenBradley
                         else
                         {
                             // Делим принятые данные по элементам массива.
-                            for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.Size)
+                            for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.ElementSize)
                             {
-                                recievedValue.Add(values.GetRange(ixElement, tag.Type.Size).ToArray());
+                                recievedValue.Add(values.GetRange(ixElement, tag.Type.ElementSize).ToArray());
                             }
 
                             tag.ReadValue.SetValueData(recievedValue);
@@ -1271,7 +1263,7 @@ namespace EIP.AllenBradley
                 // то укладываем принятые элементы 
                 List<byte> values = bytes.GetRange(2, bytes.Count - 2);
                 List<byte[]> recievedValue = new List<byte[]>();
-                if (!tag.Type.ArrayDimension.HasValue || tag.Type.Size == 0)
+                if (!tag.Type.ArrayDimension.HasValue || tag.Type.ElementSize == 0)
                 {
                     recievedValue.Add(values.ToArray());
 
@@ -1284,7 +1276,7 @@ namespace EIP.AllenBradley
                 {
                     // Проверяем принятые данные перед началом разделения значений по элементам 
                     // на равенство ожидаемого размера текущего тэга.
-                    if (tag.Type.ExpectedTotalSize != values.Count)
+                    if (tag.Type.TotalSize != values.Count)
                     {
                         tag.ReadValue.FinalizeEdition(false);
                         Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
@@ -1292,9 +1284,9 @@ namespace EIP.AllenBradley
                     else
                     {
                         // Делим принятые данные по элементам массива.
-                        for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.Size)
+                        for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.ElementSize)
                         {
-                            recievedValue.Add(values.GetRange(ixElement, tag.Type.Size).ToArray());
+                            recievedValue.Add(values.GetRange(ixElement, tag.Type.ElementSize).ToArray());
                         }
 
                         tag.ReadValue.SetValueData(recievedValue);
@@ -1345,7 +1337,7 @@ namespace EIP.AllenBradley
                 t.ReadValue.BeginEdition();
 
                 // Проверка состояния тэга перед чтением на существование размера текущего типа данных.
-                if (t.Type.Size == 0)
+                if (t.Type.ElementSize == 0)
                 {
                     Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Tag Data Type Size not Defined."));
                 }
@@ -1419,11 +1411,11 @@ namespace EIP.AllenBradley
                     || tag.Type.Family == TagDataTypeFamily.AtomicFloat
                     || tag.Type.Family == TagDataTypeFamily.AtomicBoolArray)
                 {
-                    responseSize += TAG_ATOMIC_TYPECODE_SIZE + tag.Type.ExpectedTotalSize;
+                    responseSize += TAG_ATOMIC_TYPECODE_SIZE + tag.Type.TotalSize;
                 }
                 else
                 {
-                    responseSize += TAG_STRUCTURE_TYPECODE_SIZE + tag.Type.ExpectedTotalSize;
+                    responseSize += TAG_STRUCTURE_TYPECODE_SIZE + tag.Type.TotalSize;
                 }
 
                 // 3. Проверяем что данный тэг не имеет превышения размера мультизапроса и ответа будучи единственно отправленным.
@@ -1554,7 +1546,7 @@ namespace EIP.AllenBradley
                                     // то укладываем принятые элементы 
                                     List<byte> values = bytes.GetRange(4, bytes.Count - 4);
                                     List<byte[]> recievedValue = new List<byte[]>();
-                                    if (!tag.Type.ArrayDimension.HasValue || tag.Type.Size == 0)
+                                    if (!tag.Type.ArrayDimension.HasValue || tag.Type.ElementSize == 0)
                                     {
                                         recievedValue.Add(values.ToArray());
 
@@ -1567,16 +1559,16 @@ namespace EIP.AllenBradley
                                     {
                                         // Проверяем принятые данные перед началом разделения значений по элементам 
                                         // на равенство ожидаемого размера текущего тэга.
-                                        if (tag.Type.ExpectedTotalSize != values.Count)
+                                        if (tag.Type.TotalSize != values.Count)
                                         {
                                             tag.ReadValue.FinalizeEdition(false);
                                             Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
                                         }
                                         else
                                         {
-                                            for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.Size)
+                                            for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.ElementSize)
                                             {
-                                                recievedValue.Add(values.GetRange(ixElement, tag.Type.Size).ToArray());
+                                                recievedValue.Add(values.GetRange(ixElement, tag.Type.ElementSize).ToArray());
                                             }
 
                                             tag.ReadValue.SetValueData(recievedValue);
@@ -1610,7 +1602,7 @@ namespace EIP.AllenBradley
                                 // то укладываем принятые элементы 
                                 List<byte> values = bytes.GetRange(2, bytes.Count - 2);
                                 List<byte[]> recievedValue = new List<byte[]>();
-                                if (!tag.Type.ArrayDimension.HasValue || tag.Type.Size == 0)
+                                if (!tag.Type.ArrayDimension.HasValue || tag.Type.ElementSize == 0)
                                 {
                                     recievedValue.Add(values.ToArray());
 
@@ -1623,16 +1615,16 @@ namespace EIP.AllenBradley
                                 {
                                     // Проверяем принятые данные перед началом разделения значений по элементам 
                                     // на равенство ожидаемого размера текущего тэга.
-                                    if (tag.Type.ExpectedTotalSize != values.Count)
+                                    if (tag.Type.TotalSize != values.Count)
                                     {
                                         tag.ReadValue.FinalizeEdition(false);
                                         Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
                                     }
                                     else
                                     {
-                                        for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.Size)
+                                        for (int ixElement = 0; ixElement < values.Count; ixElement += tag.Type.ElementSize)
                                         {
-                                            recievedValue.Add(values.GetRange(ixElement, tag.Type.Size).ToArray());
+                                            recievedValue.Add(values.GetRange(ixElement, tag.Type.ElementSize).ToArray());
                                         }
 
                                         tag.ReadValue.SetValueData(recievedValue);
@@ -1706,7 +1698,7 @@ namespace EIP.AllenBradley
 
             // Временные переменные.
             List<byte[]> recievedValue = new List<byte[]>();        // Общий результат в байтах.
-            int dataSize = tag.Type.Size;                           // Размер в байтах одного элемента.
+            int dataSize = tag.Type.ElementSize;                           // Размер в байтах одного элемента.
             UInt16 typeCode = 0;                                    // Текущий код типа данных.
             bool ressultOk = true;                                  // Общий результат операции.
             List<byte> values;                                      // Совокупность байт принятых от удаленного сервера (контроллера).
@@ -1817,7 +1809,7 @@ namespace EIP.AllenBradley
                         }
 
                         // Получаем размер текущего типа данных.
-                        dataSize = tag.Type.Size;
+                        dataSize = tag.Type.ElementSize;
                         // Принятые значения.
                         values = bytes.GetRange(2, bytes.Count - 2);
 
@@ -1911,7 +1903,7 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            if (tag.WriteValue.RequestedData.All(f => tag.Type.Size != f.Length))
+            if (tag.WriteValue.RequestedData.All(f => tag.Type.ElementSize != f.Length))
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                 tag.WriteValue.FinalizeEdition(false);
@@ -1925,7 +1917,7 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            if (tag.WriteValue.RequestedData.SelectMany(b => b).Count() != tag.Type.ExpectedTotalSize)
+            if (tag.WriteValue.RequestedData.SelectMany(b => b).Count() != tag.Type.TotalSize)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                 tag.WriteValue.FinalizeEdition(false);
@@ -2023,7 +2015,6 @@ namespace EIP.AllenBradley
             Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             tag.WriteValue.SetValueData();
             tag.WriteValue.FinalizeEdition(true);
-            tag.WriteEnable = false;
 
             return true;
             /* ======================================================================================== */
@@ -2087,33 +2078,35 @@ namespace EIP.AllenBradley
                     t.WriteValue.FinalizeEdition(false);
                     result = false;
                 }
-
-                if (t.WriteValue.RequestedData.All(f => t.Type.Size != f.Length))
+                else
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
-                    t.WriteValue.FinalizeEdition(false);
-                    result = false;
-                }
+                    if (t.WriteValue.RequestedData.All(f => t.Type.ElementSize != f.Length))
+                    {
+                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
+                        t.WriteValue.FinalizeEdition(false);
+                        result = false;
+                    }
 
-                if (t.Type.ArrayDimension.HasValue && t.WriteValue.RequestedData.Count != t.Type.ArrayDimension.Value)
-                {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
-                    t.WriteValue.FinalizeEdition(false);
-                    result = false;
-                }
+                    if (t.Type.ArrayDimension.HasValue && t.WriteValue.RequestedData.Count != t.Type.ArrayDimension.Value)
+                    {
+                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
+                        t.WriteValue.FinalizeEdition(false);
+                        result = false;
+                    }
 
-                if (t.WriteValue.RequestedData.SelectMany(b => b).Count() != t.Type.ExpectedTotalSize)
-                {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
-                    t.WriteValue.FinalizeEdition(false);
-                    result = false;
-                }
+                    if (t.WriteValue.RequestedData.SelectMany(b => b).Count() != t.Type.TotalSize)
+                    {
+                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
+                        t.WriteValue.FinalizeEdition(false);
+                        result = false;
+                    }
 
-                if (t.WriteValue.RequestedData.Count > 0xFFFF)
-                {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
-                    t.WriteValue.FinalizeEdition(false);
-                    result = false;
+                    if (t.WriteValue.RequestedData.Count > 0xFFFF)
+                    {
+                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
+                        t.WriteValue.FinalizeEdition(false);
+                        result = false;
+                    }
                 }
 
                 if (result)
@@ -2289,7 +2282,6 @@ namespace EIP.AllenBradley
                             Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                             tag.WriteValue.SetValueData();
                             tag.WriteValue.FinalizeEdition(true);
-                            tag.WriteEnable = false;
                         }
                     }
                 }
@@ -2346,7 +2338,7 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            if (tag.WriteValue.RequestedData.All(t => tag.Type.Size != t.Length))
+            if (tag.WriteValue.RequestedData.All(t => tag.Type.ElementSize != t.Length))
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                 tag.WriteValue.FinalizeEdition(false);
@@ -2376,7 +2368,7 @@ namespace EIP.AllenBradley
                 (9 + tag.SymbolicEPath.ToBytes(EPathToByteMethod.Complete).Length));
 
             // Переопределяем полученное выше значения под размер кратный размеру текущего типа данных тэга.
-            maxRequestDataBytesSize = (maxRequestDataBytesSize / tag.Type.Size) * tag.Type.Size;
+            maxRequestDataBytesSize = (maxRequestDataBytesSize / tag.Type.ElementSize) * tag.Type.ElementSize;
             /* ======================================================================================== */
             #endregion
 
@@ -2464,7 +2456,6 @@ namespace EIP.AllenBradley
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 tag.WriteValue.SetValueData();
                 tag.WriteValue.FinalizeEdition(true);
-                tag.WriteEnable = false;
 
                 return true;
             }
@@ -2503,21 +2494,14 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            if (!tag.WriteEnable)
-            {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Failed. Oparation was disabled by application."));
-                tag.WriteValue.FinalizeEdition(false);
-                return false;
-            }
-
-            if (tag.Type.Size == 0)
+            if (tag.Type.ElementSize == 0)
             {
                 Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeSize = 0x00."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
-            UInt16 elements = (UInt16)((tag.Type.ArrayDimension.HasValue ? tag.Type.ArrayDimension.Value : (UInt16)0x0001) * tag.Type.Size);
+            UInt16 elements = (UInt16)((tag.Type.ArrayDimension.HasValue ? tag.Type.ArrayDimension.Value : (UInt16)0x0001) * tag.Type.ElementSize);
 
             if (mask_or.Length != elements)
             {
@@ -2577,7 +2561,6 @@ namespace EIP.AllenBradley
 
             Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             tag.WriteValue.FinalizeEdition(true);
-            tag.WriteEnable = false;
 
             return true;
 

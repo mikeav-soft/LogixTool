@@ -170,32 +170,6 @@ namespace LogixTool.Controls
             }
         }
 
-        private bool _WriteModeEnable;
-        /// <summary>
-        /// Возвращает или задает режим возможности записи значений тэга.
-        /// При значении True элемент управления отображает все необходимые элементы для записи значений тэга.
-        /// </summary>
-        public bool WriteModeEnable
-        {
-            get
-            {
-                return this._WriteModeEnable;
-            }
-            set
-            {
-                this._WriteModeEnable = value;
-
-                if (this._WriteModeEnable)
-                {
-                    SetWriteEnableMode();
-                }
-                else
-                {
-                    SetWriteDisableMode();
-                }
-            }
-        }
-
         private ViewMode _Mode;
         /// <summary>
         /// Вовзращает режим отображения/редактирования элемента управления.
@@ -222,14 +196,14 @@ namespace LogixTool.Controls
                 }
             }
         }
-
-
         /* ======================================================================================== */
         #endregion
 
-        LogixTask currentEditedTask;                        //
-        LogixTagHandler currentEditedTag;                   //
-        System.Windows.Threading.DispatcherTimer dtimer;    //
+        private LogixTask currentEditedTask;                        //
+        private LogixTagHandler currentEditedTag;                   //
+        private System.Windows.Threading.DispatcherTimer dtimer;    //
+        private Color editBackColor = Color.White;                  //
+        private Color lockBackColor = Color.Gainsboro;              //
 
         /// <summary>
         /// 
@@ -267,9 +241,6 @@ namespace LogixTool.Controls
             dtimer.Interval = TimeSpan.FromMilliseconds(100);
             dtimer.Tick += dtimer_Tick;
             dtimer.IsEnabled = true;
-
-            // Устанавливаем режим работы с запретом записи.
-            this.WriteModeEnable = false;
         }
 
         #region [ EVENTS ]
@@ -420,6 +391,22 @@ namespace LogixTool.Controls
             UpdateVisualElements();
         }
         /// <summary>
+        /// Подписка на событие : DataGridView : События нажатия курсора на ячейку.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            //DataGridViewRow row = this.dataGridView.Rows[e.RowIndex];
+            //DataGridViewCell cell = row.Cells[e.ColumnIndex];
+
+            //if (cell is DataGridViewCheckBoxCell)
+            //{
+            //    DataGridViewCheckBoxCell checkBoxCell = (DataGridViewCheckBoxCell)cell;
+
+            //}
+        }
+        /// <summary>
         /// Подписка на событие : DataGridView : Начато редактирование ячейки.
         /// </summary>
         /// <param name="sender"></param>
@@ -565,7 +552,7 @@ namespace LogixTool.Controls
 
                 string readRateValueText = row.Cells[ColumnReadRate.Index].Value.ToString();
 
-                if (readRateValueText == null || readRateValueText.Trim() == "" || !readRateValueText.Trim().All(c=>Char.IsDigit(c)))
+                if (readRateValueText == null || readRateValueText.Trim() == "" || !readRateValueText.Trim().All(c => Char.IsDigit(c)))
                 {
                     MessageBox.Show("Imposible to set Update Rate Value.\r\nInput value must be contains digits only.", MESSAGE_BOX_HEADER, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -604,8 +591,6 @@ namespace LogixTool.Controls
                 /*===========================================================================================*/
                 if (row.Cells[ColumnTag.Index].Value is LogixTagHandler)
                 {
-                    #region [ CLX TAG ]
-                    /*===========================================================================================*/
                     bool resultIsOk = false;
 
                     LogixTagHandler tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
@@ -643,8 +628,6 @@ namespace LogixTool.Controls
                             Event_TagsHasValuesForWrite(tag);
                         }
                     }
-                    /*===========================================================================================*/
-                    #endregion
                 }
                 /*===========================================================================================*/
                 #endregion
@@ -661,6 +644,33 @@ namespace LogixTool.Controls
                 LogixTagHandler tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
                 object obj = Enum.Parse(typeof(TagReadMethod), row.Cells[this.ColumnComMethod.Index].Value.ToString(), true);
                 tag.ReadMethod = (TagReadMethod)obj;
+                /*===========================================================================================*/
+                #endregion
+            }
+            else if (e.ColumnIndex == this.ColumnWriteEnable.Index)
+            {
+                #region [ 7. COLUMN WRITE VALUE ENABLE. ]
+                /*===========================================================================================*/
+                if (!(row.Cells[ColumnWriteEnable.Index] is DataGridViewCheckBoxCell) || !(row.Cells[ColumnTag.Index].Value is LogixTagHandler))
+                {
+                    return;
+                }
+
+                LogixTagHandler tag = (LogixTagHandler)row.Cells[ColumnTag.Index].Value;
+
+                if (tag == null)
+                {
+                    return;
+                }
+
+                DataGridViewCheckBoxCell checkBoxCell = (DataGridViewCheckBoxCell)row.Cells[ColumnWriteEnable.Index];
+                bool writeEnable = (checkBoxCell.Value != null && (bool)checkBoxCell.Value == true);
+
+                if (writeEnable && tag.WriteValue.RequestedData == null)
+                {
+                    tag.WriteValue.RequestedData = tag.ReadValue.Report.Data;
+                }
+
                 /*===========================================================================================*/
                 #endregion
             }
@@ -735,37 +745,6 @@ namespace LogixTool.Controls
             }
         }
         /// <summary>
-        /// Подписка на событие : DataGridView : Нажата кнопка мыши на содержинии ячейки.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // В случае если ячейка является кнопкой то считаем что произошло событие нажания на эту кнопку.
-            if (dataGridView.Columns[e.ColumnIndex] is DataGridViewDisableButtonColumn)
-            {
-                DataGridViewRow row = dataGridView.Rows[e.RowIndex];
-                DataGridViewDisableButtonCell buttonCell = (DataGridViewDisableButtonCell)row.Cells[e.ColumnIndex];
-
-                if (buttonCell.Hide)
-                {
-                    return;
-                }
-
-                object tagObject = row.Cells[this.ColumnTag.Index].Value;
-                if (tagObject == null || !(tagObject is LogixTagHandler))
-                {
-                    return;
-                }
-
-                if (e.ColumnIndex == this.ColumnWriteButton.Index)
-                {
-                    LogixTagHandler tag = (LogixTagHandler)tagObject;
-                    tag.WriteEnable = true;
-                }
-            }
-        }
-        /// <summary>
         /// Подписка на событие : Button : Нажата кнопка.
         /// </summary>
         /// <param name="sender"></param>
@@ -829,7 +808,7 @@ namespace LogixTool.Controls
             }
         }
         /// <summary>
-        /// Подписка на событие : CcomboBox : Был изменен выбранный элемент.
+        /// Подписка на событие : ComboBox : Был изменен выбранный элемент.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -849,13 +828,37 @@ namespace LogixTool.Controls
             }
         }
         /// <summary>
-        /// Подписка на событие : CcomboBox : Был изменен размер.
+        /// Подписка на событие : ComboBox : Был изменен размер.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void comboBox_CommonRadix_SizeChanged(object sender, EventArgs e)
         {
             comboBox_CommonRadix.Refresh();
+        }
+        /// <summary>
+        /// Подписка на событие : CheckBox : Было изменено состояние.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void checkBox_CommonWriteEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in this.dataGridView.Rows)
+            {
+                DataGridViewCell cell = row.Cells[this.ColumnWriteEnable.Index];
+                if (cell is DataGridViewDisableCheckBoxCell)
+                {
+                    DataGridViewDisableCheckBoxCell disableCheckBoxCell = (DataGridViewDisableCheckBoxCell)cell;
+                    if (disableCheckBoxCell.Hide)
+                    {
+                        disableCheckBoxCell.Value = false;
+                    }
+                    else
+                    {
+                        disableCheckBoxCell.Value = checkBox_CommonWriteEnable.Checked;
+                    }
+                }
+            }
         }
         /// <summary>
         /// Подписка на событие : ContextMenuStrip : Меню открывается.
@@ -946,7 +949,8 @@ namespace LogixTool.Controls
             this.actualUpdateRateToolStripMenuItem.Checked = this.ColumnActualUpdateRate.Visible;
             this.actualServerReplyToolStripMenuItem.Checked = this.ColumnActualServerReply.Visible;
             this.dataTypeVisibleToolStripMenuItem.Checked = this.ColumnDataType.Visible;
-            this.tableInstanceIDToolStripMenuItem.Checked = this.ColumnTableNumber.Visible; 
+            this.tableInstanceIDToolStripMenuItem.Checked = this.ColumnTableNumber.Visible;
+            this.writeValueToolStripMenuItem.Checked = this.ColumnWriteValue.Visible;
         }
         /// <summary>
         /// Подписка на событие : ContextMenuStrip : Нажатие на элемент меню.
@@ -992,6 +996,17 @@ namespace LogixTool.Controls
         private void tableInstanceIDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.ColumnTableNumber.Visible = !this.ColumnTableNumber.Visible;
+        }
+        /// <summary>
+        /// Подписка на событие : ContextMenuStrip : Нажатие на элемент меню.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void writeValueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool visible = !this.ColumnWriteValue.Visible;
+            this.ColumnWriteValue.Visible = visible;
+            this.ColumnWriteEnable.Visible = visible;
         }
         /* ======================================================================================== */
         #endregion
@@ -1186,6 +1201,18 @@ namespace LogixTool.Controls
             this.Mode = ViewMode.Monitor;
         }
         /// <summary>
+        /// Удаляет соответствующие тэги из устройств и переводит визуальный компонент в режим редактирования.
+        /// </summary>
+        public void GoOffline()
+        {
+            foreach (LogixTask task in this.TasksByTags.Keys)
+            {
+                task.Finish();
+            }
+
+            this.Mode = ViewMode.Edit;
+        }
+        /// <summary>
         /// Переводит визуальный компонент в режим просмотра с полной блокировкой.
         /// </summary>
         public void SetOnlineLock()
@@ -1202,16 +1229,25 @@ namespace LogixTool.Controls
                 this.Mode = ViewMode.Monitor;
         }
         /// <summary>
-        /// Удаляет соответствующие тэги из устройств и переводит визуальный компонент в режим редактирования.
+        /// Запрашивает выделенные тэги на запись заданных значений.
         /// </summary>
-        public void GoOffline()
+        public void WriteEnabledValues()
         {
-            foreach (LogixTask task in this.TasksByTags.Keys)
+            if (this.Mode == ViewMode.Edit)
             {
-                task.Finish();
+                return;
             }
 
-            this.Mode = ViewMode.Edit;
+            foreach (LogixTagHandler tagHandler in this.TagsByRows.Keys)
+            {
+                tagHandler.WriteValue.Reset();
+
+                DataGridViewCheckBoxCell cell = (DataGridViewCheckBoxCell)this.TagsByRows[tagHandler].Cells[ColumnWriteEnable.Index];
+                tagHandler.WriteEnable = (cell.Value != null && (bool)cell.Value == true);
+                cell.Value = false;
+            }
+
+            this.checkBox_CommonWriteEnable.Checked = false;
         }
 
         /// <summary>
@@ -1273,15 +1309,6 @@ namespace LogixTool.Controls
                     }
                 }
 
-                // После установки установки параметров колонок, принудительно активируем/деактивируем колонки для записи.
-                if (this._WriteModeEnable)
-                {
-                    SetWriteEnableMode();
-                }
-                else
-                {
-                    SetWriteDisableMode();
-                }
                 return true;
             }
             else
@@ -1325,27 +1352,8 @@ namespace LogixTool.Controls
         /// <param name="readOnly">Значнение свойства означающее только чтенеи при равенстве True.</param>
         private void SetDataGridColumnReadOnlyProperty(DataGridViewColumn column, bool readOnly)
         {
-            Color editBackColor = Color.White;
-            Color lockBackColor = Color.Gainsboro;
-
             column.ReadOnly = readOnly;
             column.DefaultCellStyle.BackColor = readOnly ? lockBackColor : editBackColor;
-        }
-        /// <summary>
-        /// Устанавливает режим просмотра и редактирования при котором возможна запись значений тэга.
-        /// </summary>
-        private void SetWriteEnableMode()
-        {
-            this.ColumnWriteButton.Visible = true;
-            this.ColumnWriteValue.Visible = true;
-        }
-        /// <summary>
-        /// Устанавливает режим просмотра и редактирования при котором запрещена запись значений тэга.
-        /// </summary>
-        private void SetWriteDisableMode()
-        {
-            this.ColumnWriteButton.Visible = false;
-            this.ColumnWriteValue.Visible = false;
         }
         /// <summary>
         /// Обновляет свойства и состояния визуальных компонентов на верхней вспомогательной панели.
@@ -1357,13 +1365,22 @@ namespace LogixTool.Controls
             int xOffset = -dataGridView.HorizontalScrollingOffset;
             int borderDistance = 1;
 
-            textBox_CommonUpdateRate.Location = new Point(columnHeaderBounds[this.ColumnReadRate.Index].X + xOffset + borderDistance, (splitContainer_Grid.Panel1.Height - textBox_CommonUpdateRate.Height) / 2);
+            textBox_CommonUpdateRate.Location = new Point(
+                columnHeaderBounds[this.ColumnReadRate.Index].X + xOffset + borderDistance,
+                (splitContainer_Grid.Panel1.Height - textBox_CommonUpdateRate.Height) / 2);
             textBox_CommonUpdateRate.Width = columnHeaderBounds[this.ColumnReadRate.Index].Width - borderDistance * 2;
             textBox_CommonUpdateRate.Visible = this.ColumnReadRate.Visible;
 
-            comboBox_CommonRadix.Location = new Point(columnHeaderBounds[this.ColumnRadix.Index].X + xOffset + borderDistance, (splitContainer_Grid.Panel1.Height - comboBox_CommonRadix.Height) / 2);
+            comboBox_CommonRadix.Location = new Point(
+                columnHeaderBounds[this.ColumnRadix.Index].X + xOffset + borderDistance,
+                (splitContainer_Grid.Panel1.Height - comboBox_CommonRadix.Height) / 2);
             comboBox_CommonRadix.Width = columnHeaderBounds[this.ColumnRadix.Index].Width - borderDistance * 2;
             comboBox_CommonRadix.Visible = this.ColumnRadix.Visible;
+
+            checkBox_CommonWriteEnable.Location = new Point(
+                columnHeaderBounds[this.ColumnWriteEnable.Index].X + xOffset + borderDistance + columnHeaderBounds[this.ColumnWriteEnable.Index].Width / 2 - checkBox_CommonWriteEnable.Width / 2,
+                (splitContainer_Grid.Panel1.Height - checkBox_CommonWriteEnable.Height) / 2);
+            checkBox_CommonWriteEnable.Visible = this.ColumnWriteEnable.Visible;
         }
         /// <summary>
         /// Обновляет все визуальные элементы таблицы.
@@ -1535,67 +1552,67 @@ namespace LogixTool.Controls
                     /* ======================================================================================== */
                     #endregion
 
-                    #region [ Column "Write Button" ]
-                    /* ======================================================================================== */
-                    bool visibleColumnWriteButton = false;
-                    string textColumnWriteButton = "";
-                    Color backgroundColor = row.Cells[this.ColumnWriteButton.Index].Style.BackColor;
-
-                    if (tag != null)
-                    {
-                        if (tag.WriteValue.RequestedData != null)
-                        {
-                            visibleColumnWriteButton = true;
-
-                            if (!tag.WriteEnable)
-                            {
-                                if (tag.WriteValue.Report.IsSuccessful == true)
-                                {
-                                    textColumnWriteButton = "OK";
-                                    backgroundColor = Color.Chartreuse;
-                                }
-                                else if (tag.WriteValue.Report.IsSuccessful == false)
-                                {
-                                    textColumnWriteButton = "!";
-                                    backgroundColor = Color.Tomato;
-                                }
-                                else
-                                {
-                                    textColumnWriteButton = "<-";
-                                    backgroundColor = Color.Gainsboro;
-                                }
-                            }
-                        }
-                    }
-
-
-                    DataGridViewDisableButtonCell cell = ((DataGridViewDisableButtonCell)row.Cells[this.ColumnWriteButton.Index]);
-
-                    cell.Value = textColumnWriteButton;
-                    cell.Style.BackColor = backgroundColor;
-
-                    if (cell.Hide == visibleColumnWriteButton)
-                    {
-                        cell.Hide = !visibleColumnWriteButton;
-                        this.dataGridView.Refresh();
-                    }
-                    /* ======================================================================================== */
-                    #endregion
-
-                    #region [ Column "Write Value" ]
+                    #region [ Column "Write Value / Write Enable" ]
                     /* ======================================================================================== */
                     string writeValueText = "";
+
+                    Color currentCellBackColor = row.Cells[ColumnWriteValue.Index].Style.BackColor;
+                    Color requiredCellBackColor = currentCellBackColor;
+
+                    // Color.LightCyan;
+                    // Color.PaleGreen;
+                    // Color.LemonChiffon;
+                    // Color.MistyRose;
 
                     if (tag != null)
                     {
                         if (!tag.Type.ArrayDimension.HasValue)
                         {
                             writeValueText = tag.GetWritedValueText();
-                            if (writeValueText == null)
-                            {
-                                writeValueText = "";
-                            }
+                            if (writeValueText == null) writeValueText = "";
                         }
+
+                        if (((tag.Type.Family == TagDataTypeFamily.AtomicBool ||
+                            tag.Type.Family == TagDataTypeFamily.AtomicFloat ||
+                            tag.Type.Family == TagDataTypeFamily.AtomicInteger)
+                            && !tag.Type.ArrayDimension.HasValue)
+                            || (tag.Type.Family == TagDataTypeFamily.AtomicBoolArray
+                            && tag.Type.BitArrayDefinition != null))
+                        {
+                            if (tag.WriteValue.Report.IsSuccessful == true)
+                            {
+                                requiredCellBackColor = Color.PaleGreen;
+                            }
+                            else if (tag.WriteValue.Report.IsSuccessful == false)
+                            {
+                                requiredCellBackColor = Color.MistyRose;
+                            }
+                            else
+                            {
+                                requiredCellBackColor = editBackColor;
+                            }
+
+                            row.Cells[this.ColumnWriteValue.Index].ReadOnly = false;
+                            row.Cells[this.ColumnWriteEnable.Index].ReadOnly = false;
+                            ((DataGridViewDisableCheckBoxCell)row.Cells[this.ColumnWriteEnable.Index]).Hide = false;
+                        }
+                        else
+                        {
+                            requiredCellBackColor = lockBackColor;
+                            row.Cells[this.ColumnWriteValue.Index].ReadOnly = true;
+                            row.Cells[this.ColumnWriteEnable.Index].ReadOnly = true;
+                            ((DataGridViewDisableCheckBoxCell)row.Cells[this.ColumnWriteEnable.Index]).Hide = true;
+
+                            object checkBoxCellValue = row.Cells[this.ColumnWriteEnable.Index].Value;
+                            if (checkBoxCellValue != null)
+                                row.Cells[this.ColumnWriteEnable.Index].Value = false;
+                        }
+                    }
+
+                    if (currentCellBackColor.ToArgb() != requiredCellBackColor.ToArgb())
+                    {
+                        row.Cells[ColumnWriteValue.Index].Style.BackColor = requiredCellBackColor;
+                        row.Cells[ColumnWriteEnable.Index].Style.BackColor = requiredCellBackColor;
                     }
 
                     row.Cells[this.ColumnWriteValue.Index].Value = writeValueText;

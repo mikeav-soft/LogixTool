@@ -5,7 +5,9 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using EIP.Net;
 
 namespace EIP
 {
@@ -19,13 +21,14 @@ namespace EIP
         /// <summary>
         /// Информирует о том что имеется подключение с удаленным устройством.
         /// </summary>
-        public bool IsConnected
+        public bool IsTCPConnected
         {
             get
             {
-                return client != null && client.Connected;
+                return this.tcpSocket.IsConnected;
             }
         }
+
         /// <summary>
         /// Получает или задает номер слота процессора.
         /// </summary>
@@ -37,7 +40,7 @@ namespace EIP
         /// <summary>
         /// IP адрес устройства Ethernet/IP с которым ведется обмен данными.
         /// </summary>
-        public IPAddress IPAddress { get; set; }
+        public IPAddress TargetIPAddress { get; set; }
         /// <summary>
         /// Номер порта UDP соединения удаленного устройства.
         /// </summary>
@@ -53,8 +56,8 @@ namespace EIP
         /* ======================================================================================== */
         #endregion
 
-        NetworkStream stream;                       //
-        TcpClient client;                           //
+        TcpSocket tcpSocket;
+        UdpSocket udpSocket;                        //
         UInt32 sessionHandle;                       //
         UInt32 connectionID_O_T;                    //
         UInt32 connectionID_T_O;                    //
@@ -68,12 +71,13 @@ namespace EIP
         {
             this.ProcessorSlot = processorSlot;
             this.TargetTCPPort = 0xAF12;
-            this.IPAddress = ipAddress;
+            this.TargetUDPPort = 0xAF12;
+            this.OriginatorUDPPort = 0xDBA1;
 
-            this.client = new TcpClient();
+            this.TargetIPAddress = ipAddress;
 
-            this.TargetUDPPort = 0x08AE;
-            this.OriginatorUDPPort = 0x08AE;
+            this.tcpSocket = new TcpSocket();
+            this.udpSocket = new UdpSocket();
 
             this.connectionSequenceNumber = 122;
 
@@ -104,92 +108,82 @@ namespace EIP
             this.CurrentForwardOpen.ConnectionTimeOutMultiplier = 2;
         }
 
-        #region [ EVENTS ]
-        /* ================================================================================================== */
-        /// <summary>
-        /// 
-        /// </summary>
-        public event EventHandler Connected;
-        /// <summary>
-        /// 
-        /// </summary>
-        private void Event_Connected()
-        {
-            if (this.Connected != null)
-            {
-                this.Connected(this, null);
-            }
-        }
-        /* ================================================================================================== */
-        #endregion
-
         #region [ PUBLIC METHODS ]
         /* ================================================================================================== */
         /// <summary>
         /// Производит TCP подключение к удаленному устройству.
         /// </summary>
-        public bool Connect()
+        public bool TCPConnect()
         {
-            try
-            {
-                client = new TcpClient();
-                client.ReceiveTimeout = 10000;
-                client.SendTimeout = 10000;
-                client.Connect(this.IPAddress, this.TargetTCPPort);
-
-                if (client.Connected)
-                {
-                    Event_Connected();
-                    return true;
-                }
-
-                return false;
-            }
-            catch
-            {
-                return false;
-            }
+            return this.tcpSocket.Connect(new IPEndPoint(this.TargetIPAddress, this.TargetTCPPort));
         }
         /// <summary>
         /// Производит закрытие соединения от удаленноого устройства.
         /// </summary>
-        public bool Disconnect()
+        public bool TCPDisconnect()
         {
-            bool result = false;
-
-            try
-            {
-                if (IsConnected)
-                {
-                    client.Close();
-                    stream.Close();
-                    result = true;
-                }
-            }
-            catch
-            {
-            }
-            return result;
+            return this.tcpSocket.Disconnect();
         }
 
         /// <summary>
         /// Отправляет запрос идентификации объекта.
         /// </summary>
         /// <returns></returns>
-        public List<object> RequestListIdentity()
+        public List<ListIdentityResponse> RequestListIdentity(EIPBaseProtocol protocol)
         {
-            List<byte> response;
+            List<ListIdentityResponse> result = null;
+            List<List<byte>> responses = new List<List<byte>>();
 
             // Формируем пакет для отправки данных.
             EncapsulatedPacket encapsulatedPacket = new EncapsulatedPacket();
             encapsulatedPacket.Command = EncapsulatedPacketCommand.ListIdentity;
 
-            if (!this.TCPRequestResponse(encapsulatedPacket.ToBytes(),out response))
+            byte[] request = encapsulatedPacket.ToBytes();
+
+            if (protocol == EIPBaseProtocol.Tcp)
             {
-                return null;
+                // Посылаем запрос к удаленному узлу используя протокол TCP и ожидаем ответа.
+                List<byte> tcpResponse;
+                if (!this.tcpSocket.SendRecieve(request, out tcpResponse))
+                    return null;
+
+                responses.Add(tcpResponse);
+            }
+            else
+            {
+                // Определяем IP адрес для отправки удаленному узлу.
+                // При широковещательном запросе уставнавливаем адрес запроса 255.255.255.255 и слушаем все узлы.
+                IPAddress addr = this.TargetIPAddress;
+
+                if (protocol == EIPBaseProtocol.UdpBroadcast)
+                    addr = IPAddress.Broadcast;
+
+                // Посылаем запрос к удаленному узлу используя протокол UDP и ожидаем ответа.
+                List<UdpResponse> udpResponse;
+                if (!this.udpSocket.SendRecieve(encapsulatedPacket.ToBytes(), new IPEndPoint(addr, this.TargetUDPPort), 4000, out udpResponse))
+                    return null;
+
+                responses.AddRange(udpResponse.Select(t => t.RecievedData.ToList()));
             }
 
-            return ParseEncapsulatedPacket(response);
+            // Распознаем ответы удаленных устройств используя определение EncapsulatedPacket стандарта EthernetIP.
+            foreach (List<byte> response in responses)
+            {
+                // Пытаемся получить в ответах объекты с типом ListIdentityResponse.
+                List<object> encapsulatedResponse = ParseEncapsulatedPacket(response);
+                ListIdentityResponse liresp = GetObjectFromEncapsulatedPacket<ListIdentityResponse>(encapsulatedResponse);
+
+                // При успешном распозновании добавляем рузельтат в контейнер.
+                if (liresp != null)
+                {
+                    if (result == null)
+                        result = new List<ListIdentityResponse>();
+
+                    result.Add(liresp);
+                }
+            }
+
+            return result;
         }
         /// <summary>
         /// Отправляет запрос идентификации доступных интерфейсов.
@@ -203,7 +197,7 @@ namespace EIP
             EncapsulatedPacket encapsulatedPacket = new EncapsulatedPacket();
             encapsulatedPacket.Command = EncapsulatedPacketCommand.ListInterfaces;
 
-            if (!this.TCPRequestResponse(encapsulatedPacket.ToBytes(), out response))
+            if (!this.tcpSocket.SendRecieve(encapsulatedPacket.ToBytes(), out response))
             {
                 return null;
             }
@@ -222,13 +216,108 @@ namespace EIP
             EncapsulatedPacket encapsulatedPacket = new EncapsulatedPacket();
             encapsulatedPacket.Command = EncapsulatedPacketCommand.ListServices;
 
-            if (!this.TCPRequestResponse(encapsulatedPacket.ToBytes(), out response))
+            if (!this.tcpSocket.SendRecieve(encapsulatedPacket.ToBytes(), out response))
             {
                 return null;
             }
 
             return ParseEncapsulatedPacket(response);
         }
+        /// <summary>
+        /// Отправляет Explict сообщение (не требующее подключения) удаленному устройству.
+        /// </summary>
+        /// <param name="request">Пакет запроса для удаленного устройства.</param>
+        /// <returns></returns>
+        public List<object> SendRRData(MessageRouterRequest request)
+        {
+            List<byte> response;
+
+            // "Фрагмент CommonPacketFormat" : 
+            // Стандартный пакет EIP состоящий из двух сегментов.
+            CommonPacketFormat commonPacketFormat = new CommonPacketFormat();
+
+            // - Type ID: Null Address Item (0x0000)
+            CommonPacketItem commonPacket_NullAddressItem = new CommonPacketItem();
+            commonPacket_NullAddressItem.TypeID = CommonPacketItemTypeID.Address_Null;
+
+            // - Type ID: Unconnected Data Item (0x00b2)
+            CommonPacketItem commonPacket_UnconnectedDataItem = new CommonPacketItem();
+            commonPacket_UnconnectedDataItem.TypeID = CommonPacketItemTypeID.Data_UnconnectedMessage;
+            commonPacket_UnconnectedDataItem.Data.AddRange(request.ToBytes());
+
+            commonPacketFormat.Add(commonPacket_NullAddressItem);
+            commonPacketFormat.Add(commonPacket_UnconnectedDataItem);
+
+            EncapsulatedPacket encapsulatedPacket = new EncapsulatedPacket();
+            encapsulatedPacket.SessionHandle = sessionHandle;
+            encapsulatedPacket.Command = EncapsulatedPacketCommand.SendRRData;
+
+            // Interface Handle CIP (4 байта).
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            // Timeout (2 байта).
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.AddRange(commonPacketFormat.ToBytes());
+
+            if (!this.tcpSocket.SendRecieve(encapsulatedPacket.ToBytes(), out response))
+            {
+                return null;
+            }
+
+            return ParseEncapsulatedPacket(response);
+        }
+        /// <summary>
+        /// Отправляет Implict сообщение (требующее подключения) удаленному устройству.
+        /// </summary>
+        /// <param name="request">Пакет запроса для удаленного устройства.</param>
+        /// <returns></returns>
+        public List<object> SendUnitData(MessageRouterRequest request)
+        {
+            List<byte> response;
+
+            // "Фрагмент CommonPacketFormat" : 
+            // Стандартный пакет EIP состоящий из двух сегментов.
+            CommonPacketFormat commonPacketFormat = new CommonPacketFormat();
+
+            // - Type ID: Null Address Item (0x00A1)
+            CommonPacketItem commonPacket_ConnectionAddressItem = new CommonPacketItem();
+            commonPacket_ConnectionAddressItem.TypeID = CommonPacketItemTypeID.Address_ConnectionBased;
+            commonPacket_ConnectionAddressItem.Data.AddRange(BitConverter.GetBytes(connectionID_O_T));
+
+            // - Type ID: Unconnected Data Item (0x00B1)
+            CommonPacketItem commonPacket_ConnectedDataItem = new CommonPacketItem();
+            commonPacket_ConnectedDataItem.TypeID = CommonPacketItemTypeID.Data_ConnectionTransportPacket;
+            commonPacket_ConnectedDataItem.Data.AddRange((BitConverter.GetBytes(connectionSequenceNumber++)));
+            commonPacket_ConnectedDataItem.Data.AddRange(request.ToBytes());
+
+            commonPacketFormat.Add(commonPacket_ConnectionAddressItem);
+            commonPacketFormat.Add(commonPacket_ConnectedDataItem);
+
+            EncapsulatedPacket encapsulatedPacket = new EncapsulatedPacket();
+            encapsulatedPacket.SessionHandle = sessionHandle;
+            encapsulatedPacket.Command = EncapsulatedPacketCommand.SendUnitData;
+
+            // Interface Handle CIP (4 байта).
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            // Timeout (2 байта).
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.Add(0);
+            encapsulatedPacket.CommandSpecificData.AddRange(commonPacketFormat.ToBytes());
+
+            if (!this.tcpSocket.SendRecieve(encapsulatedPacket.ToBytes(), out response))
+            {
+                return null;
+            }
+
+            return ParseEncapsulatedPacket(response);
+        }
+
         /// <summary>
         /// Отправляет комманду Register Session удаленному устройству для инициализации открытия сессии.
         /// </summary>
@@ -244,7 +333,7 @@ namespace EIP
             encapsulatedPacket.CommandSpecificData.Add(0);       // Session options shall be set to "0"
             encapsulatedPacket.CommandSpecificData.Add(0);
 
-            if (!this.TCPRequestResponse(encapsulatedPacket.ToBytes(), out response))
+            if (!this.tcpSocket.SendRecieve(encapsulatedPacket.ToBytes(), out response))
             {
                 return null;
             }
@@ -274,7 +363,7 @@ namespace EIP
             encapsulatedPacket.Command = EncapsulatedPacketCommand.UnRegisterSession;
             encapsulatedPacket.SessionHandle = sessionHandle;
 
-            if (this.TCPRequest(encapsulatedPacket.ToBytes()))
+            if (this.tcpSocket.Send(encapsulatedPacket.ToBytes()))
             {
                 sessionHandle = 0;
                 return true;
@@ -340,118 +429,6 @@ namespace EIP
             return objects;
         }
         /// <summary>
-        /// Отправляет Explict сообщение (не требующее подключения) удаленному устройству.
-        /// </summary>
-        /// <param name="request">Пакет запроса для удаленного устройства.</param>
-        /// <returns></returns>
-        public List<object> SendRRData(MessageRouterRequest request)
-        {
-            List<byte> response;
-
-            // "Фрагмент CommonPacketFormat" : 
-            // Стандартный пакет EIP состоящий из двух сегментов.
-            CommonPacketFormat commonPacketFormat = new CommonPacketFormat();
-
-            // - Type ID: Null Address Item (0x0000)
-            CommonPacketItem commonPacket_NullAddressItem = new CommonPacketItem();
-            commonPacket_NullAddressItem.TypeID = CommonPacketItemTypeID.Address_Null;
-
-            // - Type ID: Unconnected Data Item (0x00b2)
-            CommonPacketItem commonPacket_UnconnectedDataItem = new CommonPacketItem();
-            commonPacket_UnconnectedDataItem.TypeID = CommonPacketItemTypeID.Data_UnconnectedMessage;
-            commonPacket_UnconnectedDataItem.Data.AddRange(request.ToBytes());
-
-            commonPacketFormat.Add(commonPacket_NullAddressItem);
-            commonPacketFormat.Add(commonPacket_UnconnectedDataItem);
-
-            EncapsulatedPacket encapsulatedPacket = new EncapsulatedPacket();
-            encapsulatedPacket.SessionHandle = sessionHandle;
-            encapsulatedPacket.Command = EncapsulatedPacketCommand.SendRRData;
-
-            // Interface Handle CIP (4 байта).
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            // Timeout (2 байта).
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.AddRange(commonPacketFormat.ToBytes());
-
-            if (!this.TCPRequestResponse(encapsulatedPacket.ToBytes(), out response))
-            {
-                return null;
-            }
-
-            return ParseEncapsulatedPacket(response);
-        }
-        /// <summary>
-        /// Отправляет Implict сообщение (требующее подключения) удаленному устройству.
-        /// </summary>
-        /// <param name="request">Пакет запроса для удаленного устройства.</param>
-        /// <returns></returns>
-        public List<object> SendUnitData(MessageRouterRequest request)
-        {
-            List<byte> response;
-
-            // "Фрагмент CommonPacketFormat" : 
-            // Стандартный пакет EIP состоящий из двух сегментов.
-            CommonPacketFormat commonPacketFormat = new CommonPacketFormat();
-
-            // - Type ID: Null Address Item (0x00A1)
-            CommonPacketItem commonPacket_ConnectionAddressItem = new CommonPacketItem();
-            commonPacket_ConnectionAddressItem.TypeID = CommonPacketItemTypeID.Address_ConnectionBased;
-            commonPacket_ConnectionAddressItem.Data.AddRange(BitConverter.GetBytes(connectionID_O_T));
-
-            // - Type ID: Unconnected Data Item (0x00B1)
-            CommonPacketItem commonPacket_ConnectedDataItem = new CommonPacketItem();
-            commonPacket_ConnectedDataItem.TypeID = CommonPacketItemTypeID.Data_ConnectionTransportPacket;
-            commonPacket_ConnectedDataItem.Data.AddRange((BitConverter.GetBytes(connectionSequenceNumber++)));
-            commonPacket_ConnectedDataItem.Data.AddRange(request.ToBytes());
-
-            commonPacketFormat.Add(commonPacket_ConnectionAddressItem);
-            commonPacketFormat.Add(commonPacket_ConnectedDataItem);
-
-            EncapsulatedPacket encapsulatedPacket = new EncapsulatedPacket();
-            encapsulatedPacket.SessionHandle = sessionHandle;
-            encapsulatedPacket.Command = EncapsulatedPacketCommand.SendUnitData;
-
-            // Interface Handle CIP (4 байта).
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            // Timeout (2 байта).
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.Add(0);
-            encapsulatedPacket.CommandSpecificData.AddRange(commonPacketFormat.ToBytes());
-
-            if (!this.TCPRequestResponse(encapsulatedPacket.ToBytes(), out response))
-            {
-                return null;
-            }
-
-            return ParseEncapsulatedPacket(response);
-        }
-        /// <summary>
-        /// Отправляет данные удаленному устройству Explict методом, который в свою очередь не требует 
-        /// создания подключения (Запрос->Ответ).
-        /// </summary>
-        /// <param name="request">Структура данных для запроса.</param>
-        /// <returns></returns>
-        public List<object> UnconnectedMessageRequest(UnconnectedSendRequest request)
-        {
-            // 2 "Фрагмент MessageRouterRequest" : 
-            // Запрос маршрутизации на перевод данных в другой логический сегмент.
-            MessageRouterRequest messageRouterRequest = new MessageRouterRequest();
-            messageRouterRequest.ServiceCode = 0x52;
-            messageRouterRequest.RequestPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_ClassID, 6));
-            messageRouterRequest.RequestPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_InstanceID, 1));
-            messageRouterRequest.RequestData.AddRange(request.ToBytes());
-
-            return SendRRData(messageRouterRequest);
-        }
-        /// <summary>
         /// Отправляет груповой разовый запрос с Implict сообщениями (требующее подключения) удаленному устройству.
         /// </summary>
         /// <param name="requests">Пакет запроса для удаленного устройства.</param>
@@ -488,53 +465,29 @@ namespace EIP
 
             return objects;
         }
+        /// <summary>
+        /// Отправляет данные удаленному устройству Explict методом, который в свою очередь не требует 
+        /// создания подключения (Запрос->Ответ).
+        /// </summary>
+        /// <param name="request">Структура данных для запроса.</param>
+        /// <returns></returns>
+        public List<object> UnconnectedMessageRequest(UnconnectedSendRequest request)
+        {
+            // 2 "Фрагмент MessageRouterRequest" : 
+            // Запрос маршрутизации на перевод данных в другой логический сегмент.
+            MessageRouterRequest messageRouterRequest = new MessageRouterRequest();
+            messageRouterRequest.ServiceCode = 0x52;
+            messageRouterRequest.RequestPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_ClassID, 6));
+            messageRouterRequest.RequestPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_InstanceID, 1));
+            messageRouterRequest.RequestData.AddRange(request.ToBytes());
+
+            return SendRRData(messageRouterRequest);
+        }
         /* ================================================================================================== */
         #endregion
 
         #region [ PRIVATE METHODS ]
         /* ======================================================================================== */
-        /// <summary>
-        /// Отправляет последовательность байт клиенту по протоколу TCP/IP и возвращает ожидаемый ответ.
-        /// </summary>
-        /// <param name="request">Последовательность байт для отправки.</param>
-        /// <returns></returns>
-        private bool TCPRequestResponse(byte[] request, out List<byte> response)
-        {
-            response = null;
-
-            try
-            {
-                stream = client.GetStream();
-                stream.Write(request, 0, request.Length);
-
-                byte[] readData = new Byte[1024];
-                Int32 bytes = stream.Read(readData, 0, readData.Length);
-                response = readData.ToList().GetRange(0, bytes);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        /// <summary>
-        /// Отправляет последовательность байт клиенту по протоколу TCP/IP.
-        /// </summary>
-        /// <param name="writeData">Последовательность байт для отправки.</param>
-        /// <returns></returns>
-        private bool TCPRequest(byte[] writeData)
-        {
-            try
-            {
-                stream = client.GetStream();
-                stream.Write(writeData, 0, writeData.Length);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
         /// <summary>
         /// Производит разбор ответа представленного в виде байтового массива по объектам.
         /// </summary>
@@ -553,8 +506,8 @@ namespace EIP
 
             switch (encapsPacketResponse.Command)
             {
-                #region [ COMMAND: "LIST SERVICES" ]
                 case EncapsulatedPacketCommand.ListServices:
+                    #region [ COMMAND: "LIST SERVICES" ]
                     /* ======================================================================== */
                     if (encapsPacketResponse.Status == EncapsulatedPacketStatus.Success)
                     {
@@ -571,52 +524,52 @@ namespace EIP
                         if (!AddObjectToContainer(text, ref obj)) return obj;
                     }
                     /* ======================================================================== */
+                    #endregion
                     break;
-                #endregion
 
-                #region [ COMMAND: "LIST IDENTITY" ]
                 case EncapsulatedPacketCommand.ListIdentity:
+                    #region [ COMMAND: "LIST IDENTITY" ]
                     /* ======================================================================== */
                     if (encapsPacketResponse.Status == EncapsulatedPacketStatus.Success)
                     {
                         CommonPacketFormat commonPacketFormat = CommonPacketFormat.Parse(encapsPacketResponse.CommandSpecificData);
-                        if (!AddObjectToContainer(commonPacketFormat, ref obj) && commonPacketFormat.ItemCount < 1) return obj;
+                        if (!AddObjectToContainer(commonPacketFormat, ref obj) || commonPacketFormat.ItemCount < 1) return obj;
 
                         ListIdentityResponse listIdentityResponse = ListIdentityResponse.Parse(commonPacketFormat.Items[0].Data);
                         if (!AddObjectToContainer(listIdentityResponse, ref obj)) return obj;
                     }
+                    /* ======================================================================== */
+                    #endregion
                     break;
-                /* ======================================================================== */
-                #endregion
 
-                #region [ COMMAND: "LIST INTERFACES" ]
                 case EncapsulatedPacketCommand.ListInterfaces:
+                    #region [ COMMAND: "LIST INTERFACES" ]
                     /* ======================================================================== */
                     if (encapsPacketResponse.Status == EncapsulatedPacketStatus.Success)
                     {
                     }
                     /* ======================================================================== */
+                    #endregion
                     break;
-                #endregion
 
-                #region [ COMMAND: "REGISTER SESSION" ]
                 case EncapsulatedPacketCommand.RegisterSession:
+                    #region [ COMMAND: "REGISTER SESSION" ]
                     /* ======================================================================== */
                     UInt32 returnvalue = encapsPacketResponse.SessionHandle;
                     if (!AddObjectToContainer(returnvalue, ref obj)) return obj;
                     /* ======================================================================== */
+                    #endregion
                     break;
-                #endregion
 
-                #region [ COMMAND: "UNREGISTER SESSION" ]
                 case EncapsulatedPacketCommand.UnRegisterSession:
-                /* ======================================================================== */
-                /* ======================================================================== */
+                    #region [ COMMAND: "UNREGISTER SESSION" ]
+                    /* ======================================================================== */
+                    /* ======================================================================== */
+                    #endregion
                     break;
-                #endregion
 
-                #region [ COMMAND: "SEND RR DATA" ]
                 case EncapsulatedPacketCommand.SendRRData:
+                    #region [ COMMAND: "SEND RR DATA" ]
                     /* ======================================================================== */
                     if (encapsPacketResponse.Status == EncapsulatedPacketStatus.Success)
                     {
@@ -651,11 +604,11 @@ namespace EIP
                         }
                     }
                     /* ======================================================================== */
+                    #endregion
                     break;
-                #endregion
 
-                #region [ COMMAND: "SEND UNIT DATA" ]
                 case EncapsulatedPacketCommand.SendUnitData:
+                    #region [ COMMAND: "SEND UNIT DATA" ]
                     /* ======================================================================== */
                     if (encapsPacketResponse.Status == EncapsulatedPacketStatus.Success)
                     {
@@ -721,12 +674,32 @@ namespace EIP
                         #endregion
                     }
                     /* ======================================================================== */
+                    #endregion
                     break;
-                #endregion
             }
 
             return obj;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="encapsPacket"></param>
+        /// <returns></returns>
+        private T GetObjectFromEncapsulatedPacket<T>(List<object> encapsPacket)
+        {
+            if (encapsPacket == null)
+                return default(T);
+
+            for (int ix = encapsPacket.Count - 1; ix >= 0; ix--)
+            {
+                if (encapsPacket[ix] is T)
+                    return (T)encapsPacket[ix];
+            }
+
+            return default(T);
+        }
+
         /// <summary>
         /// Производит добавление текущего объекта в лист объектов в случае если объект не равен Null.
         /// </summary>
@@ -742,7 +715,6 @@ namespace EIP
             }
             return false;
         }
-
         /// <summary>
         /// Возвращает строковое значение производителя из кодового знаяения.
         /// </summary>

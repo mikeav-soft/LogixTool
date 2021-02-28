@@ -84,8 +84,8 @@ namespace EIP.AllenBradley.Models
                 return false;
             }
 
-            this.Items[id].ParrentTable = null;
-            this.Items[id].Tag.OwnerTableItem = null;
+            this._Items[id].ParrentTable = null;
+            this._Items[id].Tag.OwnerTableItem = null;
             this._Items.Remove(id);
             return true;
         }
@@ -100,7 +100,7 @@ namespace EIP.AllenBradley.Models
                 item.Tag.OwnerTableItem = null;
             }
 
-            this.Items.Clear();
+            this._Items.Clear();
         }
         /// <summary>
         /// Устанавливает массив байт по соответствующим элементам таблицы ассоциации памяти и с тэгом.

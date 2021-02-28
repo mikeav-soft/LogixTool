@@ -57,6 +57,8 @@
     <Compile Include="Common\Extension\Strings.cs" />
     <Compile Include="Common\Extension\TextFragment.cs" />
     <Compile Include="Common\Extension\XLinqExtensions.cs" />
+    <Compile Include="Controls\DataGridViewDisableCheckBoxColumn.cs" />
+    <Compile Include="Controls\DataGridViewDisableCheckBoxCell.cs" />
     <Compile Include="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -172,6 +174,8 @@
   <ItemGroup>
     <Content Include="Configuration.ico" />
     <Content Include="Icons\Configuration.ico" />
+    <Content Include="Resources\flash.png" />
+    <Content Include="Resources\ico_load.png" />
     <Content Include="Resources\ico_logix_module_add.png" />
     <Content Include="Resources\ico_logix_module_init.png" />
     <Content Include="Resources\ico_loupe.png" />
@@ -208,6 +212,10 @@
     <Content Include="Resources\ico_logix_tag.png" />
     <Content Include="Resources\ico_logix_task_continuous.png" />
     <Content Include="Resources\ico_logix_task_periodic.png" />
+    <Content Include="Resources\lightbulb.png" />
+    <Content Include="Resources\lightbulb_on.png" />
+    <Content Include="Resources\scroll_run.png" />
+    <Content Include="Resources\scroll_stop.png" />
     <Content Include="Resources\txt_AppRegistratorRelease.txt" />
     <None Include="Resources\ico_plug.png" />
     <None Include="Resources\ico_cross.png" />

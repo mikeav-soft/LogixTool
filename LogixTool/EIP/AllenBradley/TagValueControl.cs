@@ -15,33 +15,33 @@ namespace EIP.AllenBradley
     {
         #region [ PROPERTIES ]
         /* ======================================================================================== */
-        private TagValueReport _Report;
         /// <summary>
         /// Возвращает или задает отчет о последних завершенных данных операции чтении/записи значения тэга.
         /// </summary>
         public TagValueReport Report
         {
-            get
-            {
-                return this._Report;
-            }
+            get { return this.report; }
             set
             {
-                this._Report = value;
+                this.report = value;
                 Event_ReportUpdated();
             }
         }
         /* ======================================================================================== */
         #endregion
 
+        private TagValueReport report;
         private TagValueReport editedReport;                // Текущие редакируемые данные чтения/записи значения тэга.
-        private TagDataTypeDefinition dataTypeDefinition;   // Представляет собой определение типа данных.
+        private TagDataTypeDefinition type;   // Представляет собой определение типа данных.
         /// <summary>
         /// Создает новый буфер значений тэга.
         /// </summary>
         public TagValueControl(TagDataTypeDefinition type)
         {
-            this.dataTypeDefinition = type;
+            if (type == null)
+                throw new ArgumentNullException("Class='TagDataTypeDefinition', Argument='type' can not be Null", "type");
+
+            this.type = type;
             this.Report = new TagValueReport();
             this.editedReport = new TagValueReport();
         }
@@ -65,8 +65,71 @@ namespace EIP.AllenBradley
         /* ======================================================================================== */
         #endregion
 
+        #region [ PUBLIC METHODS ]
+        /* ======================================================================================== */
+        /// <summary>
+        /// Производит сброс состояния текущего отчета.
+        /// </summary>
+        public virtual void Reset()
+        {
+            this.Report.Init();
+        }
+        /* ======================================================================================== */
+        #endregion
+
         #region [ INTERNAL METHODS ]
         /* ======================================================================================== */
+        /// <summary>
+        /// Проверяет требуется ли обновление данных для текущего контейнера данных в зависимости от требуемого периода обновления.
+        /// В случае нормального периода равного нулю, обновление требуется только один раз до появления
+        /// </summary>
+        /// <param name="normalUpdateRate"></param>
+        /// <param name="retryUpdateRate"></param>
+        /// <returns></returns>
+        internal virtual bool CheckOnUpdate(uint normalUpdateRate, uint retryUpdateRate)
+        {
+            // Проверяем имеется ли любая запись о последнем результате.
+            if (this.Report.IsSuccessful == null)
+            {
+                return true;
+            }
+
+            uint updateRate;
+
+            // Определяем период обновления операции в зависимости от последнего результата.
+            if (this.Report.IsSuccessful == true)
+                updateRate = normalUpdateRate;
+            else
+                updateRate = retryUpdateRate;
+
+            // Определяем разрешение на выполнение операции.
+            // Если период времени с последней записи превысил или равен требуемому периоду обновления.
+            return (this.Report.ServerRequestTimeStamp == null)
+                || (this.Report.ServerRequestTimeStamp > 0
+                && normalUpdateRate > 0
+                && (((DateTime.Now.Ticks - this.Report.ServerRequestTimeStamp) / 10000) >= updateRate));
+        }
+        /// <summary>
+        /// Проверяет что предоставленные данные существуют и соответствуют определенному типу данных.
+        /// </summary>
+        /// <param name="data">Последовательность данных.</param>
+        /// <returns></returns>
+        internal virtual bool CheckData(List<byte[]> data)
+        {
+            if (this.type.ElementSize == 0)
+            {
+                return false;
+            }
+
+            if (data == null)
+            {
+                return false;
+            }
+
+            int elements = type.ArrayDimension.HasValue ? type.ArrayDimension.Value : 1;
+
+            return elements == data.Count && data.All(e => e != null && e.Length == type.ElementSize);
+        }
         /// <summary>
         /// Производит инициализацию переменных внутри редактируемого отчета перед началом работы с ним.
         /// </summary>
@@ -240,7 +303,7 @@ namespace EIP.AllenBradley
             }
 
             // Проверяем что текущий тип данных существует и его код не равен 0.
-            if (this.dataTypeDefinition == null || this.dataTypeDefinition.Code == 0)
+            if (this.type == null || this.type.Code == 0)
             {
                 // В случае если тип данных не определен, то прекращаем попытки извлечения бита.
                 // Данная ситуация может быть нормальной, т.к. существуют методы получения данных с удаленного устройства
@@ -249,24 +312,24 @@ namespace EIP.AllenBradley
             }
 
             // Проверяем что поступившие данные соответствуют определенному размеру типа данных.
-            if (data.Any(t => t.Length == 0 || t.Length != this.dataTypeDefinition.Size))
+            if (data.Any(t => t.Length == 0 || t.Length != this.type.ElementSize))
             {
                 return null;
             }
 
             List<byte[]> result = new List<byte[]>();
 
-            switch (this.dataTypeDefinition.Family)
+            switch (this.type.Family)
             {
                 case TagDataTypeFamily.AtomicBool:
                     {
                         #region [ POST EXTRACTION OF STRUCTURE BITS ]
                         /* ======================================================================================== */
-                        if (this.dataTypeDefinition.StructureBitPosition != null)
+                        if (this.type.StructureDefinition != null && this.type.StructureDefinition.BitOffset.HasValue)
                         {
                             if (data.Count == 1 && data[0].Length == 1)
                             {
-                                byte[] extractedBits = BitExtractor.GetBitRange(data[0], this.dataTypeDefinition.StructureBitPosition.Value, 1);
+                                byte[] extractedBits = BitExtractor.GetBitRange(data[0], this.type.StructureDefinition.BitOffset.Value, 1);
 
                                 if (extractedBits != null && extractedBits.Length == 1)
                                 {
@@ -295,11 +358,11 @@ namespace EIP.AllenBradley
                     {
                         #region [ POST EXTRACTION OF ATOMIC NUMERIC BITS ]
                         /* ======================================================================================== */
-                        if (this.dataTypeDefinition.AtomicBitPosition != null)
+                        if (this.type.AtomicBitDefinition != null)
                         {
                             if (data.Count == 1 && data[0].Length > 0 && data[0].Length <= 4)
                             {
-                                byte[] extractedBits = BitExtractor.GetBitRange(data[0], this.dataTypeDefinition.AtomicBitPosition.Value, 1);
+                                byte[] extractedBits = BitExtractor.GetBitRange(data[0], this.type.AtomicBitDefinition.BitOffset.Value, 1);
 
                                 if (extractedBits != null && extractedBits.Length == 1)
                                 {
@@ -318,7 +381,6 @@ namespace EIP.AllenBradley
                                 // TODO: Add message.
                                 return null;
                             }
-
                         }
                         /* ======================================================================================== */
                         #endregion
@@ -329,12 +391,11 @@ namespace EIP.AllenBradley
                     {
                         #region [ POST EXTRACTION OF ATOMIC ARRAY BITS ]
                         /* ======================================================================================== */
-                        if (this.dataTypeDefinition.BitArrayDWordOffset != null && this.dataTypeDefinition.BitArrayDWordBitPosition != null)
+                        if (this.type.BitArrayDefinition != null)
                         {
-                            if (data.Count > this.dataTypeDefinition.BitArrayDWordOffset.Value && data[0].Length == 4)
+                            if (data.Count == 1 && data[0].Length == this.type.ElementSize)
                             {
-                                byte[] extractedBits = BitExtractor.GetBitRange(data[(int)this.dataTypeDefinition.BitArrayDWordOffset.Value],
-                                    this.dataTypeDefinition.BitArrayDWordBitPosition.Value, 1);
+                                byte[] extractedBits = BitExtractor.GetBitRange(data[0], this.type.BitArrayDefinition.BitOffset.Value, 1);
 
                                 if (extractedBits != null && extractedBits.Length == 1)
                                 {

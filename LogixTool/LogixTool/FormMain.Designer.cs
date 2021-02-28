@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.alarmListViewToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
             this.recorderStatusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.recordCounterToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.fileSizeToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -48,9 +49,9 @@
             this.toolStripButton_StopRecording = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton_ShowDeviceBrowser = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton_ShowEventLogs = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton_About = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton_WriteValues = new System.Windows.Forms.ToolStripButton();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.deviceBrowserControl = new LogixTool.Controls.DeviceBrowserControl();
@@ -75,6 +76,7 @@
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.alarmListViewToolStripSplitButton,
             this.recorderStatusToolStripStatusLabel,
             this.recordCounterToolStripStatusLabel,
             this.fileSizeToolStripStatusLabel,
@@ -84,6 +86,16 @@
             this.statusStrip.Size = new System.Drawing.Size(1265, 22);
             this.statusStrip.TabIndex = 1;
             this.statusStrip.Text = "statusStrip";
+            // 
+            // alarmListViewToolStripSplitButton
+            // 
+            this.alarmListViewToolStripSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.alarmListViewToolStripSplitButton.Image = global::LogixTool.Properties.Resources.ico_info;
+            this.alarmListViewToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.alarmListViewToolStripSplitButton.Name = "alarmListViewToolStripSplitButton";
+            this.alarmListViewToolStripSplitButton.Size = new System.Drawing.Size(32, 20);
+            this.alarmListViewToolStripSplitButton.Text = "toolStripSplitButton1";
+            this.alarmListViewToolStripSplitButton.ButtonClick += new System.EventHandler(this.alarmListViewToolStripSplitButton_ButtonClick);
             // 
             // recorderStatusToolStripStatusLabel
             // 
@@ -154,9 +166,9 @@
             this.toolStripButton_StopRecording,
             this.toolStripSeparator3,
             this.toolStripButton_ShowDeviceBrowser,
-            this.toolStripButton_ShowEventLogs,
             this.toolStripSeparator4,
-            this.toolStripButton_About});
+            this.toolStripButton_About,
+            this.toolStripButton_WriteValues});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(1265, 25);
@@ -248,17 +260,6 @@
             this.toolStripButton_ShowDeviceBrowser.Text = "Device Browser";
             this.toolStripButton_ShowDeviceBrowser.Click += new System.EventHandler(this.toolStripButton_ShowDeviceBrowser_Click);
             // 
-            // toolStripButton_ShowEventLogs
-            // 
-            this.toolStripButton_ShowEventLogs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_ShowEventLogs.Image = global::LogixTool.Properties.Resources.ico_error;
-            this.toolStripButton_ShowEventLogs.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_ShowEventLogs.Name = "toolStripButton_ShowEventLogs";
-            this.toolStripButton_ShowEventLogs.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_ShowEventLogs.Text = "toolStripButton1";
-            this.toolStripButton_ShowEventLogs.ToolTipText = "Event Logs";
-            this.toolStripButton_ShowEventLogs.Click += new System.EventHandler(this.toolStripButton_ShowEventLogs_Click);
-            // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
@@ -275,6 +276,16 @@
             this.toolStripButton_About.Text = "toolStripButton1";
             this.toolStripButton_About.ToolTipText = "About";
             this.toolStripButton_About.Click += new System.EventHandler(this.toolStripButton_About_Click);
+            // 
+            // toolStripButton_WriteValues
+            // 
+            this.toolStripButton_WriteValues.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_WriteValues.Image = global::LogixTool.Properties.Resources.flash;
+            this.toolStripButton_WriteValues.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_WriteValues.Name = "toolStripButton_WriteValues";
+            this.toolStripButton_WriteValues.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_WriteValues.Text = "Write Values";
+            this.toolStripButton_WriteValues.Click += new System.EventHandler(this.toolStripButton_WriteValues_Click);
             // 
             // splitContainer3
             // 
@@ -329,7 +340,6 @@
             this.tagBrowserControl.Name = "tagBrowserControl";
             this.tagBrowserControl.Size = new System.Drawing.Size(1036, 384);
             this.tagBrowserControl.TabIndex = 1;
-            this.tagBrowserControl.WriteModeEnable = false;
             // 
             // messageControl
             // 
@@ -353,7 +363,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Logix Tool v0.2";
+            this.Text = "Logix Tool v1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormRegistrator_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormRegistrator_FormClosed);
             this.statusStrip.ResumeLayout(false);
@@ -401,11 +411,12 @@
         private System.Windows.Forms.ToolStripButton toolStripButton_ShowDeviceBrowser;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private System.Windows.Forms.ToolStripButton toolStripButton_ShowEventLogs;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton toolStripButton_About;
         private System.Windows.Forms.ToolStripStatusLabel recordCounterToolStripStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel fileSizeToolStripStatusLabel;
         private Common.MessageControl messageControl;
+        private System.Windows.Forms.ToolStripButton toolStripButton_WriteValues;
+        private System.Windows.Forms.ToolStripSplitButton alarmListViewToolStripSplitButton;
     }
 }

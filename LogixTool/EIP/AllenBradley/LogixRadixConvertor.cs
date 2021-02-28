@@ -6,6 +6,8 @@ namespace EIP.AllenBradley
 {
     public class LogixRadixConvertor
     {
+        #region [ PUBLIC STATIC METHODS ]
+        /* ================================================================================================== */
         /// <summary>
         /// Преобразовывает значение байта в символ ASCII ControLogix.
         /// </summary>
@@ -428,13 +430,9 @@ namespace EIP.AllenBradley
             {
                 return "0";
             }
-            else if (b == 0xFF)
-            {
-                return "1";
-            }
             else
             {
-                return null;
+                return "1";
             }
         }
         /// <summary>
@@ -450,7 +448,7 @@ namespace EIP.AllenBradley
             }
             else if (s == "1")
             {
-                return 0xFF;
+                return 1;
             }
             else
             {
@@ -467,8 +465,10 @@ namespace EIP.AllenBradley
             string[] s = b.Select(t => t.ToString()).ToArray();
             return String.Join(" ", s);
         }
+        /* ================================================================================================== */
+        #endregion
 
-        #region [ PRIVATE METHODS ]
+        #region [ PRIVATE STATIC METHODS ]
         /* ================================================================================================== */
         /// <summary>
         /// Преобразовывает последовательность байт в строку Hex-формата.
@@ -507,7 +507,6 @@ namespace EIP.AllenBradley
 
             return result;
         }
-
         /// <summary>
         /// Преобразовывает строку последовательность байт в Bin-формата.
         /// </summary>

@@ -677,7 +677,7 @@ namespace EIP.AllenBradley
 
                         // Получаем текущий размер в байтах который будет занят под возврат информации для данного тэга.
                         int headerPacketSize = 4;
-                        int expectedResponsedTagSizeInTable = 2 + tag.Type.ExpectedTotalSize;
+                        int expectedResponsedTagSizeInTable = 2 + tag.Type.TotalSize;
                         int maxValidPacketSizeResponse = this.Device.MaxPacketSizeTtoO;
                         int encapsulatedHeader = 4;
 
@@ -751,82 +751,107 @@ namespace EIP.AllenBradley
 
                     #region [ 3.3. ЗАПИСЬ ЗНАЧЕНИЯ ТЭГА ]
                     /* ====================================================================================== */
-                    IEnumerable<LogixTagHandler> simpleWritingTags = mainProcessTags.Keys.Where(t =>
+                    currentTags = mainProcessTags.Keys.Where(t => t.WriteEnable && t.NeedToWrite);
+                    List<LogixTagHandler> allWritingTags = new List<LogixTagHandler>();
+
+                    // Проверяем что запрошенные тэги имеют знаяения зля записи.
+                    foreach (LogixTagHandler tag in currentTags)
+                    {
+                        if (tag.WriteValue.RequestedData == null)
+                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag Value Write", "Error! Tag Value is Null. Tag: " + tag.Name));
+                        else
+                            allWritingTags.Add(tag);
+                    }
+
+                    IEnumerable<LogixTagHandler> simpleNumericWritingTags = allWritingTags.Where(t =>
                         t.WriteMethod == TagWriteMethod.Simple
-                        && t.WriteEnable
-                        && t.Type.Family != TagDataTypeFamily.Null);
+                        && (t.Type.Family == TagDataTypeFamily.AtomicBool
+                            || t.Type.Family == TagDataTypeFamily.AtomicFloat
+                            || t.Type.Family == TagDataTypeFamily.AtomicInteger)
+                        && t.Type.AtomicBitDefinition == null);
 
-                    IEnumerable<LogixTagHandler> fragmentWritingTags = mainProcessTags.Keys.Where(t =>
+                    IEnumerable<LogixTagHandler> simpleBitWritingTags = allWritingTags.Where(t =>
+                        t.WriteMethod == TagWriteMethod.Simple
+                        && (t.Type.Family == TagDataTypeFamily.AtomicInteger && t.Type.AtomicBitDefinition != null
+                            || t.Type.Family == TagDataTypeFamily.AtomicBoolArray && t.Type.BitArrayDefinition != null));
+
+                    IEnumerable<LogixTagHandler> fragmentWritingTags = allWritingTags.Where(t =>
                         t.WriteMethod == TagWriteMethod.Fragmet
-                        && t.WriteEnable
                         && t.Type.Family != TagDataTypeFamily.Null);
 
-                    #region [ 3.3.1 ЗАПИСЬ - ПРОСТОЙ МЕТОД ]
+
+                    #region [ 3.3.1 ЗАПИСЬ - ПРОСТОЙ МЕТОД (ЗАПИСЬ ЗНАЧЕНИЯ)]
                     /* ====================================================================================== */
-                    currentTags = simpleWritingTags.Where(t => t.NeedToRead);
-
-                    IEnumerable<LogixTagHandler> atomicBitTags = currentTags.Where(f =>
-                        f.Type.AtomicBitPosition != null
-                        && f.Type.Family == TagDataTypeFamily.AtomicInteger
-                        && f.WriteValue.RequestedData != null
-                        && f.WriteValue.RequestedData.Count > 0
-                        && f.WriteValue.RequestedData[0].Length > 0);
-
-                    IEnumerable<LogixTagHandler> atomicNumTags = currentTags.Where(f =>
-                        f.Type.AtomicBitPosition == null);
-
-                    //
-                    if (atomicNumTags.Count() == 1)
+                    // Запись с использованием однократного запроса.
+                    if (simpleNumericWritingTags.Count() == 1)
                     {
-                        this.Device.WriteTag(atomicNumTags.ElementAt(0));
+                        this.Device.WriteTag(simpleNumericWritingTags.ElementAt(0));
                     }
-                    else if (atomicNumTags.Count() > 1)
+                    // Запись с использованием мультизапроса.
+                    else if (simpleNumericWritingTags.Count() > 1)
                     {
-                        this.Device.WriteTags(atomicNumTags.Select(t => (LogixTag)t).ToList());
-                    }
-
-                    //
-                    foreach (LogixTagHandler t in atomicBitTags)
-                    {
-                        if (!this.Device.IsConnected)
-                        {
-                            break;
-                        }
-
-                        byte[] orMask = new byte[t.Type.Size];
-                        byte[] andMask = new byte[t.Type.Size];
-
-                        orMask = orMask.Select(j => (byte)0x00).ToArray();
-                        andMask = andMask.Select(j => (byte)0xFF).ToArray();
-
-                        int byteNumber = t.Type.AtomicBitPosition.Value / 8;
-                        int bitNumber = t.Type.AtomicBitPosition.Value - byteNumber * 8;
-
-                        if (byteNumber <= t.Type.Size)
-                        {
-                            if (t.WriteValue.RequestedData[0].Any(c => c != 0))
-                            {
-                                // Bit == 1;
-                                orMask[byteNumber] = (byte)(0x01 << bitNumber);
-                            }
-                            else
-                            {
-                                // Bit == 0;
-                                andMask[byteNumber] = (byte)(~(0x01 << bitNumber));
-                            }
-                        }
-
-                        this.Device.ReadModifyWriteTag(t, orMask, andMask);
+                        this.Device.WriteTags(simpleNumericWritingTags.Select(t => (LogixTag)t).ToList());
                     }
                     /* ====================================================================================== */
                     #endregion
 
-                    #region [ 3.3.2 ЗАПИСЬ - ФРАГМЕНТАРНЫЙ МЕТОД ]
+                    #region [ 3.3.2 ЗАПИСЬ - ПРОСТОЙ МЕТОД (МОДИФИКАЦИЯ БИТОВ)]
                     /* ====================================================================================== */
-                    currentTags = fragmentWritingTags.Where(t => t.NeedToWrite);
+                    //
+                    foreach (LogixTagHandler tag in simpleBitWritingTags)
+                    {
+                        if (!this.Device.IsConnected) break;
 
-                    // Атомарные тэги.
-                    foreach (LogixTagHandler tag in currentTags)
+                        // Создаем маски для модификации значений OR/AND.
+                        byte[] mask_or = new byte[tag.Type.TotalSize];
+                        byte[] mask_and = new byte[tag.Type.TotalSize];
+
+                        // Производим инициализацию масок OR/AND.
+                        for (int ix = 0; ix < tag.Type.TotalSize; ix++)
+                        {
+                            mask_or[ix] = 0x00;
+                            mask_and[ix] = 0xFF;
+                        }
+
+                        BitOffsetPosition bitpos = null;
+
+                        if (tag.Type.Family == TagDataTypeFamily.AtomicInteger)
+                        {
+                            bitpos = new BitOffsetPosition(BytesInElement.OneByte);
+                            bitpos.TotalBitOffset = tag.Type.AtomicBitDefinition.BitOffset.Value;
+                        }
+                        else if (tag.Type.Family == TagDataTypeFamily.AtomicBoolArray)
+                        {
+                            bitpos = new BitOffsetPosition(BytesInElement.OneByte);
+                            bitpos.TotalBitOffset = tag.Type.BitArrayDefinition.BitOffset.Value;
+                        }
+
+                        if (bitpos != null)
+                        {
+                            if ((int)bitpos.ElementOffset <= tag.Type.TotalSize)
+                            {
+                                if (tag.WriteValue.RequestedData[0].Any(c => c != 0))
+                                {
+                                    // Bit == 1;
+                                    mask_or[(int)bitpos.ElementOffset] = (byte)(0x01 << (int)bitpos.BitOffset.Value);
+                                }
+                                else
+                                {
+                                    // Bit == 0;
+                                    mask_and[(int)bitpos.ElementOffset] = (byte)(~(0x01 << (int)bitpos.BitOffset.Value));
+                                }
+
+                                this.Device.ReadModifyWriteTag(tag, mask_or, mask_and);
+                            }
+                        }
+                    }
+                    /* ====================================================================================== */
+                    #endregion
+
+                    #region [ 3.3.3 ЗАПИСЬ - ФРАГМЕНТАРНЫЙ МЕТОД ]
+                    /* ====================================================================================== */
+                    // Запись каждого из тэгов фрагментарным методом.
+                    foreach (LogixTagHandler tag in fragmentWritingTags)
                     {
                         if (!this.Device.IsConnected)
                         {
@@ -838,6 +863,13 @@ namespace EIP.AllenBradley
                     /* ====================================================================================== */
                     #endregion
 
+                    // Для всех тэгов которые требовали запись значений и имеющие нулевой период обновления (однократная запись) в данном цикле
+                    // устанавливаем запрет на дальнейшее разрешение записи.
+                    foreach (LogixTagHandler t in currentTags)
+                    {
+                        if (t.WriteUpdateRate == 0)
+                            t.WriteEnable = false;
+                    }
                     /* ====================================================================================== */
                     #endregion
 
@@ -924,9 +956,18 @@ namespace EIP.AllenBradley
                 // производим процесс завершения.
                 if (!this.processRunRequest && this.processRunEnable)
                 {
+                    // Освобождаем ранее зарезервированные таблицы в удаленном устройстве.
+                    foreach (CLXCustomTagMemoryTable table in this.TablesInProcess)
+                    {
+                        foreach (CLXCustomTagMemoryItem item in table.Items)
+                        {
+                            this.Device.RemoveTagFromReadingTable(table, item);
+                        }
+                    }
+
+                    // Инициализируем состояние всех тэгов.
                     foreach (LogixTagHandler t in this.mainProcessTags.Keys)
                     {
-
                         t.InitState();
                         t.OwnerTableItem = null;
                         t.OwnerTask = null;
@@ -938,7 +979,6 @@ namespace EIP.AllenBradley
                     this.mainProcessTags.Clear();
                     this.processRunEnable = false;
                 }
-
                 /* ====================================================================================== */
                 #endregion
 
@@ -1092,25 +1132,22 @@ namespace EIP.AllenBradley
         /// <returns></returns>
         private bool DefineTagDataType(LogixTagHandler logixTag)
         {
-            string typeName = null;                 // Текущее название типа данных.
-            string hiddenMemberName = null;         // Текущее имя скрытого члена структуры типа данных к которой относится бит (его место определения в данном члене).
-            UInt16 typeCode = 0;                    // Текущий код типа данных.
-            UInt16? atomicBitPosition = null;       // Текущий номер бита атомарного числа.
-            UInt16? structureBitPosition = null;    // Текущее значение позиции бита структурного типа данных.
-            UInt32 structureMemberByteOffset = 0;   // Текущее значение смещения члена структуры в байтах.
-            UInt16? bitArrayDWordBitPosition = null;// Текущее значение позиции бита битового массива.
-            UInt16? bitArrayDWordOffset = null;     // Текущее значение смещения 4 байтного слова битового массива.          
-            bool isBitArray;                        // Текущее значение характеризующее что данный тип данных является битовым массивом.
-            UInt16 size = 0;                        // Текущее значение размера типа данных.
+            string typeName = null;                         // Текущее название типа данных.
+            string hiddenMemberName = null;                 // Текущее имя скрытого члена структуры типа данных к которой относится бит (его место определения в данном члене).
+            UInt16 typeCode = 0;                            // Текущий код типа данных.
+            BitOffsetPosition atomicBitDefinition = null;   // Текущее значение позиции байта/бита атомарного численного типа данных.
+            BitOffsetPosition structureDefinition = null;   // Текущее значение позиции байта/бита структурного типа данных.
+            BitOffsetPosition bitArrayDefinition = null;    // Текущее значение позиции байта/бита битового массива типа данных.
+            bool isBitArray;                                // Текущее значение характеризующее что данный тип данных является битовым массивом.
+            UInt16 size = 0;                                // Текущее значение размера типа данных.
 
             // Присваивает начальные значения возвращаемым параметрам.
-            bool isProgramTag = false;              // Показывает на что данный тэг является программным.
-            EPath epath = null;                     // Определение пути для текущего тэга.
-            UInt32? arrayIndex0 = null;             // Индекс массива размерности 0.
-            UInt32? arrayIndex1 = null;             // Индекс массива размерности 1.
-            UInt32? arrayIndex2 = null;             // Индекс массива размерности 2.
+            bool isProgramTag = false;                      // Показывает на что данный тэг является программным.
+            EPath epath = null;                             // Определение пути для текущего тэга.
+            UInt32? arrayIndex0 = null;                     // Индекс массива размерности 0.
+            UInt32? arrayIndex1 = null;                     // Индекс массива размерности 1.
+            UInt32? arrayIndex2 = null;                     // Индекс массива размерности 2.
             ArrayDefinition arrayDefinition = new ArrayDefinition();
-
 
             if (logixTag == null)
             {
@@ -1231,14 +1268,13 @@ namespace EIP.AllenBradley
 
                 if (!isNumericPartName)
                 {
-                    atomicBitPosition = null;
-                    structureBitPosition = null;
-                    structureMemberByteOffset = 0;
-                    bitArrayDWordBitPosition = null;
-                    bitArrayDWordOffset = null;
-                    arrayDefinition.ArrayDim0 = 0;
-                    arrayDefinition.ArrayDim1 = 0;
-                    arrayDefinition.ArrayDim2 = 0;
+                    atomicBitDefinition = null;
+                    structureDefinition = null;
+                    bitArrayDefinition = null;
+
+                    arrayDefinition.Dim0 = 0;
+                    arrayDefinition.Dim1 = 0;
+                    arrayDefinition.Dim2 = 0;
                     hiddenMemberName = null;
                 }
                 else if (!isLastPartIndex)
@@ -1262,7 +1298,7 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ PART NAME : TAG NAME ]
+                #region [ PART NAME : "TAG NAME" ]
                 /* ====================================================================================== */
                 if (isTagPartIndex)
                 {
@@ -1345,9 +1381,9 @@ namespace EIP.AllenBradley
                                 return false;
                             }
 
-                            // Также вычисляем положение Байта и Бита для Битового массива.
-                            bitArrayDWordOffset = (UInt16)(arrayLinearIndex / 32);
-                            bitArrayDWordBitPosition = (UInt16)(arrayLinearIndex % 32);
+                            // Создаем определение смещения для битового массива.
+                            bitArrayDefinition = new BitOffsetPosition(BytesInElement.FourBytes);
+                            bitArrayDefinition.TotalBitOffset = arrayLinearIndex;
                         }
                         /* ====================================================================================== */
                         #endregion
@@ -1358,9 +1394,9 @@ namespace EIP.AllenBradley
                         /* ====================================================================================== */
                         // Присваиваем текущей длине фрагмента значение размерности массива из полученного 
                         // найденного тэга.
-                        arrayDefinition.ArrayDim0 = clxTag.ArrayDim0;
-                        arrayDefinition.ArrayDim1 = clxTag.ArrayDim1;
-                        arrayDefinition.ArrayDim2 = clxTag.ArrayDim2;
+                        arrayDefinition.Dim0 = clxTag.ArrayDim0;
+                        arrayDefinition.Dim1 = clxTag.ArrayDim1;
+                        arrayDefinition.Dim2 = clxTag.ArrayDim2;
                         /* ====================================================================================== */
                         #endregion
                     }
@@ -1372,22 +1408,20 @@ namespace EIP.AllenBradley
                     // Добавляем в путь EPath новый сегмент с текущим именем.
                     epath.Segments.Add(new EPathSegment(currentPartName));
 
-                    if (!isBitArray)
-                    {
-                        if (currentArrayIndexRank >= 1)
-                            epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, arrayIndex0.Value));
-                        if (currentArrayIndexRank >= 2)
-                            epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, arrayIndex1.Value));
-                        if (currentArrayIndexRank >= 3)
-                            epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, arrayIndex2.Value));
-                    }
+                    if (currentArrayIndexRank >= 1)
+                        epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, isBitArray ? arrayIndex0.Value / 32 : arrayIndex0.Value));
+                    if (currentArrayIndexRank >= 2)
+                        epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, isBitArray ? arrayIndex1.Value / 32 : arrayIndex1.Value));
+                    if (currentArrayIndexRank >= 3)
+                        epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, isBitArray ? arrayIndex2.Value / 32 : arrayIndex2.Value));
+
                     /* ====================================================================================== */
                     #endregion
                 }
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ PART NAME : MEMBER NAME ]
+                #region [ PART NAME : "MEMBER NAME" ]
                 /* ====================================================================================== */
                 if (isMemberPartIndex)
                 {
@@ -1414,10 +1448,11 @@ namespace EIP.AllenBradley
                         typeCode = currentTemplateMember.SymbolTypeAttribute.Code;
                         // Определяем по типу данных является ли данный тип битовым массивом.
                         isBitArray = (typeCode == 0x00D3);
-                        // Получаем позицию бита соответствующего текущему элементу имени.
-                        structureBitPosition = currentTemplateMember.BitPosition;
-                        // Получаем позицию байта в структуре соответствующего текущему элементу имени.
-                        structureMemberByteOffset = currentTemplateMember.Offset;
+
+                        // Получаем позицию байта/бита соответствующего текущему элементу имени.
+                        structureDefinition = new BitOffsetPosition(BytesInElement.OneByte);
+                        structureDefinition.ElementOffset = currentTemplateMember.Offset;
+                        structureDefinition.BitOffset = currentTemplateMember.BitPosition;
 
                         // Если текущий индекс последний и элемент является типом BOOL с кодом 0xC1,
                         // то получаем 
@@ -1457,9 +1492,9 @@ namespace EIP.AllenBradley
                                 // Для индекса размерности 1.
                                 if (currentArrayIndexRank >= 1) arrayLinearIndex = arrayIndex0.Value;
 
-                                // Также вычисляем положение Байта и Бита для Битового массива.
-                                bitArrayDWordOffset = (UInt16)(arrayLinearIndex / 32);
-                                bitArrayDWordBitPosition = (UInt16)(arrayLinearIndex % 32);
+                                // Создаем определение смещения для битового массива.
+                                bitArrayDefinition = new BitOffsetPosition(BytesInElement.FourBytes);
+                                bitArrayDefinition.TotalBitOffset = arrayLinearIndex;
                             }
                             /* ====================================================================================== */
                             #endregion
@@ -1472,9 +1507,9 @@ namespace EIP.AllenBradley
                             {
                                 // Присваиваем текущей длине фрагмента значение размерности массива из полученного 
                                 // члена найденной структуры.
-                                arrayDefinition.ArrayDim0 = currentTemplateMember.ArrayDimension.Value;
-                                arrayDefinition.ArrayDim1 = 0;
-                                arrayDefinition.ArrayDim2 = 0;
+                                arrayDefinition.Dim0 = currentTemplateMember.ArrayDimension.Value;
+                                arrayDefinition.Dim1 = 0;
+                                arrayDefinition.Dim2 = 0;
                             }
                             /* ====================================================================================== */
                             #endregion
@@ -1487,11 +1522,8 @@ namespace EIP.AllenBradley
                             // Добавляем в путь EPath новый сегмент с текущим именем.
                             epath.Segments.Add(new EPathSegment(currentPartName));
 
-                            if (!isBitArray)
-                            {
-                                if (currentArrayIndexRank >= 1)
-                                    epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, arrayIndex0.Value));
-                            }
+                            if (currentArrayIndexRank >= 1)
+                                epath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_MemberID, isBitArray ? arrayIndex0.Value / 32 : arrayIndex0.Value));
                         }
                         /* ====================================================================================== */
                         #endregion
@@ -1522,26 +1554,29 @@ namespace EIP.AllenBradley
                         }
 
                         // Проверяем что для соответствующих атомарных типов
-                        // номера битов находятся в допустимом диапазоне.
+                        // номера битов находятся в допустимом диапазоне и присваиваем значение.
                         if (typeCode == 0xC2)
                         {
                             if (bitIndex > 7) return false;
+                            atomicBitDefinition = new BitOffsetPosition(BytesInElement.OneByte);
+                            atomicBitDefinition.BitOffset = bitIndex;
                         }
                         else if (typeCode == 0xC3)
                         {
                             if (bitIndex > 15) return false;
+                            atomicBitDefinition = new BitOffsetPosition(BytesInElement.TwoBytes);
+                            atomicBitDefinition.BitOffset = bitIndex;
                         }
                         else if (typeCode == 0xC4)
                         {
                             if (bitIndex > 31) return false;
+                            atomicBitDefinition = new BitOffsetPosition(BytesInElement.FourBytes);
+                            atomicBitDefinition.BitOffset = bitIndex;
                         }
                         else
                         {
                             return false;
                         }
-
-                        // Присваиваем полученный результат номера бита.
-                        atomicBitPosition = bitIndex;
                     }
                     /* ====================================================================================== */
                     #endregion
@@ -1570,15 +1605,12 @@ namespace EIP.AllenBradley
                         logixTag.SymbolicEPath = epath;
                         logixTag.Type.Code = typeCode;
                         logixTag.Type.Name = typeName;
-                        logixTag.Type.Size = size;
-                        logixTag.Type.AtomicBitPosition = atomicBitPosition;
-                        logixTag.Type.StructureBitPosition = structureBitPosition;
-                        logixTag.Type.StructureByteOffset = structureMemberByteOffset;
-                        logixTag.Type.BitArrayDWordBitPosition = bitArrayDWordBitPosition;
-                        logixTag.Type.BitArrayDWordOffset = bitArrayDWordOffset;
+                        logixTag.Type.ElementSize = size;
+                        logixTag.Type.AtomicBitDefinition = atomicBitDefinition;
+                        logixTag.Type.StructureDefinition = structureDefinition;
+                        logixTag.Type.BitArrayDefinition = bitArrayDefinition;
                         logixTag.Type.ArrayDimension = arrayDefinition;
-                        logixTag.Type.ArrayDimension.Value = (ushort)logixTag.Type.ArrayDimension.Length;
-                        logixTag.Type.ArrayIndex = logixTag.Type.ArrayDimension.Length;
+                        logixTag.Type.ArrayDimension.Value = (ushort)logixTag.Type.ArrayDimension.LinearDim;
                         logixTag.Type.HiddenMemberName = hiddenMemberName;
 
                         return true;

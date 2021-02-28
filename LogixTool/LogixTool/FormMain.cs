@@ -145,6 +145,21 @@ namespace LogixTool
             this.toolStripButton_GoOffline.Enabled = this.OnlineMode;
             this.toolStripButton_RunRecording.Enabled = !this.recorder.EnableRunning && this.OnlineMode;
             this.toolStripButton_StopRecording.Enabled = this.recorder.EnableRunning;
+
+            if (messageControl.ItemTypesExist.Contains( MessageEventArgsType.Error))
+            {
+                this.alarmListViewToolStripSplitButton.Image = Properties.Resources.ico_error;
+            }
+            else if(messageControl.ItemTypesExist.Contains(MessageEventArgsType.Warning))
+            {
+                this.alarmListViewToolStripSplitButton.Image = Properties.Resources.ico_alarm;
+            }
+            else
+            {
+                this.alarmListViewToolStripSplitButton.Image = Properties.Resources.ico_info;
+            }
+
+
         }
         /// <summary>
         /// 
@@ -480,7 +495,31 @@ namespace LogixTool
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton_ShowEventLogs_Click(object sender, EventArgs e)
+        private void toolStripButton_About_Click(object sender, EventArgs e)
+        {
+            FormAbout form = new FormAbout();
+            form.Show();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton_WriteValues_Click(object sender, EventArgs e)
+        {
+            this.tagBrowserControl.WriteEnabledValues();
+        }
+        /* ================================================================================================== */
+        #endregion
+
+        #region [ 3. Tool Strip Status Label ]
+        /* ================================================================================================== */
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void alarmListViewToolStripSplitButton_ButtonClick(object sender, EventArgs e)
         {
             if (!splitContainer3.Panel2Collapsed)
             {
@@ -493,21 +532,6 @@ namespace LogixTool
                 splitContainer3.Panel2.Show();
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton_About_Click(object sender, EventArgs e)
-        {
-            FormAbout form = new FormAbout();
-            form.Show();
-        }
-        /* ================================================================================================== */
-        #endregion
-
-        #region [ 3. Tool Strip Status Label ]
-        /* ================================================================================================== */
         /// <summary>
         /// 
         /// </summary>
@@ -613,7 +637,10 @@ namespace LogixTool
             else if (byteSize >= 1048576 && byteSize < 1073741824) return (byteSize / 1048576) + " MB";
             else return (byteSize / 1073741824) + " GB";
         }
+
         /* ================================================================================================== */
         #endregion
+
+
     }
 }

@@ -63,6 +63,16 @@ namespace LogixTool.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap flash {
+            get {
+                object obj = ResourceManager.GetObject("flash", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ico_alarm {
             get {
                 object obj = ResourceManager.GetObject("ico_alarm", resourceCulture);
@@ -186,6 +196,16 @@ namespace LogixTool.Properties {
         internal static System.Drawing.Bitmap ico_library {
             get {
                 object obj = ResourceManager.GetObject("ico_library", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ico_load {
+            get {
+                object obj = ResourceManager.GetObject("ico_load", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -482,7 +502,7 @@ namespace LogixTool.Properties {
         
         /// <summary>
         ///   Ищет локализованную строку, похожую на ===========================================================
-        /// Application  :	REGISTRATOR v0.1.1
+        /// Application  :	REGISTRATOR v0.2
         /// Auhtor       :	VAULIN MIKHAIL (MIKEAV)
         /// Release date :	16.02.2020
         /// Description  : 
@@ -493,7 +513,7 @@ namespace LogixTool.Properties {
         ///===========================================================
         ///Current version successful tested with PLC formware :
         /// V18.11 
-        /// V16 [остаток строки не уместился]&quot;;.
+        /// V16.0 [остаток строки не уместился]&quot;;.
         /// </summary>
         internal static string txt_AppRegistratorRelease {
             get {

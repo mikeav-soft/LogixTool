@@ -29,7 +29,7 @@ namespace EIP.AllenBradley.Models
             get
             {
                 // Возращаемый ожидаемый размер: 2 байта поля ID + сам размер тэга чтения.
-                return 2 + this.Tag.Type.ExpectedTotalSize;
+                return 2 + this.Tag.Type.TotalSize;
             }
         }
         /// <summary>
@@ -80,7 +80,7 @@ namespace EIP.AllenBradley.Models
             // Получаем последовательность байт соостветствующее только значению (2 байта ID убираем).
             List<byte> value = bytes.GetRange(2, this.ExpectedSizeOfResponse - 2);
             // Получаем значение в байтах для одного элемента (массива или атомарного элемента).
-            int itemSize = this.Tag.Type.Size;
+            int itemSize = this.Tag.Type.ElementSize;
 
             // Результат соответствующий значению тэга.
             List<byte[]> result = new List<byte[]>();

@@ -66,7 +66,6 @@ namespace EIP
         UnsupportedEncapsulationProtocol = 0x0069,
         Unknown = 0xFFFF
     }
-
     /// <summary>
     /// 
     /// </summary>
@@ -809,5 +808,14 @@ namespace EIP
         MajorRecoverableFault = 4,
         MajorUnrecoverableFault = 5,
         DefaultforGet_Attributes_All_service = 255
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum EIPBaseProtocol
+    {
+        Tcp,
+        UdpPont,
+        UdpBroadcast
     }
 }

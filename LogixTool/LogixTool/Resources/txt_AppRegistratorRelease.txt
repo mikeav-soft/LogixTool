@@ -1,7 +1,7 @@
 ﻿===========================================================
- Application  :	REGISTRATOR v0.2
+ Application  :	LOGIX TOOL v1.0
  Auhtor       :	VAULIN MIKHAIL (MIKEAV)
- Release date :	16.02.2020
+ Release date :	28.02.2021
  Description  : 
 	This application is necessary for reading data from the
 Rockwell controllers (ControlLogix and CompactLogix families) 
@@ -9,14 +9,18 @@ with the ability to register current data by writing them to
 a text file.
 ===========================================================
 Current version successful tested with PLC formware :
+ V32.00
  V18.11 
  V16.00
 
  Core release. ____________________________________________
  - 0.0 : Init Version.
- - 0.1 : Fixed problem of synchronization read/write events.
- 
+ - 0.1 : Fixed issue of synchronization read/write events.
+ - 0.2 : Fixed issue of Bit Array reading/Writing values,
+	events of ReadingValues in case of structure reading 
+	bits.
  Application Release. _____________________________________
  - 0.0 : Init Version.
  - 0.1 : Optimization of device browser.
+ - 1.0 : Interface optimization, write values base function.
 ===========================================================

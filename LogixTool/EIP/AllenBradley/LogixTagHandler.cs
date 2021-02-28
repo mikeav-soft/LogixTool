@@ -28,40 +28,27 @@ namespace EIP.AllenBradley
         public UInt32 WriteUpdateRate { get; set; }
 
         /// <summary>
+        /// Возвращает или задает разрешение на выполнение операции.
+        /// </summary>
+        public bool ReadEnable { get; set; }
+        /// <summary>
+        /// Возвращает или задает разрешение на выполнение операции.
+        /// </summary>
+        public bool WriteEnable { get; set; }
+        /// <summary>
         /// Возвращает True в случае необходимости обновления значения тэга.
         /// </summary>
         public bool NeedToRead
         {
             get
             {
+                // Проверяем имеется ли разрешение на чтение.
                 if (!this.ReadEnable)
                 {
                     return false;
                 }
 
-                // Последнее чтение не произвдеено.
-                if (this.ReadValue.Report.IsSuccessful == null)
-                {
-                    return true;
-                }
-
-                // Последнее чтение завершено удачно.
-                if (this.ReadValue.Report.IsSuccessful == true)
-                {
-                    return this.ReadValue.Report.ServerRequestTimeStamp == null
-                        || ((this.ReadValue.Report.ServerRequestTimeStamp > 0
-                        && (((DateTime.Now.Ticks - this.ReadValue.Report.ServerRequestTimeStamp) / 10000) >= this.ReadUpdateRate)
-                            && this.ReadUpdateRate > 0));
-                }
-
-                // Последнее чтение завершено неудачно.
-                if (this.ReadValue.Report.IsSuccessful == false)
-                {
-                    return this.ReadValue.Report.ServerRequestTimeStamp == null ||
-                        (((DateTime.Now.Ticks - this.ReadValue.Report.ServerRequestTimeStamp) / 10000) >= 5000);
-                }
-
-                return false;
+                return this.ReadValue.CheckOnUpdate(this.ReadUpdateRate, 5000);
             }
         }
         /// <summary>
@@ -71,30 +58,13 @@ namespace EIP.AllenBradley
         {
             get
             {
+                // Проверяем имеется ли разрешение на запись.
                 if (!this.WriteEnable)
                 {
                     return false;
                 }
 
-                if (this.WriteValue.Report.IsSuccessful == null)
-                {
-                    return true;
-                }
-
-                if (this.WriteValue.Report.IsSuccessful == true)
-                {
-                    return this.WriteValue.Report.ServerRequestTimeStamp == null
-                        || ((this.WriteValue.Report.ServerRequestTimeStamp > 0
-                        && ((DateTime.Now.Ticks - this.WriteValue.Report.ServerRequestTimeStamp) / 10000) >= this.WriteUpdateRate));
-                }
-
-                if (this.WriteValue.Report.IsSuccessful == false)
-                {
-                    return this.WriteValue.Report.ServerRequestTimeStamp == null ||
-                        (((DateTime.Now.Ticks - this.WriteValue.Report.ServerRequestTimeStamp) / 10000) >= 5000);
-                }
-
-                return false;
+                return this.WriteValue.CheckOnUpdate(this.WriteUpdateRate, 5000);
             }
         }
 
@@ -126,9 +96,12 @@ namespace EIP.AllenBradley
                 throw new ArgumentNullException("name", "Constructor 'LogixTagHandler()': Argument 'name' is NULL");
             }
 
+            this.ReadEnable = true;
+            this.WriteEnable = false;
+
             this.Name = name;
             this.ReadUpdateRate = 1000;
-            this.WriteUpdateRate = 1000;
+            this.WriteUpdateRate = 0;
 
             this.ReadMethod = TagReadMethod.Table;
             this.WriteMethod = TagWriteMethod.Simple;
@@ -145,6 +118,8 @@ namespace EIP.AllenBradley
         {
             base.InitState();
             this.OwnerTableItem = null;
+            this.ReadEnable = true;
+            this.WriteEnable = false;
         }
         /// <summary>
         /// Преобразовывает текущий объект в строку.

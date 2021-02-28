@@ -49,6 +49,8 @@ namespace EIP.AllenBradley
             Init();
         }
 
+        #region [ PUBLIC METHODS ]
+        /* ======================================================================================== */
         /// <summary>
         /// Делает полную копию текущего объекта.
         /// </summary>
@@ -86,12 +88,14 @@ namespace EIP.AllenBradley
         public void Init()
         {
             this.IsSuccessful = null;
-            this.ServerRequestTimeStamp = null;
+            this.ServerRequestTimeStamp = DateTime.Now.Ticks;
             this.ServerResponseTimeStamp = null;
             this.ServerReplyTime = null;
             this.ActualUpdateRate = null;
             this.ValueChanged = null;
             this.Data = null;
         }
+        /* ======================================================================================== */
+        #endregion
     }
 }
