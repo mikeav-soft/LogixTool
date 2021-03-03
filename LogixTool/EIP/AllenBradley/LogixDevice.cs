@@ -36,7 +36,7 @@ namespace EIP.AllenBradley
             set
             {
                 this._Name = value;
-                Event_PropertyWasChanged();
+                OnPropertyWasChanged();
             }
         }
         /// <summary>
@@ -51,7 +51,7 @@ namespace EIP.AllenBradley
             set
             {
                 this.eipClient.TargetIPAddress = value;
-                Event_PropertyWasChanged();
+                OnPropertyWasChanged();
             }
         }
         /// <summary>
@@ -66,7 +66,7 @@ namespace EIP.AllenBradley
             set
             {
                 this.eipClient.ProcessorSlot = value;
-                Event_PropertyWasChanged();
+                OnPropertyWasChanged();
             }
 
         }
@@ -167,19 +167,18 @@ namespace EIP.AllenBradley
         /// <summary>
         /// Вызывает "Событие при изменении одного из свойств". 
         /// </summary>
-        private void Event_PropertyWasChanged()
+        private void OnPropertyWasChanged()
         {
             if (PropertyWasChanged != null)
             {
                 PropertyWasChanged(this, null);
             }
         }
-
         /// <summary>
         /// Вызывает "Событие с сообщением".
         /// </summary>
         /// <param name="e"></param>
-        private void Event_Message(MessageEventArgs e)
+        private void OnMessage(MessageEventArgs e)
         {
             MessageEventArgs messageEventArgs = e;
             string messageHeader = "[" + this.Name + "]." + messageEventArgs.Header;
@@ -212,19 +211,19 @@ namespace EIP.AllenBradley
 
             if (this.eipClient.IsTCPConnected)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Refused. Already connected."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Refused. Already connected."));
                 return true;
             }
 
             // Connection to server.
             if (this.eipClient.TCPConnect())
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
                 return false;
             }
         }
@@ -237,19 +236,19 @@ namespace EIP.AllenBradley
 
             if (!this.eipClient.IsTCPConnected)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Refused. Already disconnected."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Refused. Already disconnected."));
                 return true;
             }
 
             // Connection to server.
             if (this.eipClient.TCPDisconnect())
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
                 return false;
             }
         }
@@ -267,25 +266,25 @@ namespace EIP.AllenBradley
             encapsulatedPacket = this.GetObject<EncapsulatedPacket>(objects);
             if (encapsulatedPacket == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize EncapsulatedPacket."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize EncapsulatedPacket."));
                 return false;
             }
 
             if (encapsulatedPacket.Status != 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
                 return false;
             }
 
             UInt32 sessionHandle = this.GetObject<UInt32>(objects);
             if (sessionHandle == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Failed."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Failed."));
                 return false;
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. SessionHandle=" + sessionHandle.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. SessionHandle=" + sessionHandle.ToString()));
                 return true;
             }
         }
@@ -299,12 +298,12 @@ namespace EIP.AllenBradley
 
             if (this.eipClient.UnRegisterSession())
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
                 return false;
             }
         }
@@ -324,44 +323,44 @@ namespace EIP.AllenBradley
             encapsulatedPacket = this.GetObject<EncapsulatedPacket>(objects);
             if (encapsulatedPacket == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize EncapsulatedPacket."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize EncapsulatedPacket."));
                 return false;
             }
 
             if (encapsulatedPacket.Status != 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
                 return false;
             }
 
             messageRouterResponse = this.GetObject<MessageRouterResponse>(objects);
             if (messageRouterResponse == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize MessageRouterResponse."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize MessageRouterResponse."));
                 return false;
             }
 
             if (messageRouterResponse.GeneralStatus != 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. MessageRouterResponse.GeneralStatus=" + messageRouterResponse.GeneralStatus.ToString() + " (" + messageRouterResponse.GeneralStatusText + ")"));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. MessageRouterResponse.GeneralStatus=" + messageRouterResponse.GeneralStatus.ToString() + " (" + messageRouterResponse.GeneralStatusText + ")"));
                 return false;
             }
 
             forwardOpenResponse = this.GetObject<ForwardOpenResponse>(objects);
             if (forwardOpenResponse == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize ForwardOpenResponse."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize ForwardOpenResponse."));
                 return false;
             }
 
             if (forwardOpenResponse.IsSuccessful != true)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
                 return false;
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
             }
         }
@@ -381,44 +380,44 @@ namespace EIP.AllenBradley
             encapsulatedPacket = this.GetObject<EncapsulatedPacket>(objects);
             if (encapsulatedPacket == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize EncapsulatedPacket."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize EncapsulatedPacket."));
                 return false;
             }
 
             if (encapsulatedPacket.Status != 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
                 return false;
             }
 
             messageRouterResponse = this.GetObject<MessageRouterResponse>(objects);
             if (messageRouterResponse == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize MessageRouterResponse."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize MessageRouterResponse."));
                 return false;
             }
 
             if (messageRouterResponse.GeneralStatus != 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. MessageRouterResponse.GeneralStatus=" + messageRouterResponse.GeneralStatus.ToString() + " (" + messageRouterResponse.GeneralStatusText + ")"));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. MessageRouterResponse.GeneralStatus=" + messageRouterResponse.GeneralStatus.ToString() + " (" + messageRouterResponse.GeneralStatusText + ")"));
                 return false;
             }
 
             forwardCloseResponse = this.GetObject<ForwardCloseResponse>(objects);
             if (forwardCloseResponse == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize ForwardOpenResponse."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible to recognize ForwardOpenResponse."));
                 return false;
             }
 
             if (forwardCloseResponse.IsSuccessful != true)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed."));
                 return false;
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
             }
         }
@@ -503,7 +502,7 @@ namespace EIP.AllenBradley
 
             clxTags = result.Values.ToList();
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             return true;
         }
         /// <summary>
@@ -586,7 +585,7 @@ namespace EIP.AllenBradley
 
             typeCodes = result.Keys.ToList();
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             return true;
         }
         /// <summary>
@@ -673,12 +672,12 @@ namespace EIP.AllenBradley
                 // Создаем возвращаемый объект.
                 template = new CLXTemplate(null, templateInstance, templateSize, templateBytes, templateMemberCount, templateCRC);
 
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 return true;
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Ruturned value of attributes count <> 4."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Ruturned value of attributes count <> 4."));
                 return false;
             }
         }
@@ -720,14 +719,14 @@ namespace EIP.AllenBradley
                 // Проверяем ответ на успешность принятых данных.
                 if (!TryGetSimpleMessageRouterResponse(messageEventHeaderText, responsedObjects, out response))
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "offset=" + offset.ToString() + ", count=" + count.ToString()));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "offset=" + offset.ToString() + ", count=" + count.ToString()));
                     return false;
                 }
 
                 // Проверяем ответ на заданные критерии статусов, и допустимых минимального и максимального размеров данных.
                 if (!CheckMessageRouterResponse(messageEventHeaderText, response, new byte[] { 0, 6 }, null, null))
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "offset=" + offset.ToString() + ", count=" + count.ToString()));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "offset=" + offset.ToString() + ", count=" + count.ToString()));
                     return false;
                 }
 
@@ -740,7 +739,7 @@ namespace EIP.AllenBradley
 
                     if (count < bytes.Count)
                     {
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "bytes.Count > count! " + "offset=" + offset.ToString() + ", count=" + count.ToString()));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "bytes.Count > count! " + "offset=" + offset.ToString() + ", count=" + count.ToString()));
                         return false;
                     }
 
@@ -792,7 +791,7 @@ namespace EIP.AllenBradley
                 templateInfo.Members[ix].Name = memberNames[ix];
             }
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             return true;
         }
         /* ======================================================================================== */
@@ -857,7 +856,7 @@ namespace EIP.AllenBradley
                 // Присваиваем полученные результаты.
                 table = new CLXCustomTagMemoryTable((UInt16)(response.ResponseData[1] << 8 | response.ResponseData[0]));
                 
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Associated with Instance=" + table.Instance.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Associated with Instance=" + table.Instance.ToString()));
                 return true;
             }
         }
@@ -884,14 +883,14 @@ namespace EIP.AllenBradley
 
             if (tag.SymbolicEPath == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
                 tag.ReadValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.Type.Code == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode = 0x00."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode = 0x00."));
                 tag.ReadValue.FinalizeEdition(false);
                 return false;
             }
@@ -933,7 +932,7 @@ namespace EIP.AllenBradley
 
                 table.Add(id, tag);
 
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Tag Associated with ID=" + id.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Tag Associated with ID=" + id.ToString()));
                 return true;
             }
         }
@@ -988,7 +987,7 @@ namespace EIP.AllenBradley
 
             table.Remove(item.ID);
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Table Instance=" + table.Instance.ToString() + "."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Table Instance=" + table.Instance.ToString() + "."));
             return true;
         }
         /// <summary>
@@ -1043,11 +1042,11 @@ namespace EIP.AllenBradley
             // Разбираем принятые значения таблицы и записываем статус тэгов таблицы.
             if (!table.SetBytesToItems(response.ResponseData))
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible Recognize Packet. Table Instance=" + table.Instance.ToString() + "."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Imposible Recognize Packet. Table Instance=" + table.Instance.ToString() + "."));
                 return false;
             }
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Table Instance=" + table.Instance.ToString() + "."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Table Instance=" + table.Instance.ToString() + "."));
             return true;
         }
         /* ======================================================================================== */
@@ -1080,13 +1079,13 @@ namespace EIP.AllenBradley
             // Проверка состояния тэга перед чтением на существование размера текущего типа данных.
             if (tag.Type.ElementSize == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Tag Data Type Size not Defined."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Tag Data Type Size not Defined."));
             }
 
             // Проверка состояние тэга преде чтением.
             if (tag.SymbolicEPath == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
                 tag.ReadValue.FinalizeEdition(false);
                 return;
             }
@@ -1137,7 +1136,7 @@ namespace EIP.AllenBradley
             // Проверяем размер запроса.
             if (this.MaxPacketSizeOtoT < currentRequestPacketSize)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
                     + this.MaxPacketSizeOtoT.ToString() + ", current Request Data Size = " + currentRequestPacketSize.ToString() + "."));
                 tag.ReadValue.FinalizeEdition(false);
                 return;
@@ -1146,7 +1145,7 @@ namespace EIP.AllenBradley
             // Проверяем размер ответа.
             if (this.MaxPacketSizeTtoO < currentResponsePacketSize)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
                     + this.MaxPacketSizeTtoO.ToString() + ", current Response Data Size = " + currentResponsePacketSize.ToString() + "."));
                 tag.ReadValue.FinalizeEdition(false);
                 return;
@@ -1213,7 +1212,7 @@ namespace EIP.AllenBradley
                         tag.ReadValue.SetValueData(recievedValue);
                         tag.ReadValue.FinalizeEdition(true);
 
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                     }
                     else
                     {
@@ -1222,7 +1221,7 @@ namespace EIP.AllenBradley
                         if (tag.Type.TotalSize != values.Count)
                         {
                             tag.ReadValue.FinalizeEdition(false);
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
                         }
                         else
                         {
@@ -1235,14 +1234,14 @@ namespace EIP.AllenBradley
                             tag.ReadValue.SetValueData(recievedValue);
                             tag.ReadValue.FinalizeEdition(true);
 
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                         }
                     }
                 }
                 else
                 {
                     tag.ReadValue.FinalizeEdition(false);
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved Data from Server has length less 4 bytes in case of structure Type (incorrect reply from Server)."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved Data from Server has length less 4 bytes in case of structure Type (incorrect reply from Server)."));
                 }
                 /* ======================================================================================== */
                 #endregion
@@ -1270,7 +1269,7 @@ namespace EIP.AllenBradley
                     tag.ReadValue.SetValueData(recievedValue);
                     tag.ReadValue.FinalizeEdition(true);
 
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 }
                 else
                 {
@@ -1279,7 +1278,7 @@ namespace EIP.AllenBradley
                     if (tag.Type.TotalSize != values.Count)
                     {
                         tag.ReadValue.FinalizeEdition(false);
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
                     }
                     else
                     {
@@ -1292,7 +1291,7 @@ namespace EIP.AllenBradley
                         tag.ReadValue.SetValueData(recievedValue);
                         tag.ReadValue.FinalizeEdition(true);
 
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                     }
                 }
                 /* ======================================================================================== */
@@ -1339,13 +1338,13 @@ namespace EIP.AllenBradley
                 // Проверка состояния тэга перед чтением на существование размера текущего типа данных.
                 if (t.Type.ElementSize == 0)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Tag Data Type Size not Defined."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Tag Data Type Size not Defined."));
                 }
 
                 // Проверка состояние тэга преде чтением.
                 if (t.SymbolicEPath == null)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
                     t.ReadValue.FinalizeEdition(false);
                     return;
                 }
@@ -1381,7 +1380,7 @@ namespace EIP.AllenBradley
                 }
                 else
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TagPath='" + t.SymbolicEPath.ToString() + "' already exist in requests."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TagPath='" + t.SymbolicEPath.ToString() + "' already exist in requests."));
                     t.ReadValue.FinalizeEdition(false);
                 }
             }
@@ -1422,14 +1421,14 @@ namespace EIP.AllenBradley
                 // Проверяем размер запроса.
                 if (COMPLETE_HEADER_REQUEST_SIZE + requestSize > this.MaxPacketSizeOtoT)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
                         + this.MaxPacketSizeOtoT.ToString() + ", current Request Data Size = " + (COMPLETE_HEADER_REQUEST_SIZE + requestSize).ToString() + "."));
                     tag.ReadValue.FinalizeEdition(false);
                 }
                 // Проверяем размер ответа.
                 else if (COMPLETE_HEADER_RESPONSE_SIZE + responseSize > this.MaxPacketSizeTtoO)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
                         + this.MaxPacketSizeTtoO.ToString() + ", current Response Data Size = " + (COMPLETE_HEADER_RESPONSE_SIZE + responseSize).ToString() + "."));
                     tag.ReadValue.FinalizeEdition(false);
                 }
@@ -1553,7 +1552,7 @@ namespace EIP.AllenBradley
                                         tag.ReadValue.SetValueData(recievedValue);
                                         tag.ReadValue.FinalizeEdition(true);
 
-                                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                                     }
                                     else
                                     {
@@ -1562,7 +1561,7 @@ namespace EIP.AllenBradley
                                         if (tag.Type.TotalSize != values.Count)
                                         {
                                             tag.ReadValue.FinalizeEdition(false);
-                                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
+                                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
                                         }
                                         else
                                         {
@@ -1574,14 +1573,14 @@ namespace EIP.AllenBradley
                                             tag.ReadValue.SetValueData(recievedValue);
                                             tag.ReadValue.FinalizeEdition(true);
 
-                                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                                         }
                                     }
                                 }
                                 else
                                 {
                                     tag.ReadValue.FinalizeEdition(false);
-                                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved Data from Server has length less 4 bytes in case of structure Type (incorrect reply from Server)."));
+                                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved Data from Server has length less 4 bytes in case of structure Type (incorrect reply from Server)."));
                                 }
                                 /* ======================================================================================== */
                                 #endregion
@@ -1609,7 +1608,7 @@ namespace EIP.AllenBradley
                                     tag.ReadValue.SetValueData(recievedValue);
                                     tag.ReadValue.FinalizeEdition(true);
 
-                                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                                 }
                                 else
                                 {
@@ -1618,7 +1617,7 @@ namespace EIP.AllenBradley
                                     if (tag.Type.TotalSize != values.Count)
                                     {
                                         tag.ReadValue.FinalizeEdition(false);
-                                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
+                                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved data Size = " + values.Count.ToString() + ", not equal to expected data Size = " + values.Count.ToString() + "."));
                                     }
                                     else
                                     {
@@ -1630,7 +1629,7 @@ namespace EIP.AllenBradley
                                         tag.ReadValue.SetValueData(recievedValue);
                                         tag.ReadValue.FinalizeEdition(true);
 
-                                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                                     }
                                 }
                                 /* ======================================================================================== */
@@ -1650,7 +1649,7 @@ namespace EIP.AllenBradley
                         t.ReadValue.FinalizeEdition(false);
                     });
 
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Items Count Request and Reply of Multiply Service is not equal."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Items Count Request and Reply of Multiply Service is not equal."));
                 }
                 /* ======================================================================================== */
                 #endregion
@@ -1682,14 +1681,14 @@ namespace EIP.AllenBradley
             // Проверка состояние тэга перед чтением.
             if (tag.SymbolicEPath == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
                 tag.ReadValue.FinalizeEdition(false);
                 return false;
             }
 
             if (!tag.Type.ArrayDimension.HasValue)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Current tag is not array."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Current tag is not array."));
                 tag.ReadValue.FinalizeEdition(false);
                 return false;
             }
@@ -1784,13 +1783,13 @@ namespace EIP.AllenBradley
                         else
                         {
                             ressultOk = false;
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Data Size = 0, imposible to parse Structure array elements."));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Data Size = 0, imposible to parse Structure array elements."));
                         }
                     }
                     else
                     {
                         ressultOk = false;
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved Data from Server has length less 4 bytes in case of structure Type (incorrect reply from Server)."));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Recieved Data from Server has length less 4 bytes in case of structure Type (incorrect reply from Server)."));
                     }
                     /* ======================================================================================== */
                     #endregion
@@ -1850,7 +1849,7 @@ namespace EIP.AllenBradley
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 tag.ReadValue.SetValueData(recievedValue);
                 tag.ReadValue.FinalizeEdition(true);
 
@@ -1881,7 +1880,7 @@ namespace EIP.AllenBradley
 
             if (tag.SymbolicEPath == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
@@ -1891,42 +1890,42 @@ namespace EIP.AllenBradley
                 && (tag.Type.Family != TagDataTypeFamily.AtomicFloat)
                 && (tag.Type.Family != TagDataTypeFamily.AtomicBoolArray))
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode must be as atomic."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode must be as atomic."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.WriteValue.RequestedData == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value is NULL."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value is NULL."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.WriteValue.RequestedData.All(f => tag.Type.ElementSize != f.Length))
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.Type.ArrayDimension.HasValue && tag.WriteValue.RequestedData.Count != tag.Type.ArrayDimension.Value)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.WriteValue.RequestedData.SelectMany(b => b).Count() != tag.Type.TotalSize)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.WriteValue.RequestedData.Count > 0xFFFF)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
@@ -1967,7 +1966,7 @@ namespace EIP.AllenBradley
             // Проверяем размер запроса.
             if (this.MaxPacketSizeOtoT < currentRequestPacketSize)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
                     + this.MaxPacketSizeOtoT.ToString() + ", current Request Data Size = " + currentRequestPacketSize.ToString() + "."));
                 tag.ReadValue.FinalizeEdition(false);
                 return false;
@@ -1976,7 +1975,7 @@ namespace EIP.AllenBradley
             // Проверяем размер ответа.
             if (this.MaxPacketSizeTtoO < currentResponsePacketSize)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
                     + this.MaxPacketSizeTtoO.ToString() + ", current Response Data Size = " + currentResponsePacketSize.ToString() + "."));
                 tag.ReadValue.FinalizeEdition(false);
                 return false;
@@ -2012,7 +2011,7 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             tag.WriteValue.SetValueData();
             tag.WriteValue.FinalizeEdition(true);
 
@@ -2054,7 +2053,7 @@ namespace EIP.AllenBradley
 
                 if (t.SymbolicEPath == null)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
                     t.WriteValue.FinalizeEdition(false);
                     result = false;
                 }
@@ -2067,14 +2066,14 @@ namespace EIP.AllenBradley
                     && (t.Type.Family != TagDataTypeFamily.AtomicFloat)
                     && (t.Type.Family != TagDataTypeFamily.AtomicBoolArray))
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode must be as atomic."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode must be as atomic."));
                     t.WriteValue.FinalizeEdition(false);
                     result = false;
                 }
 
                 if (t.WriteValue.RequestedData == null)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value is NULL."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value is NULL."));
                     t.WriteValue.FinalizeEdition(false);
                     result = false;
                 }
@@ -2082,28 +2081,28 @@ namespace EIP.AllenBradley
                 {
                     if (t.WriteValue.RequestedData.All(f => t.Type.ElementSize != f.Length))
                     {
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                         t.WriteValue.FinalizeEdition(false);
                         result = false;
                     }
 
                     if (t.Type.ArrayDimension.HasValue && t.WriteValue.RequestedData.Count != t.Type.ArrayDimension.Value)
                     {
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
                         t.WriteValue.FinalizeEdition(false);
                         result = false;
                     }
 
                     if (t.WriteValue.RequestedData.SelectMany(b => b).Count() != t.Type.TotalSize)
                     {
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                         t.WriteValue.FinalizeEdition(false);
                         result = false;
                     }
 
                     if (t.WriteValue.RequestedData.Count > 0xFFFF)
                     {
-                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
                         t.WriteValue.FinalizeEdition(false);
                         result = false;
                     }
@@ -2147,7 +2146,7 @@ namespace EIP.AllenBradley
                 }
                 else
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TagPath='" + t.SymbolicEPath.ToString() + "' already exist in requests."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TagPath='" + t.SymbolicEPath.ToString() + "' already exist in requests."));
                     t.WriteValue.FinalizeEdition(false);
                 }
             }
@@ -2175,14 +2174,14 @@ namespace EIP.AllenBradley
                 // Проверяем размер запроса.
                 if (COMPLETE_HEADER_REQUEST_SIZE + requestSize > this.MaxPacketSizeOtoT)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag request size too much. Max Request Data Size = "
                         + this.MaxPacketSizeOtoT.ToString() + ", current Request Data Size = " + (COMPLETE_HEADER_REQUEST_SIZE + requestSize).ToString() + "."));
                     tag.WriteValue.FinalizeEdition(false);
                 }
                 // Проверяем размер ответа.
                 else if (COMPLETE_HEADER_RESPONSE_SIZE + responseSize > this.MaxPacketSizeTtoO)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag response size too much. Max Response Data Size = "
                         + this.MaxPacketSizeTtoO.ToString() + ", current Response Data Size = " + (COMPLETE_HEADER_RESPONSE_SIZE + responseSize).ToString() + "."));
                     tag.WriteValue.FinalizeEdition(false);
                 }
@@ -2279,7 +2278,7 @@ namespace EIP.AllenBradley
                         }
                         else
                         {
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                             tag.WriteValue.SetValueData();
                             tag.WriteValue.FinalizeEdition(true);
                         }
@@ -2292,7 +2291,7 @@ namespace EIP.AllenBradley
                         t.WriteValue.FinalizeEdition(false);
                     });
 
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Items Count Request and Reply of Multiply Service is not equal."));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Items Count Request and Reply of Multiply Service is not equal."));
                 }
                 /* ======================================================================================== */
                 #endregion
@@ -2326,35 +2325,35 @@ namespace EIP.AllenBradley
 
             if (tag.Type.Code == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode = 0x00."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeCode = 0x00."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.WriteValue.RequestedData == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value is NULL."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value is NULL."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.WriteValue.RequestedData.All(t => tag.Type.ElementSize != t.Length))
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items not equal to Data Type size."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.Type.ArrayDimension.HasValue && tag.WriteValue.RequestedData.Count != tag.Type.ArrayDimension.Value)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value of items Count not equal to Fragment Length."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.WriteValue.RequestedData.Count > 0xFFFF)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Tag Value dimension is too big, more than 65535 items"));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
@@ -2437,12 +2436,12 @@ namespace EIP.AllenBradley
 
                 if (!ressultOk)
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Failed. Fragment of value was writed unsuccessful. Response General Status := " + response.GeneralStatus.ToString() + " (" + response.GeneralStatusText + ")"));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Warning, messageEventHeaderText, "Failed. Fragment of value was writed unsuccessful. Response General Status := " + response.GeneralStatus.ToString() + " (" + response.GeneralStatusText + ")"));
                     break;
                 }
                 else
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Fragment of value was writed successful. Offset = " + offset.ToString() + ", length = " + buffer.Count.ToString()));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "Fragment of value was writed successful. Offset = " + offset.ToString() + ", length = " + buffer.Count.ToString()));
                 }
 
                 // Вычисляем текущее смещение в байтах.
@@ -2453,7 +2452,7 @@ namespace EIP.AllenBradley
 
             if (ressultOk)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
                 tag.WriteValue.SetValueData();
                 tag.WriteValue.FinalizeEdition(true);
 
@@ -2489,14 +2488,14 @@ namespace EIP.AllenBradley
             // Проверка состояние тэга перед чтением.
             if (tag.SymbolicEPath == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. Incorrect Tag Name. Imposible to recognize."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (tag.Type.ElementSize == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeSize = 0x00."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. TypeSize = 0x00."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
@@ -2505,14 +2504,14 @@ namespace EIP.AllenBradley
 
             if (mask_or.Length != elements)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. 'OR Mask' byte length not equal to TypeSize."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. 'OR Mask' byte length not equal to TypeSize."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
 
             if (mask_and.Length != elements)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. 'AND Mask' byte length not equal to TypeSize."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageEventHeaderText, "Failed. 'AND Mask' byte length not equal to TypeSize."));
                 tag.WriteValue.FinalizeEdition(false);
                 return false;
             }
@@ -2559,7 +2558,7 @@ namespace EIP.AllenBradley
             }
 
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             tag.WriteValue.FinalizeEdition(true);
 
             return true;
@@ -2612,7 +2611,7 @@ namespace EIP.AllenBradley
 
             DateTime dt = new DateTime(1970, 1, 1);
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
 
             return dt.AddTicks(BitConverter.ToInt64(response.ResponseData.ToArray(), 6) * 10);
         }
@@ -2664,7 +2663,7 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
+            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK."));
             return true;
         }
         /* ======================================================================================== */
@@ -2804,27 +2803,27 @@ namespace EIP.AllenBradley
 
             if (responses == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Response data is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Response data is Null."));
                 return false;
             }
 
             EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responses);
             if (encapsulatedPacket == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize EncapsulatedPacket."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize EncapsulatedPacket."));
                 return false;
             }
 
             if (encapsulatedPacket.Status != EncapsulatedPacketStatus.Success)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
                 return false;
             }
 
             MessageRouterResponse messageRouterResponse = this.GetObject<MessageRouterResponse>(responses);
             if (messageRouterResponse == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponse."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponse."));
                 return false;
             }
 
@@ -2846,34 +2845,34 @@ namespace EIP.AllenBradley
 
             if (responses == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Response data is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Response data is Null."));
                 return false;
             }
 
             EncapsulatedPacket encapsulatedPacket = this.GetObject<EncapsulatedPacket>(responses);
             if (encapsulatedPacket == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize EncapsulatedPacket."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize EncapsulatedPacket."));
                 return false;
             }
 
             if (encapsulatedPacket.Status != EncapsulatedPacketStatus.Success)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. EncapsulatedPacket.Status=" + encapsulatedPacket.Status.ToString()));
                 return false;
             }
 
             MessageRouterResponse messageRouterResponse = this.GetObject<MessageRouterResponse>(responses);
             if (messageRouterResponse == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponse."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponse."));
                 return false;
             }
 
             List<MessageRouterResponse> messageRouterResponses = this.GetObject<List<MessageRouterResponse>>(responses);
             if (messageRouterResponses == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponses."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible to recognize MessageRouterResponses."));
                 return false;
             }
 
@@ -2895,32 +2894,32 @@ namespace EIP.AllenBradley
         {
             if (validMessageRouterGeneralStatus != null && !validMessageRouterGeneralStatus.Contains(response.GeneralStatus))
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. MessageRouterResponse.GeneralStatus=" + response.GeneralStatus.ToString() + " (" + response.GeneralStatusText + ")"));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. MessageRouterResponse.GeneralStatus=" + response.GeneralStatus.ToString() + " (" + response.GeneralStatusText + ")"));
                 return false;
             }
 
             if (response.ResponseData == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server is Null (incorrect reply from Server)."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server is Null (incorrect reply from Server)."));
                 return false;
             }
 
 
             if (validDataLengthMin != null && validDataLengthMax != null && validDataLengthMin == validDataLengthMax && validDataLengthMin != response.ResponseData.Count)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server Has incorrect Length=" + response.ResponseData.Count.ToString() + ", not eqal to " + validDataLengthMin.ToString() + ". (incorrect reply from Server)."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server Has incorrect Length=" + response.ResponseData.Count.ToString() + ", not eqal to " + validDataLengthMin.ToString() + ". (incorrect reply from Server)."));
                 return false;
             }
 
             if (validDataLengthMin != null && validDataLengthMin > response.ResponseData.Count)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server Has incorrect Length=" + response.ResponseData.Count.ToString() + ", less than " + validDataLengthMin.ToString() + ". (incorrect reply from Server)."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server Has incorrect Length=" + response.ResponseData.Count.ToString() + ", less than " + validDataLengthMin.ToString() + ". (incorrect reply from Server)."));
                 return false;
             }
 
             if (validDataLengthMax != null && validDataLengthMax < response.ResponseData.Count)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server Has incorrect Length=" + response.ResponseData.Count.ToString() + ", more than " + validDataLengthMax.ToString() + ". (incorrect reply from Server)."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Data from Server Has incorrect Length=" + response.ResponseData.Count.ToString() + ", more than " + validDataLengthMax.ToString() + ". (incorrect reply from Server)."));
                 return false;
             }
 
@@ -2942,7 +2941,7 @@ namespace EIP.AllenBradley
 
             if (inBytes == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Input Bytes is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Input Bytes is Null."));
                 return false;
             }
 
@@ -2960,7 +2959,7 @@ namespace EIP.AllenBradley
             expectedByteLength = 4;
             if (inBytes.Count < expectedByteLength + currBytePos)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Instance. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Instance. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
                 return false;
             }
             tagInstance = BitConverter.ToUInt32(inBytes.ToArray(), currBytePos);
@@ -2970,7 +2969,7 @@ namespace EIP.AllenBradley
             expectedByteLength = 2;
             if (inBytes.Count < expectedByteLength + currBytePos)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Name Length. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Name Length. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
                 return false;
             }
             UInt16 tagNameLength = BitConverter.ToUInt16(inBytes.ToArray(), currBytePos);
@@ -2980,7 +2979,7 @@ namespace EIP.AllenBradley
             expectedByteLength = tagNameLength;
             if (inBytes.Count < expectedByteLength + currBytePos)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Name Symbols. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Name Symbols. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
                 return false;
             }
             tagName = new string(inBytes.GetRange(currBytePos, tagNameLength).Select(b => (char)b).ToArray());
@@ -2990,7 +2989,7 @@ namespace EIP.AllenBradley
             expectedByteLength = 2;
             if (inBytes.Count < expectedByteLength + currBytePos)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Symbol Type Attribute. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Symbol Type Attribute. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
                 return false;
             }
             UInt16 symbolTypeAttribute = BitConverter.ToUInt16(inBytes.ToArray(), currBytePos);
@@ -3000,7 +2999,7 @@ namespace EIP.AllenBradley
             expectedByteLength = 12;
             if (inBytes.Count < expectedByteLength + currBytePos)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Array Dimensions. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed of parse Tag Array Dimensions. Count of Input Bytes < " + (expectedByteLength + currBytePos).ToString()));
                 return false;
             }
 
@@ -3032,19 +3031,19 @@ namespace EIP.AllenBradley
 
             if (inBytes == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes is Null."));
                 return false;
             }
 
             if (inBytes.Count < 4)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes length <4"));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes length <4"));
                 return false;
             }
 
             if ((inBytes.Count / 4) * 4 != inBytes.Count)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes length not a multiple 4"));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes length not a multiple 4"));
                 return false;
             }
 
@@ -3077,13 +3076,13 @@ namespace EIP.AllenBradley
 
             if (inBytes == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes is Null."));
                 return false;
             }
 
             if (inBytes.Count < length)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes length too short."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Attribute data. Bytes length too short."));
                 return false;
             }
 
@@ -3103,13 +3102,13 @@ namespace EIP.AllenBradley
                 }
                 else
                 {
-                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Requested Attribute " + requestedAttribute + " has usucessful Status=" + status.ToString()));
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Requested Attribute " + requestedAttribute + " has usucessful Status=" + status.ToString()));
                     return false;
                 }
             }
             else
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Requested Attribute =" + requestedAttribute + " is not equal recieved =" + recievedAttribute + "."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Requested Attribute =" + requestedAttribute + " is not equal recieved =" + recievedAttribute + "."));
                 return false;
             }
         }
@@ -3129,13 +3128,13 @@ namespace EIP.AllenBradley
 
             if (inBytes == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Template Member data. Bytes is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Template Member data. Bytes is Null."));
                 return false;
             }
 
             if (inBytes.Count < 8)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes length to <8."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes length to <8."));
                 return false;
             }
 
@@ -3167,13 +3166,13 @@ namespace EIP.AllenBradley
 
             if (inBytes == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Template Member data. Bytes is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Template Member data. Bytes is Null."));
                 return false;
             }
 
             if (inBytes.Count == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes length =0."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes length =0."));
                 return false;
             }
 
@@ -3201,7 +3200,7 @@ namespace EIP.AllenBradley
 
             if (!endOfStringWasFound)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Symbol 0x00 of 'End' of Template Name string was not found."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Symbol 0x00 of 'End' of Template Name string was not found."));
                 return false;
             }
 
@@ -3222,13 +3221,13 @@ namespace EIP.AllenBradley
 
             if (inBytes == null)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Template Member data. Bytes is Null."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible Parse Template Member data. Bytes is Null."));
                 return false;
             }
 
             if (inBytes.Count == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes length =0."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes length =0."));
                 return false;
             }
 
@@ -3236,13 +3235,13 @@ namespace EIP.AllenBradley
 
             if (recievedMemberNames.Count == 0)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes not contains Symbols."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Imposible ParseTemplate Member data. Bytes not contains Symbols."));
                 return false;
             }
 
             if (recievedMemberNames.Count < requiredMemberCount)
             {
-                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Member Names count " + recievedMemberNames.Count.ToString() + " not equal to required count " + requiredMemberCount.ToString() + "."));
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, messageHeader, "Failed. Recieved Member Names count " + recievedMemberNames.Count.ToString() + " not equal to required count " + requiredMemberCount.ToString() + "."));
                 return false;
             }
 

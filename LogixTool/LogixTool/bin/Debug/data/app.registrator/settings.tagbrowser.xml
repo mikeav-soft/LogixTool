@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="settings" ID="tagbrowser" Saved="637501378440018604">
+<storage Owner="app.registrator" Type="settings" ID="tagbrowser" Saved="637504147558304721">
   <data>
     <Settings>
       <Columns>
@@ -9,7 +9,7 @@
         <Column Name="ColumnStatus" Width="55" Visible="true" />
         <Column Name="ColumnReadRate" Width="84" Visible="true" />
         <Column Name="ColumnActualUpdateRate" Width="100" Visible="true" />
-        <Column Name="ColumnActualServerReply" Width="100" Visible="false" />
+        <Column Name="ColumnActualServerReply" Width="100" Visible="true" />
         <Column Name="ColumnRadix" Width="100" Visible="true" />
         <Column Name="ColumnReadValue" Width="561" Visible="true" />
         <Column Name="ColumnWriteValue" Width="121" Visible="true" />

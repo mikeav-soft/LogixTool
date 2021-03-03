@@ -69,7 +69,7 @@ namespace EIP.AllenBradley
             private set
             {
                 _State = value;
-                Event_StateWasChanged();
+                OnStateWasChanged();
             }
         }
         /// <summary>
@@ -231,7 +231,7 @@ namespace EIP.AllenBradley
         /// Вызывает "Событие при обработке чтения тэгов из контроллера, данные тэга которогоизменились с момента последнего чтения".
         /// </summary>
         /// <param name="tags"></param>
-        private void Event_TagsValueWasChanged(List<LogixTagHandler> tags)
+        private void OnTagsValueWasChanged(List<LogixTagHandler> tags)
         {
             if (TagsValueWasChanged != null)
             {
@@ -242,7 +242,7 @@ namespace EIP.AllenBradley
         /// Вызывает "Событие при успешной обработки чтения тэгов из контроллера".
         /// </summary>
         /// <param name="tags"></param>
-        private void Event_TagsValueWasReaded(List<LogixTagHandler> tags)
+        private void OnTagsValueWasReaded(List<LogixTagHandler> tags)
         {
             if (TagsValueWasReaded != null)
             {
@@ -253,7 +253,7 @@ namespace EIP.AllenBradley
         /// Вызывает "Событие при успешной обработки записи тэгов в контроллер".
         /// </summary>
         /// <param name="tags"></param>
-        private void Event_TagsValueWasWrited(List<LogixTagHandler> tags)
+        private void OnTagsValueWasWrited(List<LogixTagHandler> tags)
         {
             if (TagsValueWasWrited != null)
             {
@@ -264,7 +264,7 @@ namespace EIP.AllenBradley
         /// <summary>
         /// Вызывает "Событие при установке соединения с сервером".
         /// </summary>
-        private void Event_StateWasChanged()
+        private void OnStateWasChanged()
         {
             if (StateWasChanged != null)
             {
@@ -275,7 +275,7 @@ namespace EIP.AllenBradley
         /// Вызывает "Событие с сообщением".
         /// </summary>
         /// <param name="e"></param>
-        internal void Event_Message(MessageEventArgs e)
+        internal void OnMessage(MessageEventArgs e)
         {
             MessageEventArgs messageEventArgs = e;
             string messageHeader = "[" + MESSAGE_HEADER + "]." + messageEventArgs.Header;
@@ -467,14 +467,14 @@ namespace EIP.AllenBradley
                                     }
                                     else
                                     {
-                                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist."));
+                                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist."));
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device."));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device."));
                             // В случае неудачи устанавливаем состояние ошибки.
                             this.ServerState = ServerState.Error;
                         }
@@ -505,14 +505,14 @@ namespace EIP.AllenBradley
                                             }
                                             else
                                             {
-                                                Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist. Program :: '" + program + "'."));
+                                                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist. Program :: '" + program + "'."));
                                             }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device. Program :: '" + program + "'."));
+                                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device. Program :: '" + program + "'."));
 
                                     // В случае неудачи устанавливаем состояние ошибки.
                                     this.ServerState = ServerState.Error;
@@ -556,20 +556,20 @@ namespace EIP.AllenBradley
                                     }
                                     else
                                     {
-                                        Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Members Reading", "Error! Imposible to read template Members from Device. Instance: " + templateInstance.ToString()));
+                                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Members Reading", "Error! Imposible to read template Members from Device. Instance: " + templateInstance.ToString()));
                                         this.ServerState = ServerState.Error;
                                     }
                                 }
                                 else
                                 {
-                                    Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Info Reading", "Error! Imposible to read template Information from Device. Instance: " + templateInstance.ToString()));
+                                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Info Reading", "Error! Imposible to read template Information from Device. Instance: " + templateInstance.ToString()));
                                     this.ServerState = ServerState.Error;
                                 }
                             }
                         }
                         else
                         {
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Template List Reading", "Error! Imposible to read template Instances from Device."));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template List Reading", "Error! Imposible to read template Instances from Device."));
                             this.ServerState = ServerState.Error;
                         }
                     }
@@ -590,7 +590,7 @@ namespace EIP.AllenBradley
                         {
                             tag.ReadEnable = false;
                             tag.WriteEnable = false;
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag Definition", "Error! Invalid Name or Imposible to define Data Type of Tag: " + tag.Name));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag Definition", "Error! Invalid Name or Imposible to define Data Type of Tag: " + tag.Name));
                         }
                     }
                     /* ====================================================================================== */
@@ -758,7 +758,7 @@ namespace EIP.AllenBradley
                     foreach (LogixTagHandler tag in currentTags)
                     {
                         if (tag.WriteValue.RequestedData == null)
-                            Event_Message(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag Value Write", "Error! Tag Value is Null. Tag: " + tag.Name));
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag Value Write", "Error! Tag Value is Null. Tag: " + tag.Name));
                         else
                             allWritingTags.Add(tag);
                     }
@@ -902,13 +902,13 @@ namespace EIP.AllenBradley
                     //
                     if (readedTags.Count > 0)
                     {
-                        Event_TagsValueWasReaded(readedTags);
+                        OnTagsValueWasReaded(readedTags);
                     }
 
                     //
                     if (writedTags.Count > 0)
                     {
-                        Event_TagsValueWasWrited(writedTags);
+                        OnTagsValueWasWrited(writedTags);
                     }
 
                     // Получаем все тэги значения которых было изменено в результате чтения из удаленного
@@ -919,7 +919,7 @@ namespace EIP.AllenBradley
                     // изменения значения тэгов.
                     if (tagsWithNewValues.Count > 0)
                     {
-                        Event_TagsValueWasChanged(tagsWithNewValues);
+                        OnTagsValueWasChanged(tagsWithNewValues);
                     }
                     /* ====================================================================================== */
                     #endregion

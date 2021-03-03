@@ -24,15 +24,15 @@ namespace EIP.AllenBradley
             set
             {
                 this.report = value;
-                Event_ReportUpdated();
+                OnReportUpdated();
             }
         }
         /* ======================================================================================== */
         #endregion
 
         private TagValueReport report;
-        private TagValueReport editedReport;                // Текущие редакируемые данные чтения/записи значения тэга.
-        private TagDataTypeDefinition type;   // Представляет собой определение типа данных.
+        private TagValueReport editedReport;    // Текущие редакируемые данные чтения/записи значения тэга.
+        private TagDataTypeDefinition type;     // Представляет собой определение типа данных.
         /// <summary>
         /// Создает новый буфер значений тэга.
         /// </summary>
@@ -55,7 +55,7 @@ namespace EIP.AllenBradley
         /// <summary>
         /// Вызывает событие при изменении значения отчета о последних завершенных данных операциях чтении/записи значения тэга.
         /// </summary>
-        private void Event_ReportUpdated()
+        private void OnReportUpdated()
         {
             if (this.ReportUpdated != null)
             {

@@ -54,10 +54,10 @@ namespace EIP.Net
         /* ======================================================================================== */
         #endregion
 
-        private UdpClient udpClient;    // Базовый UDP клиент с конкретным портом.
-        private Thread udpThread;       // Фоновый поток для прослушивания входящих данных.
-        private bool recieverEnabled;   // При значении True разрешает циклический процесс фонового прослушивания.
-        private List<UdpResponse> replies; // Вспомогательный список ответов от удаленных узлов после отправленного запроса.
+        private UdpClient udpClient;        // Базовый UDP клиент с конкретным портом.
+        private Thread udpThread;           // Фоновый поток для прослушивания входящих данных.
+        private bool recieverEnabled;       // При значении True разрешает циклический процесс фонового прослушивания.
+        private List<UdpResponse> replies;  // Вспомогательный список ответов от удаленных узлов после отправленного запроса.
 
         /// <summary>
         /// Создает новый UDP клиент.
@@ -244,6 +244,8 @@ namespace EIP.Net
                             this.OnDataRecieved(endPoint, data);
                         }
                     }
+
+                    Thread.Sleep(5);
                 }
             }
             catch
