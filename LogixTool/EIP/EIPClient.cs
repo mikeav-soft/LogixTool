@@ -387,6 +387,8 @@ namespace EIP
             this.CurrentForwardOpen.OtoTConnectionID = this.connectionID_O_T;
             this.CurrentForwardOpen.TtoOConnectionID = this.connectionID_T_O;
             this.CurrentForwardOpen.ConnectionSerialNumber = this.connectionSerialNumber;
+
+            this.CurrentForwardOpen.ConnectionPath.Segments.Clear();
             this.CurrentForwardOpen.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Port_Backplane, this.ProcessorSlot));
             this.CurrentForwardOpen.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_ClassID, 2));
             this.CurrentForwardOpen.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_InstanceID, 1));
@@ -414,6 +416,8 @@ namespace EIP
             forwardCloseRequest.ConnectionSerialNumber = connectionSerialNumber;
             forwardCloseRequest.OriginatorVendorID = this.CurrentForwardOpen.OriginatorVendorID;
             forwardCloseRequest.OriginatorSerialNumber = this.CurrentForwardOpen.OriginatorSerialNumber;
+
+            forwardCloseRequest.ConnectionPath.Segments.Clear();
             forwardCloseRequest.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Port_Backplane, this.ProcessorSlot));
             forwardCloseRequest.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_ClassID, 2));
             forwardCloseRequest.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_InstanceID, 1));

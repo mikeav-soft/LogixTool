@@ -31,3 +31,21 @@ E:\repos\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.pdb
 E:\repos\LogixTool\LogixTool\LogixTool\bin\Release\EIP.dll
 E:\repos\LogixTool\LogixTool\LogixTool\bin\Release\EIP.pdb
 E:\repos\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.csproj.CopyComplete
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Release\LogixTool.exe.config
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Release\LogixTool.exe
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Release\LogixTool.pdb
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Release\EIP.dll
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Release\EIP.pdb
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.csprojAssemblyReference.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.FormAbout.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.FormRecordSettings.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.FormMain.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.Controls.DeviceBrowserControl.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.Controls.TagBrowserControl.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.Common.MessageControl.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.Properties.Resources.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.csproj.GenerateResource.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.csproj.CoreCompileInputs.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.csproj.CopyComplete
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.exe
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Release\LogixTool.pdb

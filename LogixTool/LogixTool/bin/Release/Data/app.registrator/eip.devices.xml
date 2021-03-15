@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="eip.devices" ID="" Saved="637173119207622729">
+<storage Owner="app.registrator" Type="eip.devices" ID="" Saved="637504151169607527">
   <data>
     <Devices>
-      <Device Name="EIP_STUDY" IPAddress="192.168.2.101" ProcessorSlot="0" />
+      <Device Name="EIP_STUDY" IPAddress="192.168.1.101" ProcessorSlot="0" />
       <Device Name="NewPLC_0" IPAddress="0.0.0.0" ProcessorSlot="0" />
     </Devices>
   </data>

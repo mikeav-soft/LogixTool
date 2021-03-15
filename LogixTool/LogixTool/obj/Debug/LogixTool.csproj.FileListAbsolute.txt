@@ -31,3 +31,21 @@ E:\repos\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.pdb
 E:\repos\LogixTool\LogixTool\LogixTool\bin\Debug\EIP.dll
 E:\repos\LogixTool\LogixTool\LogixTool\bin\Debug\EIP.pdb
 E:\repos\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CopyComplete
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Debug\LogixTool.exe.config
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Debug\LogixTool.exe
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Debug\LogixTool.pdb
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Debug\EIP.dll
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\bin\Debug\EIP.pdb
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csprojAssemblyReference.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.FormAbout.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.FormRecordSettings.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.FormMain.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.DeviceBrowserControl.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.Controls.TagBrowserControl.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.Common.MessageControl.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.Properties.Resources.resources
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.GenerateResource.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CoreCompileInputs.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.csproj.CopyComplete
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.exe
+D:\C# Projects\Repository\LogixTool\LogixTool\LogixTool\obj\Debug\LogixTool.pdb

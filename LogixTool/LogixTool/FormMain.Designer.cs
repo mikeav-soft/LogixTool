@@ -363,7 +363,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Logix Tool v1.001";
+            this.Text = "Logix Tool v1.002";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormRegistrator_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormRegistrator_FormClosed);
             this.statusStrip.ResumeLayout(false);

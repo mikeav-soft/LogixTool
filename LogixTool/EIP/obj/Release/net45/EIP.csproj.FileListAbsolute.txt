@@ -6,3 +6,11 @@ E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.AssemblyInfo.cs
 E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.csproj.CoreCompileInputs.cache
 E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.dll
 E:\repos\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.pdb
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\bin\Release\net45\EIP.dll
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\bin\Release\net45\EIP.pdb
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.csprojAssemblyReference.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.AssemblyInfoInputs.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.AssemblyInfo.cs
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.csproj.CoreCompileInputs.cache
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.dll
+D:\C# Projects\Repository\LogixTool\LogixTool\EIP\obj\Release\net45\EIP.pdb
