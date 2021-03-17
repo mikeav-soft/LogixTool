@@ -32,7 +32,7 @@ namespace EIP
         /// <summary>
         /// Получает или задает номер слота процессора.
         /// </summary>
-        public byte ProcessorSlot { get; set; }
+        public byte? ProcessorSlot { get; set; }
         /// <summary>
         /// Номер порта TCP соединения удаленного устройства.
         /// </summary>
@@ -67,7 +67,7 @@ namespace EIP
         /// <summary>
         /// Создает новый объект на основании IP адреса и номером слота прибора с которым ведется подключение.
         /// </summary>
-        public EIPClient(IPAddress ipAddress, byte processorSlot)
+        public EIPClient(IPAddress ipAddress, byte? processorSlot)
         {
             this.ProcessorSlot = processorSlot;
             this.TargetTCPPort = 0xAF12;
@@ -389,7 +389,9 @@ namespace EIP
             this.CurrentForwardOpen.ConnectionSerialNumber = this.connectionSerialNumber;
 
             this.CurrentForwardOpen.ConnectionPath.Segments.Clear();
-            this.CurrentForwardOpen.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Port_Backplane, this.ProcessorSlot));
+
+            if (this.ProcessorSlot.HasValue)
+                this.CurrentForwardOpen.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Port_Backplane, this.ProcessorSlot.Value));
             this.CurrentForwardOpen.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_ClassID, 2));
             this.CurrentForwardOpen.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_InstanceID, 1));
 
@@ -418,7 +420,8 @@ namespace EIP
             forwardCloseRequest.OriginatorSerialNumber = this.CurrentForwardOpen.OriginatorSerialNumber;
 
             forwardCloseRequest.ConnectionPath.Segments.Clear();
-            forwardCloseRequest.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Port_Backplane, this.ProcessorSlot));
+            if (this.ProcessorSlot.HasValue)
+                forwardCloseRequest.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Port_Backplane, this.ProcessorSlot.Value));
             forwardCloseRequest.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_ClassID, 2));
             forwardCloseRequest.ConnectionPath.Segments.Add(new EPathSegment(EPathSegmentHeader.Local_InstanceID, 1));
 

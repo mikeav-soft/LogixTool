@@ -57,7 +57,7 @@ namespace EIP.AllenBradley
         /// <summary>
         /// Возвращает номер слота контроллера в рейке Backplane к которому производится подключение.
         /// </summary>
-        public byte ProcessorSlot
+        public byte? ProcessorSlot
         {
             get
             {
@@ -855,7 +855,7 @@ namespace EIP.AllenBradley
             {
                 // Присваиваем полученные результаты.
                 table = new CLXCustomTagMemoryTable((UInt16)(response.ResponseData[1] << 8 | response.ResponseData[0]));
-                
+
                 OnMessage(new MessageEventArgs(this, MessageEventArgsType.Info, messageEventHeaderText, "OK. Associated with Instance=" + table.Instance.ToString()));
                 return true;
             }
@@ -928,7 +928,7 @@ namespace EIP.AllenBradley
             else
             {
                 // Присваиваем полученные результаты.
-                UInt16 id = (UInt16)(response.ResponseData[1] << 8 | response.ResponseData[0]);       
+                UInt16 id = (UInt16)(response.ResponseData[1] << 8 | response.ResponseData[0]);
 
                 table.Add(id, tag);
 
@@ -2705,10 +2705,14 @@ namespace EIP.AllenBradley
         /// <returns></returns>
         public XElement GetXElement()
         {
+            string slot = "";
+            if (this.ProcessorSlot.HasValue) slot = this.ProcessorSlot.ToString();
+
             XElement xdevice = new XElement("Device");
             xdevice.Add(new XAttribute("Name", this.Name));
             xdevice.Add(new XAttribute("IPAddress", this.Address));
-            xdevice.Add(new XAttribute("ProcessorSlot", this.ProcessorSlot));
+            xdevice.Add(new XAttribute("ProcessorSlot", slot));
+
             return xdevice;
         }
         /// <summary>
@@ -2738,7 +2742,7 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            if (!xattrProcessorSlot.Value.All(c => Char.IsDigit(c)))
+            if (xattrProcessorSlot.Value != "" && !xattrProcessorSlot.Value.All(c => Char.IsDigit(c)))
             {
                 return false;
             }
@@ -2751,10 +2755,16 @@ namespace EIP.AllenBradley
             }
 
             // Преобразовываем номер слота процессора.
-            byte processorSlot;
-            if (!Byte.TryParse(xattrProcessorSlot.Value, out processorSlot))
+            byte? processorSlot = null;
+            if (xattrProcessorSlot.Value != "")
             {
-                return false;
+                byte slotNumber;
+                if (!Byte.TryParse(xattrProcessorSlot.Value, out slotNumber))
+                {
+                    return false;
+                }
+
+                processorSlot = slotNumber;
             }
 
             // Устанавливаем значения свойств.

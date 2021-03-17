@@ -253,7 +253,7 @@ namespace LogixTool.Controls
         /// </summary>
         private void Event_TaskCollectionWasChanged()
         {
-            if (this.TaskCollectionWasChanged!=null)
+            if (this.TaskCollectionWasChanged != null)
             {
                 TaskCollectionWasChanged(this, null);
             }
@@ -432,7 +432,19 @@ namespace LogixTool.Controls
             {
                 this.textBoxDeviceName.Text = this.SelectedEthernetDeviceNode.Device.Name;
                 this.textBoxDeviceIpAddress.Text = this.SelectedEthernetDeviceNode.Device.Address.ToString();
-                this.numericUpDownSlotNumber.Value = this.SelectedEthernetDeviceNode.Device.ProcessorSlot;
+
+                if (this.SelectedEthernetDeviceNode.Device.ProcessorSlot.HasValue)
+                {
+                    this.numericUpDownSlotNumber.Value = this.SelectedEthernetDeviceNode.Device.ProcessorSlot.Value;
+                    this.checkBox_EnableBackplane.Checked = true;
+                }
+                else
+                {
+                    this.numericUpDownSlotNumber.Value = 0;
+                    this.checkBox_EnableBackplane.Checked = false;
+                }
+
+
             }
             else
             {
@@ -472,6 +484,21 @@ namespace LogixTool.Controls
             this.buttonApply.Enabled = (this.SelectedEthernetDeviceNode != null && this.SelectedEthernetDeviceNode.Device.ProcessorSlot != this.numericUpDownSlotNumber.Value);
         }
         /// <summary>
+        /// Подписка на событие : CheckBox : Значение изменено.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void checkBox_EnableBackplane_CheckedChanged(object sender, EventArgs e)
+        {
+            this.numericUpDownSlotNumber.Enabled = this.checkBox_EnableBackplane.Checked;
+
+            decimal? slot = null;
+            if (this.checkBox_EnableBackplane.Checked)
+                slot = this.numericUpDownSlotNumber.Value;
+
+            this.buttonApply.Enabled = (this.SelectedEthernetDeviceNode != null && this.SelectedEthernetDeviceNode.Device.ProcessorSlot != slot);
+        }
+        /// <summary>
         /// Подписка на событие : Button : Нажата кнопка.
         /// </summary>
         /// <param name="sender"></param>
@@ -484,8 +511,8 @@ namespace LogixTool.Controls
                 Dictionary<string, TreeNode_EthernetDevice> devicesByIpAddress = this.CLXDevicesByAddress;
 
                 string currentName = textBoxDeviceName.Text;
-                string currentAddress = textBoxDeviceIpAddress.Text + "/" + this.numericUpDownSlotNumber.Value.ToString();
-                
+                string currentAddress = textBoxDeviceIpAddress.Text + (this.checkBox_EnableBackplane.Checked ? "/" + this.numericUpDownSlotNumber.Value.ToString() : "");
+
                 // Проверка установки нового имени устройства.
                 if (devicesByName.ContainsKey(currentName) && devicesByName[currentName] != this.SelectedEthernetDeviceNode)
                 {
@@ -499,11 +526,18 @@ namespace LogixTool.Controls
                 if (devicesByIpAddress.ContainsKey(currentAddress) && devicesByIpAddress[currentAddress] != this.SelectedEthernetDeviceNode)
                 {
                     MessageBox.Show("Imposible to set IP Address.\r\nController with this IP Address already exist:\r\n"
-                        + devicesByIpAddress[currentAddress].Name + ", " + devicesByIpAddress[currentAddress].Device.Address + ", slot: " + devicesByIpAddress[currentAddress].Device.ProcessorSlot.ToString(), 
+                        + devicesByIpAddress[currentAddress].Name + ", " + devicesByIpAddress[currentAddress].Device.Address + ", slot: " + devicesByIpAddress[currentAddress].Device.ProcessorSlot.ToString(),
                         MESSAGE_HEADER, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     this.textBoxDeviceIpAddress.Text = this.SelectedEthernetDeviceNode.Device.Address.ToString();
-                    this.numericUpDownSlotNumber.Value = this.SelectedEthernetDeviceNode.Device.ProcessorSlot;
+                    if (this.SelectedEthernetDeviceNode.Device.ProcessorSlot.HasValue)
+                    {
+                        this.numericUpDownSlotNumber.Value = this.SelectedEthernetDeviceNode.Device.ProcessorSlot.Value;
+                    }
+                    else
+                    {
+                        this.numericUpDownSlotNumber.Value = 0;
+                    }
                     this.textBoxDeviceIpAddress.Focus();
                     return;
                 }
@@ -520,7 +554,11 @@ namespace LogixTool.Controls
 
                 this.SelectedEthernetDeviceNode.Device.Name = this.textBoxDeviceName.Text;
                 this.SelectedEthernetDeviceNode.Device.Address = ipAddress;
-                this.SelectedEthernetDeviceNode.Device.ProcessorSlot = (byte)this.numericUpDownSlotNumber.Value;
+
+                if (this.checkBox_EnableBackplane.Checked)
+                    this.SelectedEthernetDeviceNode.Device.ProcessorSlot = (byte)this.numericUpDownSlotNumber.Value;
+                else
+                    this.SelectedEthernetDeviceNode.Device.ProcessorSlot = null;
 
                 this.buttonApply.Enabled = false;
             }
@@ -536,10 +574,10 @@ namespace LogixTool.Controls
         /// <param name="namePrefix">Префикс имени по умолчанию для добваления. После текущего имени следуют символы цифр.</param>
         /// <param name="defaultIpAddress">IP Адрес устройства по умолчанию.</param>
         /// <returns></returns>
-        public bool Add(string namePrefix, byte [] defaultIpAddress)
+        public bool Add(string namePrefix, byte[] defaultIpAddress)
         {
             bool result;
-                        string plcName = namePrefix;
+            string plcName = namePrefix;
             for (int ix = 0; ix < 1000; ix++)
             {
                 if (!this.CLXDevicesByName.ContainsKey(plcName + ix.ToString()))
@@ -607,7 +645,7 @@ namespace LogixTool.Controls
                 return false;
             }
 
-            if (treeNode_EthernetDevice.Task.ProcessState != TaskProcessState.Stop 
+            if (treeNode_EthernetDevice.Task.ProcessState != TaskProcessState.Stop
                 || treeNode_EthernetDevice.Task.ServerState != ServerState.Off)
             {
                 return false;
@@ -725,9 +763,10 @@ namespace LogixTool.Controls
             FormsExtensions.InvokeControl<TextBox>(this.textBoxStatus, t => t.BackColor = backColor);
 
             bool value = this.SelectedEthernetDeviceNode != null && this.SelectedEthernetDeviceNode.Task.ProcessState == TaskProcessState.Stop;
-            FormsExtensions.InvokeControl<TextBox>(this.textBoxDeviceName, t=>t.Enabled = value);
+            FormsExtensions.InvokeControl<TextBox>(this.textBoxDeviceName, t => t.Enabled = value);
             FormsExtensions.InvokeControl<TextBox>(this.textBoxDeviceIpAddress, t => t.Enabled = value);
-            FormsExtensions.InvokeControl<NumericUpDown>(this.numericUpDownSlotNumber,n=>n.Enabled = value);
+            FormsExtensions.InvokeControl<CheckBox>(this.checkBox_EnableBackplane, t => t.Enabled = value);
+            FormsExtensions.InvokeControl<NumericUpDown>(this.numericUpDownSlotNumber, n => n.Enabled = (value && this.checkBox_EnableBackplane.Checked));
             FormsExtensions.InvokeControl<NumericUpDown>(this.numericUpDownSlotNumber, n => n.Visible = this.SelectedEthernetDeviceNode != null);
         }
         /// <summary>
@@ -735,17 +774,17 @@ namespace LogixTool.Controls
         /// </summary>
         private void RefreshStateOfHeadControl()
         {
-            bool removeButtonVisible = this.SelectedEthernetDeviceNode != null 
+            bool removeButtonVisible = this.SelectedEthernetDeviceNode != null
                 && this.SelectedEthernetDeviceNode.Task.ProcessState == TaskProcessState.Stop
                 && this.SelectedEthernetDeviceNode.Task.ServerState == ServerState.Off;
 
-            string connectButtonText = (this.SelectedEthernetDeviceNode == null 
+            string connectButtonText = (this.SelectedEthernetDeviceNode == null
                 || this.SelectedEthernetDeviceNode.Task.ProcessState == TaskProcessState.Stop) ? "Online" : "Offline";
 
-            FormsExtensions.InvokeControl<ToolStrip>(this.toolStrip, b => 
+            FormsExtensions.InvokeControl<ToolStrip>(this.toolStrip, b =>
             {
                 this.toolStripButton_Remove.Enabled = removeButtonVisible;
-            });        
+            });
         }
         /* ======================================================================================== */
         #endregion

@@ -230,7 +230,11 @@ namespace LogixTool.Controls
         {
             FormsExtensions.InvokeControl<TreeView>(this.TreeView, tn =>
             {
-                this.Text = this.Device.Name + ": (" + this.Device.Address.ToString() + "/" + this.Device.ProcessorSlot.ToString() + ")";
+                string slot = "";
+                if (this.Device.ProcessorSlot.HasValue)
+                    slot = "/" + this.Device.ProcessorSlot.Value.ToString();
+
+                this.Text = this.Device.Name + ": (" + this.Device.Address.ToString() + slot + ")";
                 switch (this.Task.ServerState)
                 {
                     case ServerState.Off:

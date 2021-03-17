@@ -43,12 +43,12 @@
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.labelStatus = new System.Windows.Forms.Label();
             this.buttonApply = new System.Windows.Forms.Button();
-            this.labelSlotNumber = new System.Windows.Forms.Label();
             this.textBoxDeviceName = new System.Windows.Forms.TextBox();
             this.labelIpAddress = new System.Windows.Forms.Label();
             this.textBoxDeviceIpAddress = new System.Windows.Forms.TextBox();
             this.labelServerName = new System.Windows.Forms.Label();
             this.numericUpDownSlotNumber = new System.Windows.Forms.NumericUpDown();
+            this.checkBox_EnableBackplane = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -181,10 +181,10 @@
             // 
             // groupBoxProperties
             // 
+            this.groupBoxProperties.Controls.Add(this.checkBox_EnableBackplane);
             this.groupBoxProperties.Controls.Add(this.textBoxStatus);
             this.groupBoxProperties.Controls.Add(this.labelStatus);
             this.groupBoxProperties.Controls.Add(this.buttonApply);
-            this.groupBoxProperties.Controls.Add(this.labelSlotNumber);
             this.groupBoxProperties.Controls.Add(this.textBoxDeviceName);
             this.groupBoxProperties.Controls.Add(this.labelIpAddress);
             this.groupBoxProperties.Controls.Add(this.textBoxDeviceIpAddress);
@@ -223,22 +223,13 @@
             // 
             this.buttonApply.Enabled = false;
             this.buttonApply.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonApply.Location = new System.Drawing.Point(147, 69);
+            this.buttonApply.Location = new System.Drawing.Point(150, 75);
             this.buttonApply.Name = "buttonApply";
             this.buttonApply.Size = new System.Drawing.Size(57, 24);
             this.buttonApply.TabIndex = 6;
             this.buttonApply.Text = "Apply";
             this.buttonApply.UseVisualStyleBackColor = true;
             this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
-            // 
-            // labelSlotNumber
-            // 
-            this.labelSlotNumber.AutoSize = true;
-            this.labelSlotNumber.Location = new System.Drawing.Point(41, 57);
-            this.labelSlotNumber.Name = "labelSlotNumber";
-            this.labelSlotNumber.Size = new System.Drawing.Size(25, 13);
-            this.labelSlotNumber.TabIndex = 5;
-            this.labelSlotNumber.Text = "Slot";
             // 
             // textBoxDeviceName
             // 
@@ -289,6 +280,20 @@
             this.numericUpDownSlotNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDownSlotNumber.ValueChanged += new System.EventHandler(this.numericUpDownSlotNumber_ValueChanged);
             // 
+            // checkBox_EnableBackplane
+            // 
+            this.checkBox_EnableBackplane.AutoSize = true;
+            this.checkBox_EnableBackplane.Checked = true;
+            this.checkBox_EnableBackplane.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_EnableBackplane.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.checkBox_EnableBackplane.Location = new System.Drawing.Point(24, 56);
+            this.checkBox_EnableBackplane.Name = "checkBox_EnableBackplane";
+            this.checkBox_EnableBackplane.Size = new System.Drawing.Size(42, 17);
+            this.checkBox_EnableBackplane.TabIndex = 9;
+            this.checkBox_EnableBackplane.Text = "Slot";
+            this.checkBox_EnableBackplane.UseVisualStyleBackColor = true;
+            this.checkBox_EnableBackplane.CheckedChanged += new System.EventHandler(this.checkBox_EnableBackplane_CheckedChanged);
+            // 
             // DeviceBrowserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -320,7 +325,6 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.Label labelSlotNumber;
         private System.Windows.Forms.Label labelIpAddress;
         private System.Windows.Forms.Label labelServerName;
         private System.Windows.Forms.NumericUpDown numericUpDownSlotNumber;
@@ -337,5 +341,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButton_Remove;
         private System.Windows.Forms.TreeView treeView;
         private System.Windows.Forms.ImageList imageList;
+        private System.Windows.Forms.CheckBox checkBox_EnableBackplane;
     }
 }
