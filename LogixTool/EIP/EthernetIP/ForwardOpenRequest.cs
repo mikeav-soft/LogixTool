@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace EIP
+namespace EIP.EthernetIP
 {
     /// <summary>
     /// Структура запроса на создание подключения с удаленным устройством.

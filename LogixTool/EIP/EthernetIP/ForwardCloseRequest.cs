@@ -1,30 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
-namespace EIP
+namespace EIP.EthernetIP
 {
     /// <summary>
-    /// 
+    /// Структура запроса на закрытие подключения с удаленным устройством.
     /// </summary>
-    public class UnconnectedSendRequest
+	public class ForwardCloseRequest
     {
         #region [ PROPERTIES ]
         /* ============================================================================== */
         /// <summary>
-        /// Используется при расчете выхода за пределы временного интервала запроса.
+        /// 
         /// </summary>
         public byte PriorityTimeTick { get; set; }
         /// <summary>
-        /// Используется при расчете выхода за пределы временного интервала запроса.
+        /// 
         /// </summary>
         public byte TimeOutTicks { get; set; }
         /// <summary>
-        /// 
+        /// Серийный номер подключения.
         /// </summary>
-        public MessageRouterRequest MessageRequest { get; set; }
+        public ushort ConnectionSerialNumber { get; set; }
+        /// <summary>
+        /// Originator Vendor ID.
+        /// </summary>
+        public ushort OriginatorVendorID { get; set; }
+        /// <summary>
+        /// Серийный номер Originator-а.
+        /// </summary>
+        public uint OriginatorSerialNumber { get; set; }
         /// <summary>
         /// Путь до запрашиваемого объекта.
         /// </summary>
@@ -32,15 +38,16 @@ namespace EIP
         /* ============================================================================== */
         #endregion
 
-
         /// <summary>
-        /// 
+        /// Создает структуру запроса на закрытие подключения с удаленным устройством.
         /// </summary>
-        public UnconnectedSendRequest ()
+        public ForwardCloseRequest()
         {
-            this.PriorityTimeTick = 7;
-            this.TimeOutTicks = 155;
-            this.MessageRequest = new MessageRouterRequest();
+            this.PriorityTimeTick = 0;
+            this.TimeOutTicks = 0;
+            this.ConnectionSerialNumber = 0;
+            this.OriginatorVendorID = 0;
+            this.OriginatorSerialNumber = 0;
             this.ConnectionPath = new EPath();
         }
 
@@ -48,33 +55,27 @@ namespace EIP
         /// Преобразовывает данный объект в масив Байт.
         /// </summary>
         /// <returns></returns>
-        public byte[] ToBytes()
+		public byte[] ToBytes()
         {
             List<byte> result = new List<byte>();
-            byte[] messageRequestBytes = this.MessageRequest.ToBytes();
 
-            // PriorityTimeTick.
+            // Priority/Time_tick
             result.Add(this.PriorityTimeTick);
-            // TimeOutTicks.
+            // Time-out_ticks
             result.Add(this.TimeOutTicks);
-            // Message Request Size.
-            result.AddRange(BitConverter.GetBytes((UInt16)(messageRequestBytes.Length & 0xFFFF)));
-            // Message Request.
-            result.AddRange(messageRequestBytes);
-            // Only present if Message Request Size is an odd value.
-            if ((messageRequestBytes.Length & 0x01) == 0x01)
-            {
-                result.Add(0);
-            }
+            // Connection Serial Number.
+            result.AddRange(BitConverter.GetBytes(this.ConnectionSerialNumber));
+            // Originator Vendor ID.
+            result.AddRange(BitConverter.GetBytes(this.OriginatorVendorID));
+            // Originator Serial Number.
+            result.AddRange(BitConverter.GetBytes(this.OriginatorSerialNumber));
             // The number of 16 bit words in the Connection_Path field.
             result.Add(this.ConnectionPath.Size);
             // Reserved.
             result.Add(0);
             // Indicates the route to the Remote Target Device.
             result.AddRange(this.ConnectionPath.ToBytes(EPathToByteMethod.DataOnly));
-
             return result.ToArray();
         }
-
     }
 }

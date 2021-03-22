@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Net;
+using EIP.EthernetIP;
 using EIP.AllenBradley.Models;
 using EIP.AllenBradley.Models.Events;
 
@@ -13,7 +14,7 @@ using EIP.AllenBradley.Models.Events;
 namespace EIP.AllenBradley
 {
     /// <summary>
-    /// Представляет собой класс способный управлять, читать и записывать данные в контроллер типа ControlLogix и CompactLogix.
+    /// Представляет собой класс для работы с контроллерами типа ControlLogix и CompactLogix.
     /// </summary>
     public class LogixDevice
     {
@@ -22,6 +23,11 @@ namespace EIP.AllenBradley
 
         #region [ PROPERTIES ]
         /* ================================================================================================== */
+        /// <summary>
+        /// Возвращает или задает семейство контроллеров с которым производится работа.
+        /// </summary>
+        public DeviceFamily Family { get; set; }
+
         private string _Name;
         /// <summary>
         /// Задает имя контроллера.
@@ -119,6 +125,7 @@ namespace EIP.AllenBradley
 
         private EIPClient eipClient;                    // Платформа для работы с EthernetIP.
 
+
         #region [ CONSTRUCTOR ]
         /* ================================================================================================== */
         /// <summary>
@@ -129,6 +136,7 @@ namespace EIP.AllenBradley
         /// <param name="processorSlot">Номер слота в рейке Backplane.</param>
         public LogixDevice(string name, IPAddress address, byte processorSlot)
         {
+            this.Family = DeviceFamily.ControlLogix;
             this.Name = name;
             this.eipClient = new EIPClient(address, processorSlot);
             this.Address = address;
@@ -2709,6 +2717,7 @@ namespace EIP.AllenBradley
             if (this.ProcessorSlot.HasValue) slot = this.ProcessorSlot.ToString();
 
             XElement xdevice = new XElement("Device");
+            xdevice.Add(new XAttribute("Family", this.Family.ToString()));
             xdevice.Add(new XAttribute("Name", this.Name));
             xdevice.Add(new XAttribute("IPAddress", this.Address));
             xdevice.Add(new XAttribute("ProcessorSlot", slot));
@@ -2727,11 +2736,13 @@ namespace EIP.AllenBradley
                 return false;
             }
 
-            XAttribute xattrName;            // Название устройства.
-            XAttribute xattrIpAddress;       // IP адрес.
-            XAttribute xattrProcessorSlot;   // Номер слота процессора.
+            XAttribute xattrFamily;             // Семейство контроллеров.
+            XAttribute xattrName;               // Название устройства.
+            XAttribute xattrIpAddress;          // IP адрес.
+            XAttribute xattrProcessorSlot;      // Номер слота процессора.
 
             // Получам значения атрибутов.
+            xattrFamily = xdevice.Attribute("Family");
             xattrName = xdevice.Attribute("Name");
             xattrIpAddress = xdevice.Attribute("IPAddress");
             xattrProcessorSlot = xdevice.Attribute("ProcessorSlot");
@@ -2765,6 +2776,17 @@ namespace EIP.AllenBradley
                 }
 
                 processorSlot = slotNumber;
+            }
+
+            // Преобразовываем значение семейства устройства.
+            DeviceFamily resultFamily;
+            if (xattrFamily != null && Enum.TryParse<DeviceFamily>(xattrFamily.Value, out resultFamily))
+            {
+                this.Family = resultFamily;
+            }
+            else
+            {
+                this.Family = DeviceFamily.ControlLogix;
             }
 
             // Устанавливаем значения свойств.

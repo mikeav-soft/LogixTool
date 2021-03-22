@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EIP
+namespace EIP.EthernetIP
 {
     /// <summary>
     /// Socket Address (see section 2-6.3.2)

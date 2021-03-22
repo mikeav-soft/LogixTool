@@ -7,9 +7,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using EIP.Net;
+using EIP.EthernetIP.Net;
 
-namespace EIP
+namespace EIP.EthernetIP
 {
     /// <summary>
     /// Класс по работе с устройством на уровне CIP Ethernet IP.
@@ -104,7 +104,11 @@ namespace EIP
             this.CurrentForwardOpen.OtoTRequestedPacketInterval = 2000000;
             this.CurrentForwardOpen.TtoORequestedPacketInterval = 2000000;
 
-            this.CurrentForwardOpen.TransportClassAndTrigger = new TransportTypeAndTrigger(163);
+            this.CurrentForwardOpen.TransportClassAndTrigger = new TransportTypeAndTrigger();
+            this.CurrentForwardOpen.TransportClassAndTrigger.AsServer = true;
+            this.CurrentForwardOpen.TransportClassAndTrigger.ProductionTrigger = ProductionTrigger.Application;
+            this.CurrentForwardOpen.TransportClassAndTrigger.TransportClass = TransportClass.Class3;
+
             this.CurrentForwardOpen.ConnectionTimeOutMultiplier = 2;
         }
 

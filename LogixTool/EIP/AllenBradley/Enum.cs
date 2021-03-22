@@ -69,4 +69,10 @@ namespace EIP.AllenBradley
         Stoping,
         Stop
     }
+
+    public enum DeviceFamily
+    {
+        ControlLogix,
+        Micro800
+    }
 }

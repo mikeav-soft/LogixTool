@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace EIP.Net
+namespace EIP.EthernetIP.Net
 {
     internal class ClientReplyEventArgs : EventArgs
     {

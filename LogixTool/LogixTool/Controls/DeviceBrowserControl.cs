@@ -130,6 +130,12 @@ namespace LogixTool.Controls
 
             this.RefreshStateOfHeadControl();
             this.RefreshStateOfPropertyControl();
+
+            // Заполняем элементы ComboBox для сеймейства контроллеров.
+            foreach (DeviceFamily fam in Enum.GetValues(typeof(DeviceFamily)))
+                this.comboBox_DeviceFamily.Items.Add(fam.ToString());
+
+
         }
 
         #region [ EVENTS ]
@@ -430,6 +436,7 @@ namespace LogixTool.Controls
 
             if (this.SelectedEthernetDeviceNode != null)
             {
+                this.comboBox_DeviceFamily.Text = this.SelectedEthernetDeviceNode.Device.Family.ToString();
                 this.textBoxDeviceName.Text = this.SelectedEthernetDeviceNode.Device.Name;
                 this.textBoxDeviceIpAddress.Text = this.SelectedEthernetDeviceNode.Device.Address.ToString();
 
@@ -454,6 +461,23 @@ namespace LogixTool.Controls
             }
 
             this.treeView.Refresh();
+        }
+        /// <summary>
+        /// Подписка на событие : ComboBox : Выбранный индекс был изменен.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBox_DeviceFamily_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboBox_DeviceFamily.Text.Trim() == "" || this.SelectedEthernetDeviceNode == null)
+                return;
+
+            DeviceFamily famResult;
+            if (Enum.TryParse<DeviceFamily>(this.comboBox_DeviceFamily.Text,out famResult))
+            {
+                this.buttonApply.Enabled = true;
+                this.SelectedEthernetDeviceNode.Device.Family = famResult;
+            }
         }
 
         /// <summary>

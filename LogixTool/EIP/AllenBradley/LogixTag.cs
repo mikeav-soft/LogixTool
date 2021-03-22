@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EIP.EthernetIP;
 using EIP.AllenBradley.Models;
 
 namespace EIP.AllenBradley
@@ -18,8 +19,6 @@ namespace EIP.AllenBradley
         /// Путь к объекту согласно спецификации CIP.
         /// </summary>
         public EPath SymbolicEPath { get; set; }
-
-        private TagDataTypeDefinition _Type;
         /// <summary>
         /// Возвращает или задает тип данных значения тэга.
         /// Представляет собой подструктуру которая не должа быть равной Null.
@@ -58,6 +57,8 @@ namespace EIP.AllenBradley
         public CLXCustomTagMemoryItem OwnerTableItem { get; internal set; }
         /* ================================================================================================== */
         #endregion
+
+        private TagDataTypeDefinition _Type;
 
         /// <summary>
         /// Создает новый тэг контроллера Allen Breadley.

@@ -40,6 +40,7 @@
             this.treeView = new System.Windows.Forms.TreeView();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.groupBoxProperties = new System.Windows.Forms.GroupBox();
+            this.checkBox_EnableBackplane = new System.Windows.Forms.CheckBox();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.labelStatus = new System.Windows.Forms.Label();
             this.buttonApply = new System.Windows.Forms.Button();
@@ -48,7 +49,8 @@
             this.textBoxDeviceIpAddress = new System.Windows.Forms.TextBox();
             this.labelServerName = new System.Windows.Forms.Label();
             this.numericUpDownSlotNumber = new System.Windows.Forms.NumericUpDown();
-            this.checkBox_EnableBackplane = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.comboBox_DeviceFamily = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -143,7 +145,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.groupBoxProperties);
             this.splitContainer2.Size = new System.Drawing.Size(210, 271);
-            this.splitContainer2.SplitterDistance = 165;
+            this.splitContainer2.SplitterDistance = 137;
             this.splitContainer2.TabIndex = 1;
             // 
             // groupBox2
@@ -152,7 +154,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(0, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(210, 165);
+            this.groupBox2.Size = new System.Drawing.Size(210, 137);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Ethernet IP Devices";
@@ -166,7 +168,7 @@
             this.treeView.Location = new System.Drawing.Point(3, 16);
             this.treeView.Name = "treeView";
             this.treeView.SelectedImageIndex = 0;
-            this.treeView.Size = new System.Drawing.Size(204, 146);
+            this.treeView.Size = new System.Drawing.Size(204, 118);
             this.treeView.TabIndex = 1;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             // 
@@ -181,6 +183,8 @@
             // 
             // groupBoxProperties
             // 
+            this.groupBoxProperties.Controls.Add(this.comboBox_DeviceFamily);
+            this.groupBoxProperties.Controls.Add(this.label1);
             this.groupBoxProperties.Controls.Add(this.checkBox_EnableBackplane);
             this.groupBoxProperties.Controls.Add(this.textBoxStatus);
             this.groupBoxProperties.Controls.Add(this.labelStatus);
@@ -193,17 +197,31 @@
             this.groupBoxProperties.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxProperties.Location = new System.Drawing.Point(0, 0);
             this.groupBoxProperties.Name = "groupBoxProperties";
-            this.groupBoxProperties.Size = new System.Drawing.Size(210, 102);
+            this.groupBoxProperties.Size = new System.Drawing.Size(210, 130);
             this.groupBoxProperties.TabIndex = 6;
             this.groupBoxProperties.TabStop = false;
             this.groupBoxProperties.Text = "Properties";
+            // 
+            // checkBox_EnableBackplane
+            // 
+            this.checkBox_EnableBackplane.AutoSize = true;
+            this.checkBox_EnableBackplane.Checked = true;
+            this.checkBox_EnableBackplane.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_EnableBackplane.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.checkBox_EnableBackplane.Location = new System.Drawing.Point(24, 73);
+            this.checkBox_EnableBackplane.Name = "checkBox_EnableBackplane";
+            this.checkBox_EnableBackplane.Size = new System.Drawing.Size(42, 17);
+            this.checkBox_EnableBackplane.TabIndex = 9;
+            this.checkBox_EnableBackplane.Text = "Slot";
+            this.checkBox_EnableBackplane.UseVisualStyleBackColor = true;
+            this.checkBox_EnableBackplane.CheckedChanged += new System.EventHandler(this.checkBox_EnableBackplane_CheckedChanged);
             // 
             // textBoxStatus
             // 
             this.textBoxStatus.BackColor = System.Drawing.Color.White;
             this.textBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxStatus.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBoxStatus.Location = new System.Drawing.Point(72, 80);
+            this.textBoxStatus.Location = new System.Drawing.Point(72, 97);
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.Size = new System.Drawing.Size(69, 13);
@@ -213,7 +231,7 @@
             // labelStatus
             // 
             this.labelStatus.AutoSize = true;
-            this.labelStatus.Location = new System.Drawing.Point(29, 80);
+            this.labelStatus.Location = new System.Drawing.Point(29, 97);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(37, 13);
             this.labelStatus.TabIndex = 7;
@@ -223,7 +241,7 @@
             // 
             this.buttonApply.Enabled = false;
             this.buttonApply.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonApply.Location = new System.Drawing.Point(150, 75);
+            this.buttonApply.Location = new System.Drawing.Point(147, 86);
             this.buttonApply.Name = "buttonApply";
             this.buttonApply.Size = new System.Drawing.Size(57, 24);
             this.buttonApply.TabIndex = 6;
@@ -235,7 +253,7 @@
             // 
             this.textBoxDeviceName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxDeviceName.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBoxDeviceName.Location = new System.Drawing.Point(72, 19);
+            this.textBoxDeviceName.Location = new System.Drawing.Point(72, 36);
             this.textBoxDeviceName.Name = "textBoxDeviceName";
             this.textBoxDeviceName.Size = new System.Drawing.Size(132, 13);
             this.textBoxDeviceName.TabIndex = 0;
@@ -244,7 +262,7 @@
             // labelIpAddress
             // 
             this.labelIpAddress.AutoSize = true;
-            this.labelIpAddress.Location = new System.Drawing.Point(8, 38);
+            this.labelIpAddress.Location = new System.Drawing.Point(8, 55);
             this.labelIpAddress.Name = "labelIpAddress";
             this.labelIpAddress.Size = new System.Drawing.Size(58, 13);
             this.labelIpAddress.TabIndex = 4;
@@ -254,7 +272,7 @@
             // 
             this.textBoxDeviceIpAddress.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxDeviceIpAddress.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBoxDeviceIpAddress.Location = new System.Drawing.Point(72, 38);
+            this.textBoxDeviceIpAddress.Location = new System.Drawing.Point(72, 55);
             this.textBoxDeviceIpAddress.Name = "textBoxDeviceIpAddress";
             this.textBoxDeviceIpAddress.Size = new System.Drawing.Size(132, 13);
             this.textBoxDeviceIpAddress.TabIndex = 1;
@@ -263,7 +281,7 @@
             // labelServerName
             // 
             this.labelServerName.AutoSize = true;
-            this.labelServerName.Location = new System.Drawing.Point(31, 19);
+            this.labelServerName.Location = new System.Drawing.Point(31, 36);
             this.labelServerName.Name = "labelServerName";
             this.labelServerName.Size = new System.Drawing.Size(35, 13);
             this.labelServerName.TabIndex = 3;
@@ -273,26 +291,33 @@
             // 
             this.numericUpDownSlotNumber.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.numericUpDownSlotNumber.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.numericUpDownSlotNumber.Location = new System.Drawing.Point(72, 56);
+            this.numericUpDownSlotNumber.Location = new System.Drawing.Point(72, 73);
             this.numericUpDownSlotNumber.Name = "numericUpDownSlotNumber";
             this.numericUpDownSlotNumber.Size = new System.Drawing.Size(47, 16);
             this.numericUpDownSlotNumber.TabIndex = 2;
             this.numericUpDownSlotNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDownSlotNumber.ValueChanged += new System.EventHandler(this.numericUpDownSlotNumber_ValueChanged);
             // 
-            // checkBox_EnableBackplane
+            // label1
             // 
-            this.checkBox_EnableBackplane.AutoSize = true;
-            this.checkBox_EnableBackplane.Checked = true;
-            this.checkBox_EnableBackplane.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_EnableBackplane.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.checkBox_EnableBackplane.Location = new System.Drawing.Point(24, 56);
-            this.checkBox_EnableBackplane.Name = "checkBox_EnableBackplane";
-            this.checkBox_EnableBackplane.Size = new System.Drawing.Size(42, 17);
-            this.checkBox_EnableBackplane.TabIndex = 9;
-            this.checkBox_EnableBackplane.Text = "Slot";
-            this.checkBox_EnableBackplane.UseVisualStyleBackColor = true;
-            this.checkBox_EnableBackplane.CheckedChanged += new System.EventHandler(this.checkBox_EnableBackplane_CheckedChanged);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(30, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(36, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Family";
+            // 
+            // comboBox_DeviceFamily
+            // 
+            this.comboBox_DeviceFamily.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_DeviceFamily.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBox_DeviceFamily.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.comboBox_DeviceFamily.FormattingEnabled = true;
+            this.comboBox_DeviceFamily.Location = new System.Drawing.Point(72, 9);
+            this.comboBox_DeviceFamily.Name = "comboBox_DeviceFamily";
+            this.comboBox_DeviceFamily.Size = new System.Drawing.Size(132, 21);
+            this.comboBox_DeviceFamily.TabIndex = 11;
+            this.comboBox_DeviceFamily.SelectedIndexChanged += new System.EventHandler(this.comboBox_DeviceFamily_SelectedIndexChanged);
             // 
             // DeviceBrowserControl
             // 
@@ -342,5 +367,7 @@
         private System.Windows.Forms.TreeView treeView;
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.CheckBox checkBox_EnableBackplane;
+        private System.Windows.Forms.ComboBox comboBox_DeviceFamily;
+        private System.Windows.Forms.Label label1;
     }
 }

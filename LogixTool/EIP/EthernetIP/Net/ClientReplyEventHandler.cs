@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EIP.Net
+namespace EIP.EthernetIP.Net
 {
     /// <summary>
     /// 

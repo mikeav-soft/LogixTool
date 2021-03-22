@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using EIP.EthernetIP;
 using EIP.AllenBradley.Models;
 using EIP.AllenBradley.Models.Events;
 
@@ -430,180 +431,34 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 if (this.processRunEnable && this.ServerState == ServerState.Init)
                 {
-                    // Очищаем список доступных тэгов удаленного устройства и
+                    // Initialization of containers.
                     this.AvaliableControllerTags.Clear();
-                    // Очищаем список доступных структур типов данных удаленного устройства.
                     this.AvaliableTemplateStructures.Clear();
-                    // Очищаем список таблиц.
                     this.tables.Clear();
 
-                    // Инициализируем состояние тэгов перед чтением.
-                    foreach (LogixTagHandler tag in this.mainProcessTags.Keys)
-                    {
-                        tag.InitState();
-                        tag.OwnerTask = this;
-                    }
+                    // Initialization of Tag Handlers.
+                    this.InitTagHandlers(this.mainProcessTags.Keys);
 
-                    #region [ 2.1. ПОЛУЧЕНИЕ СПИСКА ТЭГОВ УДАЛЕННОГО УСТРОЙСТВА ]
-                    /* ====================================================================================== */
+                    // Getting of all Logix tags from remote Logix PLC.
                     if (this.ServerState == ServerState.Init)
                     {
-                        // Получаем список всех глобальных тэгов удаленного устройства.
-                        List<CLXTag> recievedControllerTags;
-                        List<CLXTag> recievedProgramTags;
-
-                        #region [ 2.1.1 ПОЛУЧЕНИЕ ГЛОБАЛЬНЫХ ТЭГОВ УДАЛЕННОГО УСТРОЙСТВА ]
-                        /* ====================================================================================== */
-                        if (this.Device.GetTagsAddreses(out recievedControllerTags))
-                        {
-                            // Добавляем принятые тэги удаленного устройства.
-                            foreach (CLXTag t in recievedControllerTags)
-                            {
-                                if (t.Name != null)
-                                {
-                                    if (!this.AvaliableControllerTags.ContainsKey(t.Name))
-                                    {
-                                        this.AvaliableControllerTags.Add(t.Name, t);
-                                    }
-                                    else
-                                    {
-                                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist."));
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device."));
-                            // В случае неудачи устанавливаем состояние ошибки.
+                        if (!this.GetLogixTags(this.AvaliableControllerTags))
                             this.ServerState = ServerState.Error;
-                        }
-                        /* ====================================================================================== */
-                        #endregion
-
-                        #region [ 2.1.2 ПОЛУЧЕНИЕ ПРОГРАММНЫХ ТЭГОВ УДАЛЕННОГО УСТРОЙСТВА ]
-                        /* ====================================================================================== */
-                        if (recievedControllerTags != null)
-                        {
-                            const string PROGRAM_PREFIX = "Program:";
-                            IEnumerable<CLXTag> programTags = recievedControllerTags.Where(p => p != null && p.Name != null && p.Name.StartsWith(PROGRAM_PREFIX));
-
-                            foreach (string program in programTags.Select(p => p.Name))
-                            {
-                                // Получаем список всех програмных тэгов удаленного устройства для каждой программы.
-                                if (this.Device.GetTagsAddreses(program, out recievedProgramTags))
-                                {
-                                    // Добавляем принятые тэги удаленного устройства.
-                                    foreach (CLXTag t in recievedProgramTags)
-                                    {
-                                        if (t.Name != null)
-                                        {
-                                            string key = program + "." + t.Name;
-                                            if (!this.AvaliableControllerTags.ContainsKey(key))
-                                            {
-                                                this.AvaliableControllerTags.Add(key, t);
-                                            }
-                                            else
-                                            {
-                                                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist. Program :: '" + program + "'."));
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device. Program :: '" + program + "'."));
-
-                                    // В случае неудачи устанавливаем состояние ошибки.
-                                    this.ServerState = ServerState.Error;
-                                    break;
-                                }
-                            }
-                        }
-                        /* ====================================================================================== */
-                        #endregion
                     }
-                    /* ====================================================================================== */
-                    #endregion
 
-                    #region [ 2.2. ПОЛУЧЕНИЕ СПИСКА СТРУКТУР ТИПОВ ДАННЫХ УДАЛЕННОГО УСТРОЙСТВА ]
-                    /* ====================================================================================== */
-                    if (this.ServerState == ServerState.Init)
+                    // Getting of all Data Templates from remote Logix PLC.
+                    if (this.Device.Family == DeviceFamily.ControlLogix && this.ServerState == ServerState.Init)
                     {
-                        // Получаем полный доступный список кодов структур типов данных удаленного устройства.
-                        List<UInt16> templateInstances;
-
-                        if (this.Device.GetTemplateAddreses(out templateInstances))
-                        {
-                            // Для каждого кода структуры типа данных производим получение информации.
-                            foreach (UInt16 templateInstance in templateInstances)
-                            {
-                                // Получаем информацию о структуре типа данных.
-                                // В случае успешного получения данных проихводим получение информации о членах структуры типа данных,
-                                // в случае неудачи устанавливаем ошибочное состояние.
-                                CLXTemplate clxTemplate;
-                                if (this.Device.GetTemplateInformation(templateInstance, out clxTemplate))
-                                {
-                                    // Получаем информацию о членах структуры типа данных,
-                                    // в случае неудачи устанавливаем ошибочное состояние.
-                                    if (this.Device.GetTemplateMembers(clxTemplate))
-                                    {
-                                        // В Случае успешного получения информации добаляем ип данных в список.
-                                        if (clxTemplate.SymbolTypeAttribute.Code != 0 && !this.AvaliableTemplateStructures.ContainsKey(clxTemplate.SymbolTypeAttribute.Code))
-                                        {
-                                            this.AvaliableTemplateStructures.Add(clxTemplate.SymbolTypeAttribute.Code, clxTemplate);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Members Reading", "Error! Imposible to read template Members from Device. Instance: " + templateInstance.ToString()));
-                                        this.ServerState = ServerState.Error;
-                                    }
-                                }
-                                else
-                                {
-                                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Info Reading", "Error! Imposible to read template Information from Device. Instance: " + templateInstance.ToString()));
-                                    this.ServerState = ServerState.Error;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template List Reading", "Error! Imposible to read template Instances from Device."));
+                        if (!this.GetLogixDataTemplates(this.AvaliableTemplateStructures))
                             this.ServerState = ServerState.Error;
-                        }
                     }
-                    /* ====================================================================================== */
-                    #endregion
 
-                    #region [ 2.3. ИНИЦИАЛИЗАЦИЯ ПЕРЕМЕННЫХ ]
-                    /* ====================================================================================== */
+                    // Definition of Tag Handlers of Data Type Information and  
+                    this.DefineTagHandlers(this.mainProcessTags.Keys);
 
-                    #region [ 2.3.1 ПОЛУЧЕНИЕ ТИПА ДАННЫХ ТЭГОВ ПО ИХ ИМЕНИ ]
-                    /* ====================================================================================== */
-                    // Инициализируем состояние тэгов перед чтением.
-                    foreach (LogixTagHandler tag in mainProcessTags.Keys)
-                    {
-                        // Если удалось определить тип данных то присваиваем его текущему тэгу.
-                        // В противном случае выводим сообщение о неудаче.
-                        if (!this.DefineTagDataType(tag))
-                        {
-                            tag.ReadEnable = false;
-                            tag.WriteEnable = false;
-                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag Definition", "Error! Invalid Name or Imposible to define Data Type of Tag: " + tag.Name));
-                        }
-                    }
-                    /* ====================================================================================== */
-                    #endregion
-
-                    /* ====================================================================================== */
-                    #endregion
-
-                    // Устанавливам состояние запуска.
+                    // Changing of process state to "Run".
                     if (this.ServerState == ServerState.Init)
-                    {
                         this.ServerState = ServerState.Run;
-                    }
                 }
                 /* ====================================================================================== */
                 #endregion
@@ -927,7 +782,7 @@ namespace EIP.AllenBradley
                 /* ====================================================================================== */
                 #endregion
 
-                #region [ 4. DISCONNESTION FROM SERVER. ]
+                #region [ 4. DISCONNECTION FROM SERVER. ]
                 /* ====================================================================================== */
                 // В случае закрытия разрешения подключения пытаемся поэтапно произвести действия с удаленным устройством
                 // при условии что сохранено подключение TCP/IP.
@@ -1067,70 +922,180 @@ namespace EIP.AllenBradley
         {
             this.runCyclicProcess = false;
         }
-
         /// <summary>
-        /// Производит попытку определения размера данных значения по его заданному коду.
+        /// Gets all Logix Tags (Controllers and Programs) from remote Logix PLC.
         /// </summary>
-        /// <param name="typeCode">Код типа данных.</param>
-        /// <param name="size">Результат : Размер данный в байтах.</param>
-        /// <returns>В случае успеха выполняемой операции возвращает True.</returns>
-        private bool TryGetSizeByTypeCode(UInt16 typeCode, out UInt16 size)
+        /// <param name="tags">Dictionary of Logix Tags, where key is a string with their name.</param>
+        /// <returns>Result of operation.</returns>
+        private bool GetLogixTags(Dictionary<string, CLXTag> tags)
         {
-            size = 0;
+            tags.Clear();
 
-            if (this.AvaliableTemplateStructures.ContainsKey(typeCode))
+            // Variables.
+            List<CLXTag> recievedControllerTags;    // Recieved Controller tags from Logix PLC.
+            List<CLXTag> recievedProgramTags;       // Recieved Program tags of Logix Program from Logix PLC.
+
+            #region [ Getting of "Controller Tags". ]
+            /* ====================================================================================== */
+            if (this.Device.GetTagsAddreses(out recievedControllerTags))
             {
-                UInt32 sizeOfStructure = this.AvaliableTemplateStructures[typeCode].SizeOfStructure;
-
-                if (sizeOfStructure > 0xFFFF || sizeOfStructure == 0)
+                // Add the recieved "Controller tags" to dictionary.
+                foreach (CLXTag t in recievedControllerTags)
                 {
-                    return false;
+                    if (t.Name != null)
+                    {
+                        if (!tags.ContainsKey(t.Name))
+                        {
+                            tags.Add(t.Name, t);
+                        }
+                        else
+                        {
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist."));
+                            return false;
+                        }
+                    }
                 }
-
-                size = (UInt16)sizeOfStructure;
-                return true;
             }
             else
             {
-                switch (typeCode)
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device."));
+                return false;
+            }
+            /* ====================================================================================== */
+            #endregion
+
+            #region [ Getting of "Program Tags". ]
+            /* ====================================================================================== */
+            if (recievedControllerTags != null)
+            {
+                // Getting of Logix Program List from controller tags.
+                const string PROGRAM_PREFIX = "Program:";
+                IEnumerable<CLXTag> programTags = recievedControllerTags.Where(p => p != null && p.Name != null && p.Name.StartsWith(PROGRAM_PREFIX));
+
+                foreach (string program in programTags.Select(p => p.Name))
                 {
-                    case 0xC1:
-                    case 0xC2:
+                    // Getting list of program tags from each Logix Program.
+                    if (this.Device.GetTagsAddreses(program, out recievedProgramTags))
+                    {
+                        // Add the recieved "Program tags" to dictionary.
+                        foreach (CLXTag t in recievedProgramTags)
                         {
-                            size = 1;
-                            return true;
+                            if (t.Name != null)
+                            {
+                                string key = program + "." + t.Name;
+                                if (!tags.ContainsKey(key))
+                                {
+                                    tags.Add(key, t);
+                                }
+                                else
+                                {
+                                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Name of recieved tag already exist. Program :: '" + program + "'."));
+                                    return false;
+                                }
+                            }
                         }
-                    case 0xC3:
-                        {
-                            size = 2;
-                            return true;
-                        }
-
-                    case 0xC4:
-                    case 0xCA:
-                    case 0xD3:
-                        {
-                            size = 4;
-                            return true;
-                        }
-
-                    case 0xC5:
-                        {
-                            size = 8;
-                            return true;
-                        }
+                    }
+                    else
+                    {
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag List Reading", "Error! Imposible to read tags from Device. Program :: '" + program + "'."));
+                        return false;
+                    }
                 }
             }
+            /* ====================================================================================== */
+            #endregion
 
-            return false;
+            return true;
         }
         /// <summary>
-        /// Производит подготовку параметров тэга для его дальнейшего использования.
-        /// Для текущего тэга производится : генерация пути по имени, определение параметров типа данных.
+        /// Gets all Logix Data Templates from remote Logix PLC.
         /// </summary>
-        /// <param name="logixTag">Держатель тэга удаленного устройства.</param>
-        /// <returns></returns>
-        private bool DefineTagDataType(LogixTagHandler logixTag)
+        /// <param name="templates">Dictionary of Logix Data Templates, where key is a number with their code. </param>
+        /// <returns>Result of operation.</returns>
+        private bool GetLogixDataTemplates(Dictionary<ushort, CLXTemplate> templates)
+        {
+            templates.Clear();
+
+            // Get the full available list of codes for the data type structures of the remote device.
+            List<UInt16> templateInstances;
+
+            if (this.Device.GetTemplateAddreses(out templateInstances))
+            {
+                // For each code of the data type structure, we obtain information. 
+                foreach (UInt16 templateInstance in templateInstances)
+                {
+                    // Get information about the structure of the data type.
+                    // If the data is successfully received, we obtain information about the members of the data type structure,
+                    // in case of failure, return false.
+                    CLXTemplate clxTemplate;
+                    if (this.Device.GetTemplateInformation(templateInstance, out clxTemplate))
+                    {
+                        // Get information about the members of the data type structure,
+                        // in case of failure, return false.
+                        if (this.Device.GetTemplateMembers(clxTemplate))
+                        {
+                            // If the information is successfully received, add the data type to the list.
+                            if (clxTemplate.SymbolTypeAttribute.Code != 0 && !templates.ContainsKey(clxTemplate.SymbolTypeAttribute.Code))
+                                templates.Add(clxTemplate.SymbolTypeAttribute.Code, clxTemplate);
+                        }
+                        else
+                        {
+                            OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Members Reading", "Error! Imposible to read template Members from Device. Instance: " + templateInstance.ToString()));
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template Info Reading", "Error! Imposible to read template Information from Device. Instance: " + templateInstance.ToString()));
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Template List Reading", "Error! Imposible to read template Instances from Device."));
+                return false;
+            }
+
+            return true;
+        }
+        /// <summary>
+        /// Initializes the state of the tag handlers.
+        /// </summary>
+        /// <param name="tagHandlers">List of Tag Handlers.</param>
+        private void InitTagHandlers(IEnumerable<LogixTagHandler> tagHandlers)
+        {
+            // Инициализируем состояние тэгов перед чтением.
+            foreach (LogixTagHandler tag in tagHandlers)
+            {
+                tag.InitState();
+                tag.OwnerTask = this;
+            }
+        }
+        /// <summary>
+        /// Gets and fills Data Type information, CIP Path for Tag Handlers.
+        /// </summary>
+        /// <param name="tagHandlers">List of Tag Handlers.</param>
+        private void DefineTagHandlers(IEnumerable<LogixTagHandler> tagHandlers)
+        {
+            foreach (LogixTagHandler tag in tagHandlers)
+            {
+                // Если удалось определить тип данных то присваиваем его текущему тэгу.
+                // В противном случае выводим сообщение о неудаче.
+                if (!this.DefineTagHandler(tag))
+                {
+                    tag.ReadEnable = false;
+                    tag.WriteEnable = false;
+                    OnMessage(new MessageEventArgs(this, MessageEventArgsType.Error, "Tag Definition", "Error! Invalid Name or Imposible to define Data Type of Tag: " + tag.Name));
+                }
+            }
+        }
+        /// <summary>
+        // Gets and fills Data Type information, CIP Path for Tag Handler.
+        /// </summary>
+        /// <param name="logixTag">Tag Handler.</param>
+        /// <returns>Result of operation.</returns>
+        private bool DefineTagHandler(LogixTagHandler logixTag)
         {
             string typeName = null;                         // Текущее название типа данных.
             string hiddenMemberName = null;                 // Текущее имя скрытого члена структуры типа данных к которой относится бит (его место определения в данном члене).
@@ -1362,7 +1327,6 @@ namespace EIP.AllenBradley
 
                             // На основании данных о размере массива и о индексе элемента производим преобразование
                             // в линейное значение индекса. Следим за тем чтобы не произошло переполнение UInt32.
-
                             try
                             {
                                 checked
@@ -1618,6 +1582,62 @@ namespace EIP.AllenBradley
                 }
                 /* ====================================================================================== */
                 #endregion
+            }
+
+            return false;
+        }
+        /// <summary>
+        /// Tries to determine the data size from its specified Logix data template code.
+        /// </summary>
+        /// <param name="typeCode">Data Template code of Logix PLC.</param>
+        /// <param name="size">Result : Size of Data Template in bytes.</param>
+        /// <returns>Result of operation.</returns>
+        private bool TryGetSizeByTypeCode(UInt16 typeCode, out UInt16 size)
+        {
+            size = 0;
+
+            if (this.AvaliableTemplateStructures.ContainsKey(typeCode))
+            {
+                UInt32 sizeOfStructure = this.AvaliableTemplateStructures[typeCode].SizeOfStructure;
+
+                if (sizeOfStructure > 0xFFFF || sizeOfStructure == 0)
+                {
+                    return false;
+                }
+
+                size = (UInt16)sizeOfStructure;
+                return true;
+            }
+            else
+            {
+                switch (typeCode)
+                {
+                    case 0xC1:
+                    case 0xC2:
+                        {
+                            size = 1;
+                            return true;
+                        }
+                    case 0xC3:
+                        {
+                            size = 2;
+                            return true;
+                        }
+
+                    case 0xC4:
+                    case 0xCA:
+                    case 0xD3:
+                        {
+                            size = 4;
+                            return true;
+                        }
+
+                    case 0xC5:
+                        {
+                            size = 8;
+                            return true;
+                        }
+                }
             }
 
             return false;

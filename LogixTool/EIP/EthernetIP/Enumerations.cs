@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EIP
+namespace EIP.EthernetIP
 {
     /// <summary>
     /// Table 2-3.2 Encapsulation Commands

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace EIP
+namespace EIP.EthernetIP
 {
     /// <summary>
     /// CIP запрос.

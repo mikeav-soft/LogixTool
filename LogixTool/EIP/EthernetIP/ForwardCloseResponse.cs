@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace EIP
+namespace EIP.EthernetIP
 {
     /// <summary>
     /// Структура ответа на закрытие подключения с удаленным устройством.

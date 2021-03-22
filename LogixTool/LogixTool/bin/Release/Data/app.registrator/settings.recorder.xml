@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<storage Owner="app.registrator" Type="settings" ID="recorder" Saved="637516086114950695">
+<storage Owner="app.registrator" Type="settings" ID="recorder" Saved="637520532190015780">
   <data>
     <Settings FileLocation="D:\Git\Repository\LogixTool\LogixTool\bin\Debug\log" FilePrefix="my_rec" SeparationFileSize="1" SeparationPeriod="Minute" RecordingType="All" RecordingPeriodValue="100" RecordingPeriodUnit="mSec" TickTimeFormat="true" />
   </data>

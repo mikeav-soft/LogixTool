@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogixTool", "LogixTool\LogixTool.csproj", "{99D6C33C-BE52-4F7A-AE36-52626634ED50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EIP", "EIP\EIP.csproj", "{942EDF61-64BA-4A60-91EF-3E8C691BD7C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EIP", "EIP\EIP.csproj", "{942EDF61-64BA-4A60-91EF-3E8C691BD7C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

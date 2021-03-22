@@ -59,51 +59,5 @@ namespace EIP
 
             return bytes.ToArray();
         }
-        /// <summary>
-        /// Смещает последовательность байт на заданное кол-во бит.
-        /// </summary>
-        /// <param name="b">Исходная последовательность байт.</param>
-        /// <param name="shiftCount">Кол-во бит на которое происходит смещение влево 
-        /// при положительном значении и вправо при отрицательном.</param>
-        /// <returns></returns>
-        internal static byte[] ShiftBytesTo(byte[] b, int shiftCount)
-        {
-            byte[] result = new byte[b.Length];
-            b.CopyTo(result, 0);
-
-            byte last = 0;
-            byte currByte;
-
-            if (shiftCount > 0)
-            {
-                for (int ix = 0; ix < result.Length; ix++)
-                {
-                    currByte = result[ix];
-
-                    result[ix] = (byte)(currByte << shiftCount);
-                    result[ix] = (byte)(result[ix] | last);
-
-                    last = currByte;
-                    last = (byte)(last & (byte)(0xFF << (8 - shiftCount)));
-                    last = (byte)(last >> (8 - shiftCount));
-                }
-            }
-            else
-            {
-                for (int ix = result.Length - 1; ix >= 0; ix--)
-                {
-                    currByte = result[ix];
-
-                    result[ix] = (byte)(currByte >> shiftCount);
-                    result[ix] = (byte)(result[ix] | last);
-
-                    last = currByte;
-                    last = (byte)(last & (byte)(0xFF >> (8 - shiftCount)));
-                    last = (byte)(last << (8 - shiftCount));
-                }
-            }
-
-            return result;
-        }
     }
 }

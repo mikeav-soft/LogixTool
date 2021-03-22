@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Text;
 
-namespace EIP.Net
+namespace EIP.EthernetIP.Net
 {
     /// <summary>
     /// Представляет собой класс для работы с UDP подключением с указанием конкретного порта.

@@ -157,7 +157,7 @@ namespace EIP.AllenBradley
         /// </summary>
         public BitOffsetPosition AtomicBitDefinition { get; set; }
         /// <summary>
-        /// Возвращает или задает смещение байт/бит для извлечения данных бита структуры.
+        /// Возвращает или задает смещение байт/бит для извлечения данных структуры.
         /// </summary>
         public BitOffsetPosition StructureDefinition { get; set; }
         /// <summary>
