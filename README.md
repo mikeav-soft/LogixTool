@@ -15,7 +15,7 @@ LogixTool is C# WinForms application which fully created on standard .NET Framew
 
 Production automation based on Allen-Bradley PLC (ControlLogix, CompactLogix).
 
->Was successfuly tested with 18.11, 16.00 versions.
+>Was successfuly tested with 16.00, 18.11, 32.00 versions.
 >
 ## Advanteges
 
